@@ -1,0 +1,34 @@
+<xf:title>
+	{{ phrase('th_iau_edit_product_details:') }} {$addOn.AddOn.title}
+</xf:title>
+
+<xf:comment>
+	<xf:pageaction>
+		<xf:button href="{{ link('install-upgrade-products/add-ons/delete', {'product_id': $addOn.AddOn.addon_id_url}) }}"
+				   icon="delete">
+			{{ phrase('delete') }}
+		</xf:button>
+	</xf:pageaction>
+</xf:comment>
+
+<xf:form action="{{ link('install-upgrade-products/add-ons/edit', {'product_id': $addOn.AddOn.addon_id_url}) }}"
+		 class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:checkboxrow>
+				<xf:option name="update_check"
+						   checked="{$addOn.update_check}"
+						   value="1">
+					{{ phrase('th_iau_automatically_check_for_updates') }}
+				</xf:option>
+			</xf:checkboxrow>
+
+			<hr class="formRowSep" />
+			
+			<xf:textboxrow label="{{ phrase('th_iau_download_url') }}"
+						   value="{$addOn.download_url}"
+						   name="download_url"  />
+		</div>
+		<xf:submitrow rowtype="simple" icon="save" />
+	</div>
+</xf:form>

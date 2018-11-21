@@ -1,0 +1,172 @@
+{
+    "admin/install_upgrade_provider_config_themehouse.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "d09fda2a4d14597333ba06ada3f5caa6"
+    },
+    "admin/install_upgrade_provider_config_xenforo.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "18a2d82f346c999b7801b4416c6d6c23"
+    },
+    "admin/install_upgrade_provider_config_xf2rm.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "5cdf703051c57731edcea4e020c57661"
+    },
+    "admin/th_iau_addon_install.html": {
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "db195996049d2125d90dbf7cc3e17b92"
+    },
+    "admin/th_iau_encryption_secret.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "84f0c555d05d0072c4bd3c2c4bf158d0"
+    },
+    "admin/th_iau_extra_info.less": {
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "23076ef3938bd6d628a7bba3aa978e59"
+    },
+    "admin/th_iau_index.less": {
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "17566d47300b59f2fbe579740201556c"
+    },
+    "admin/th_iau_install_upgrade_log_clear.html": {
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "fdcb771188610a2a09f5a3ffe059834f"
+    },
+    "admin/th_iau_install_upgrade_log_delete.html": {
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "b79c4285144fd5e9f11fc4e2bef838e5"
+    },
+    "admin/th_iau_install_upgrade_log_list.html": {
+        "version_id": 1000033,
+        "version_string": "1.0.0 Beta 3",
+        "hash": "47f240c34d61c21b58687ea1ff0cdd47"
+    },
+    "admin/th_iau_install_upgrade_log_view.html": {
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "f457ed6b2074a7f90386f1bab0548e78"
+    },
+    "admin/th_iau_language_bulk_delete.html": {
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "6e0c7a9c1b262a436210da4a2d1c30ad"
+    },
+    "admin/th_iau_macros.html": {
+        "version_id": 1000041,
+        "version_string": "1.0.0 Beta 11",
+        "hash": "34ca8fd7349638432a30fbe84fe52d0a"
+    },
+    "admin/th_iau_product_addOn_edit.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "b79c261ca138b7e1a78c006ec617dc48"
+    },
+    "admin/th_iau_product_encryption_secrets.html": {
+        "version_id": 1000038,
+        "version_string": "1.0.0 Beta 8",
+        "hash": "b390e2ca218be9b735220b61c3ffebf8"
+    },
+    "admin/th_iau_product_language_edit.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "8cb127f456023d16158613c2a369ed9d"
+    },
+    "admin/th_iau_product_style_edit.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "aeabb98ff11e3f79b3024a418fb4866e"
+    },
+    "admin/th_iau_products_addon_list.html": {
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "3768f01cd5519b584a8207671627a79e"
+    },
+    "admin/th_iau_products_available_list.html": {
+        "version_id": 1000038,
+        "version_string": "1.0.0 Beta 8",
+        "hash": "84a01a995c2bd59ef8d8e001817c96c4"
+    },
+    "admin/th_iau_products_installed_add.html": {
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "40e0f91b56c154c32cefb8d1851ce657"
+    },
+    "admin/th_iau_products_installed_list.html": {
+        "version_id": 1000034,
+        "version_string": "1.0.0 Beta 4",
+        "hash": "64a18e80070be6900eb4e4e4bd993460"
+    },
+    "admin/th_iau_products_language_list.html": {
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "257a4f42ec4bf92b8651b75b68b9e98b"
+    },
+    "admin/th_iau_products_style_list.html": {
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "1486323d322846f620692874eb24f584"
+    },
+    "admin/th_iau_profiles_add.html": {
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "d3d96de994534da2e82c4641ff5936a9"
+    },
+    "admin/th_iau_profiles_delete.html": {
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "069cfac7fb5966286921b4fdb5734c77"
+    },
+    "admin/th_iau_profiles_edit.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "8696b0b7f5f589112bb82b14970a4a84"
+    },
+    "admin/th_iau_profiles_list.html": {
+        "version_id": 1000032,
+        "version_string": "1.0.0 Beta 2",
+        "hash": "7547601b7f2d6bce50daa060828e6218"
+    },
+    "admin/th_iau_style_bulk_delete.html": {
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "431d381d6671042bb20eab1223967c39"
+    },
+    "admin/th_iau_tfa_key.html": {
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "c2445ca0b4025bb0eea3047405d8c238"
+    },
+    "public/_widget_thuix_aboutUsWidget.html": {
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "9d20ef46117fc6ee1beb8fe1d1742d27"
+    },
+    "public/_widget_thuix_userNavWidget.html": {
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "70e4afe03f621849ad5455820f1fc96e"
+    },
+    "public/alert_user_th_iau_addOn_updateAvailable.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "e64efa5fc9ed8bd27991a7e1f24696ca"
+    },
+    "public/alert_user_th_iau_language_updateAvailable.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "89fa76a9579ec9d4117cb1ffc9425a1a"
+    },
+    "public/alert_user_th_iau_style_updateAvailable.html": {
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "2e277f34dd21c7578ddd940d8f19b9f9"
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "event_id": "entity_structure",
+    "execute_order": 10,
+    "callback_class": "ThemeHouse\\InstallAndUpgrade\\Listener\\EntityStructure",
+    "callback_method": "style",
+    "active": true,
+    "hint": "XF\\Entity\\Style",
+    "description": "XF\\Entity\\Style"
+}

@@ -1,0 +1,1 @@
+Provider does not support installation via URL or URL does not lead to a downloadable resource.

@@ -1,0 +1,32 @@
+<xf:title>{{ phrase('th_iau_select_styles_for_deletion') }}</xf:title>
+
+<xf:form action="{{ link('styles/bulk-delete') }}" class="block" ajax="true">
+
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				<p>{{ phrase('th_iau_you_sure_you_want_to_bulk_delete_styles') }}</p>
+				<p>{{ phrase('th_iau_you_may_control_which_styles_to_delete_from_list_below:') }}</p>
+			</xf:inforow>
+
+			<xf:checkboxrow name="to_delete">
+				<xf:foreach loop="$styles" key="$styleId" value="$style">
+					<xf:if is="$styleId">
+						<xf:option value="{$styleId}"
+								   label="{$style.record.title}"
+								   disabled="{{$styleId == $xf.options.defaultStyleId ? 'disabled' : ''}}">
+							<xf:hint>
+								{{$styleId == $xf.options.defaultStyleId ? phrase('th_iau_default_style_cannot_be_deleted') : ''}}
+								{{ !$style.record.user_selectable ? phrase('th_iau_this_style_is_currently_disabled') : '' }}
+							</xf:hint>
+						</xf:option>
+					</xf:if>
+				</xf:foreach>
+			</xf:checkboxrow>
+		</div>
+
+		<xf:submitrow submit="{{ phrase('delete') }}" icon="delete" />
+	</div>
+
+	<xf:redirect />
+</xf:form>

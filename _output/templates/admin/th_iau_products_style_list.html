@@ -1,0 +1,69 @@
+<xf:title>{{ phrase('th_iau_available_styles') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('install-upgrade-products/refresh') }}"
+			   icon="refresh">
+		{{ phrase('th_iau_refresh') }}
+	</xf:button>
+</xf:pageaction>
+
+<xf:if is="$profiles is not empty">
+	<xf:foreach loop="$profiles" value="$profile" key="$profileId">
+		<div class="block">
+			<div class="block-container">
+				<h3 class="block-header">
+					<span class="collapseTrigger collapseTrigger--block {{ !is_toggled('collapse_styles_' . $profile.profile_id) ? 'is-active' : '' }}"
+						  data-xf-click="toggle"
+						  data-xf-init="toggle-storage"
+						  data-storage-type="cookie"
+						  data-storage-key="collapse_styles_ . {$profile.profile_id}"
+						  data-target="#js-collapse-styles-{$profile.profile_id}">
+					{$profile.page_title}
+					</span>
+				</h3>
+				<ol class="block-body block-body--collapsible block-row {{ !is_toggled('collapse_styles_' . $profile.profile_id) ? 'is-active' : '' }}"
+					id="js-collapse-styles-{$profile.profile_id}">
+					<xf:foreach loop="{$styles.{$profileId}}" value="$style">
+						<xf:css src="addon_list.less" />
+						<li class="block-row block-row--separated addOnList-row }}">
+							<div class="contentRow">
+								<div class="contentRow-figure">
+									<div class="contentRow-figureIcon">
+										<xf:if is="$style.extra.thumbnail">
+											<img src="{$style.extra.thumbnail}" alt="{$style.title}" />
+											<xf:elseif is="$style.extra.icon" />
+											<i class="{$style.extra.icon}" aria-hidden="true"></i>
+											<xf:else />
+											<i class="fa fa-tint fa-3x" aria-hidden="true"></i>
+										</xf:if>
+									</div>
+								</div>
+								<div class="contentRow-main">
+									<h3 class="contentRow-header js-filterSearchable">
+										{$style.title} <span class="contentRow-muted">{$style.version}</span>
+									</h3>
+									<div class="contentRow-lesser js-filterSearchable{{ !$style.description ? ' no-description' : '' }}">
+										{{ $style.description }}
+									</div>
+								</div>
+								<div class="contentRow-extra">
+									<xf:button href="{{ link('install-upgrade-products/styles/install', $style) }}" overlay="true">
+										{{ phrase('install') }}
+									</xf:button>
+								</div>
+							</div>
+						</li>
+					</xf:foreach>
+				</ol>
+			</div>
+		</div>
+	</xf:foreach>
+	<xf:else />
+	<div class="block">
+		<div class="block-container">
+			<div class="block-body block-row">
+				{{ phrase('th_iau_no_style_products_found') }}
+			</div>
+		</div>
+	</div>
+</xf:if>

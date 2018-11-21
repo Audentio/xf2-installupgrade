@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "install-upgrade",
+    "sub_name": "",
+    "format": ":str<content_type>/:str<content_id>",
+    "build_class": "",
+    "build_method": "",
+    "controller": "ThemeHouse\\InstallAndUpgrade:InstallUpgrade",
+    "context": "",
+    "action_prefix": ""
+}

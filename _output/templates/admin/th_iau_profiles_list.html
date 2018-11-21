@@ -1,0 +1,36 @@
+<xf:title>{{ phrase('th_iau_install_upgrade_profiles') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('install-upgrade-profiles/add') }}" icon="add" overlay="true">{{ phrase('th_iau_add_install_upgrade_profile') }}</xf:button>
+</xf:pageaction>
+
+<xf:if is="$profiles is not empty">
+	<xf:form class="block"
+			 ajax="true"
+			 action="{{ link('install-upgrade-profiles/toggle') }}">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:foreach loop="$profiles" key="$profileId" value="$profile">
+						<xf:datarow
+									label="{$profile.page_title}"
+									hint="{{ $profile.base_url ?: '' }}"
+									href="{{ link('install-upgrade-profiles/edit', $profile) }}"
+									toggle=""
+									delete="{{ link('install-upgrade-profiles/delete', $profile) }}">
+
+							<xf:toggle name="active[{$profile.profile_id}]" selected="$profile.active"
+									   class="dataList-cell--separated" submit="true"
+									   tooltip="{{ phrase('enable_disable_x', {'title': $profile.page_title}) }}" />
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($profileTotal) }}</span>
+			</div>
+		</div>
+	</xf:form>
+	<xf:else />
+	<div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
+</xf:if>

@@ -1,0 +1,1 @@
+The root URL of the resource managers XenForo 2 installation. For example the XenForo community base url would be <pre style="display:inline-block;margin:0">https://xenforo.com/community/</pre>.

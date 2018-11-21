@@ -1,0 +1,10 @@
+{
+    "additional_files": [
+        "src/addons/ThemeHouse/Core/Branding.php",
+        "src/addons/ThemeHouse/Core/Branding",
+        "src/addons/ThemeHouse/Core/Service/ApiRequest.php",
+        "src/addons/ThemeHouse/Core/Service/ApiRequest/",
+        "src/addons/ThemeHouse/Core/AutoLoad.php",
+        "src/addons/ThemeHouse/Core/AutoLoad"
+    ]
+}

@@ -1,0 +1,93 @@
+<xf:title>{{ phrase('th_iau_install_upgrade_log') }}</xf:title>
+
+<xf:pageaction if="$entries is not empty">
+	<xf:if is="$filters is empty">
+		<xf:button href="{{ link('install-upgrade-log/clear') }}" icon="delete" overlay="true">
+			{{ phrase('clear') }}
+		</xf:button>
+	</xf:if>
+</xf:pageaction>
+
+<xf:form action="{{ link('install-upgrade-log') }}" class="block">
+	<div class="block-outer">
+		<div class="filterBlock">
+			<ul class="listInline">
+				<li>
+					<xf:select name="content_type" class="filterBlock-input" value="{$filters.content_type}">
+						<xf:option>{{ phrase('(all_content_types)') }}</xf:option>
+						<xf:option value="addOn">{{ phrase('add_ons') }}</xf:option>
+						<xf:option value="style">{{ phrase('styles') }}</xf:option>
+						<xf:option value="language">{{ phrase('languages') }}</xf:option>
+					</xf:select>
+				</li>
+				<li>
+					<xf:textbox name="username" value="{$filters.username}" ac="single"
+								class="input filterBlock-input"
+								placeholder="{{ phrase('user_name') }}" />
+				</li>
+				<li>
+					<div class="inputGroup inputGroup--auto inputGroup--inline">
+						<xf:dateinput name="start" value="{{ $filters.start ? date($filters.start, 'Y-m-d') : '' }}"
+									  class="filterBlock-input filterBlock-input--small" />
+						<span class="inputGroup-text">-</span>
+						<xf:dateinput name="end" value="{{ $filters.end ? date($filters.end, 'Y-m-d') : '' }}"
+									  class="filterBlock-input filterBlock-input--small" />
+						<span class="inputGroup-splitter"></span>
+					</div>
+				</li>
+				<li>
+					<xf:select name="date_preset" class="js-presetChange filterBlock-input">
+						<xf:option label="{{ phrase('date_presets:') }}" value="-1" />
+						<xf:optgroup>
+							<xf:options source="{$datePresets}" />
+							<xf:option value="1995-01-01">{{ phrase('all_time') }}</xf:option>
+						</xf:optgroup>
+					</xf:select>
+				</li>
+				<li>
+					<xf:button type="submit" class="button--small">{{ phrase('go') }}</xf:button>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<xf:if is="$entries is not empty">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:foreach loop="$entries" value="$entry">
+						<xf:datarow overlay="true"
+									label="{{ $entry.Content ? $entry.Content.title : phrase('th_iau_content_no_longer_available') }}"
+									href="{{ link('install-upgrade-log/view', $entry) }}"
+									delete="{{ link('install-upgrade-log/delete', $entry) }}"
+									dir="auto">
+							<xf:hint>
+								<xf:if is="$entry.Content">
+									<xf:if is="$entry.action == 'install'">
+										{{ phrase('th_iau_install_version_x', {'version': $entry.to_version})}}
+										<xf:else />
+										{{ phrase('th_iau_upgrade_from_version_x_to_version_y', {'from': $entry.from_version, 'to': $entry.to_version}) }}
+									</xf:if>
+								</xf:if>
+							</xf:hint>
+							<xf:explain>
+								<ul class="listInline listInline--bullet">
+									<li><xf:date time="{$entry.timestamp}" /></li>
+									<li>{$entry.User.username}</li>
+								</ul>
+							</xf:explain>
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($entries, $total) }}</span>
+			</div>
+		</div>
+
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+					link="install-upgrade-log"
+					wrapperclass="block-outer block-outer--after" />
+		<xf:else />
+		<div class="blockMessage">{{ phrase('th_iau_no_logs_found') }}</div>
+	</xf:if>
+</xf:form>

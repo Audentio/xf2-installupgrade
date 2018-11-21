@@ -1,0 +1,69 @@
+<xf:title>{{ phrase('th_iau_available_languages') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('install-upgrade-products/refresh') }}"
+			   icon="refresh">
+		{{ phrase('th_iau_refresh') }}
+	</xf:button>
+</xf:pageaction>
+
+<xf:if is="$profiles is not empty">
+	<xf:foreach loop="$profiles" value="$profile" key="$profileId">
+		<div class="block">
+			<div class="block-container">
+				<h3 class="block-header">
+					<span class="collapseTrigger collapseTrigger--block {{ !is_toggled('collapse_languages_' . $profile.profile_id) ? 'is-active' : '' }}"
+						  data-xf-click="toggle"
+						  data-xf-init="toggle-storage"
+						  data-storage-type="cookie"
+						  data-storage-key="collapse_languages_ . {$profile.profile_id}"
+						  data-target="#js-collapse-languages-{$profile.profile_id}">
+					{$profile.page_title}
+					</span>
+				</h3>
+				<ol class="block-body block-body--collapsible block-row {{ !is_toggled('collapse_languages_' . $profile.profile_id) ? 'is-active' : '' }}"
+					id="js-collapse-languages-{$profile.profile_id}">
+					<xf:foreach loop="{$languages.{$profileId}}" value="$language">
+						<xf:css src="addon_list.less" />
+						<li class="block-row block-row--separated addOnList-row }}">
+							<div class="contentRow">
+								<div class="contentRow-figure">
+									<div class="contentRow-figureIcon">
+										<xf:if is="$language.extra.thumbnail">
+											<img src="{$language.extra.thumbnail}" alt="{$language.title}" />
+											<xf:elseif is="$language.extra.icon" />
+											<i class="{$language.extra.icon}" aria-hidden="true"></i>
+											<xf:else />
+											<i class="fa fa-language fa-3x" aria-hidden="true"></i>
+										</xf:if>
+									</div>
+								</div>
+								<div class="contentRow-main">
+									<h3 class="contentRow-header js-filterSearchable">
+										{$language.title} <span class="contentRow-muted">{$language.version}</span>
+									</h3>
+									<div class="contentRow-lesser js-filterSearchable{{ !$language.description ? ' no-description' : '' }}">
+										{{ $language.description }}
+									</div>
+								</div>
+								<div class="contentRow-extra">
+									<xf:button href="{{ link('install-upgrade-products/languages/install', $language) }}" overlay="true">
+										{{ phrase('install') }}
+									</xf:button>
+								</div>
+							</div>
+						</li>
+					</xf:foreach>
+				</ol>
+			</div>
+		</div>
+	</xf:foreach>
+	<xf:else />
+	<div class="block">
+		<div class="block-container">
+			<div class="block-body block-row">
+				{{ phrase('th_iau_no_language_products_found') }}
+			</div>
+		</div>
+	</div>
+</xf:if>

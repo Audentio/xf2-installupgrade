@@ -1,0 +1,896 @@
+{
+    "admin_navigation.thIAU.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "168be0fc9571ab2ad245c614ea0addda"
+    },
+    "admin_navigation.thiau_availableProducts.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "9a78d5ec82f0062063ebc3679ee1439f"
+    },
+    "admin_navigation.thiau_installedProducts.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "aaa1e37e24f59df95345d64719f186d7"
+    },
+    "admin_navigation.thiau_log.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "013d47600ca19123eaa7131600fe0d8f"
+    },
+    "admin_navigation.thiau_prod_addOns.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "3ca7f40aed676807c86c695508a51263"
+    },
+    "admin_navigation.thiau_prod_languages.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "4e1b0d5f96251571c00165c066b7c550"
+    },
+    "admin_navigation.thiau_prod_styles.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "7a8eb1d25863ace55032de8bbd112a06"
+    },
+    "admin_navigation.thiau_profiles.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "ce11dcea804c0e896d7d48175dcc2165"
+    },
+    "admin_navigation.thiau_profiles1.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "d0f25115288c15321ecf672f0d6a83ea"
+    },
+    "admin_navigation.thiau_settings.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "dae8ace18bdcbcc6ae5aece263e14fe8"
+    },
+    "admin_permission.thaiu.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "c0efceb670f09c12f6a78a122c1a9b72"
+    },
+    "admin_permission.thaiu_manageProviders.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "293348e54e29b0373c87903abce55664"
+    },
+    "cron_entry.thiau_checkAddOnUpdates.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "8077d235475f532c78613db993c50e09"
+    },
+    "cron_entry.thiau_checkLanguagUpdates.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "2ff553fd683ffe64d1e97c652fb99650"
+    },
+    "cron_entry.thiau_checkStyleUpdates.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "a6c51588624ada936c7f53cd9eb1a188"
+    },
+    "cron_entry.thiau_checkXenForoUpdates.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "c028a9ff3e4705b0a41f1ed09562e6be"
+    },
+    "install_upgrade_provider.themehouse.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "39b1fa88828c1c1dfa9c40c7f96ed61a"
+    },
+    "install_upgrade_provider.xenforo.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "1b253f44caf7590a0e70da1913a0f7fc"
+    },
+    "install_upgrade_provider.xf2rm.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "55382ca0423236a019d2a1930a3bcfd0"
+    },
+    "option.th_iau_disableBoard.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "9f3588d2f8607f8005a057e49b7bd4b1"
+    },
+    "option_explain.th_iau_disableBoard.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "ae31c00475f146e7d3fc0170b9ba3b0d"
+    },
+    "option_group.th_iau.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "5f68eb3518b2881c20d08419587de2b2"
+    },
+    "option_group_description.th_iau.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "th_iau_action_install.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "7cd8fb6e31cc946c078d2740c76a9899"
+    },
+    "th_iau_action_upgrade.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "06933067aafd48425d67bcb01bba5cb6"
+    },
+    "th_iau_add_install_upgrade_profile.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "600e95f3ce0908869001d0ef9817d7d3"
+    },
+    "th_iau_add_profile.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "600e95f3ce0908869001d0ef9817d7d3"
+    },
+    "th_iau_addon_downloaded_successfully.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "196c71a027f5f1665b0bbc74468544de"
+    },
+    "th_iau_addon_id_not_found_in_package.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "cb18d92d17de63028386c69fed7c7650"
+    },
+    "th_iau_addon_not_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "339cb3b5faaf123470046bf37ee57221"
+    },
+    "th_iau_addon_upgrades_available.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "8e4cc6609603b86436840ab56bb382db"
+    },
+    "th_iau_addon_uploaded_successfully.txt": {
+        "global_cache": false,
+        "version_id": 1000012,
+        "version_string": "1.0.0 Alpha 2",
+        "hash": "2ab214729804bd8fe0cb8e90aa9fa511"
+    },
+    "th_iau_addons.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "2ed9fe3318cba954f72a23d9cfa0cf21"
+    },
+    "th_iau_authentication_failed.txt": {
+        "global_cache": false,
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "d4e6d6c42bf3eb807b8778255a4ce415"
+    },
+    "th_iau_automatically_check_for_updates.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "ef3999cfd30ae4c7091b44e75891c4d6"
+    },
+    "th_iau_available_addons.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "1547171a0dbc591e04c7313bab12ac68"
+    },
+    "th_iau_available_languages.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "4e1b0d5f96251571c00165c066b7c550"
+    },
+    "th_iau_available_products.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "9a78d5ec82f0062063ebc3679ee1439f"
+    },
+    "th_iau_available_styles.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "7a8eb1d25863ace55032de8bbd112a06"
+    },
+    "th_iau_bulk_delete.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "7e31a97847ed9f901e12519184e6fa64"
+    },
+    "th_iau_check_for_updates.txt": {
+        "global_cache": false,
+        "version_id": 1000013,
+        "version_string": "1.0.0 Alpha 3",
+        "hash": "eb1b4bb3667dd670210c7822badc2f1d"
+    },
+    "th_iau_content_no_longer_available.txt": {
+        "global_cache": false,
+        "version_id": 1000033,
+        "version_string": "1.0.0 Beta 3",
+        "hash": "ddde5bcc35de59149bdaa8ea277dc99b"
+    },
+    "th_iau_content_type.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "266ba14af58a3dfa4b9e1c90a8879dfb"
+    },
+    "th_iau_content_type_not_supported.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "f134d3f2d6945c0050bfe6ea2804d3c9"
+    },
+    "th_iau_current_version.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "34b6cd75171affba6957e308dcbd92be"
+    },
+    "th_iau_decryption_key_for_x_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "c7ddefc966d4fd70aed77df5568ffbf3"
+    },
+    "th_iau_default_language_cannot_be_deleted.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "8ed79441b9c3f11643f301025a265775"
+    },
+    "th_iau_default_style_cannot_be_deleted.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "28e2894e6fac2d9809b5c20a1d09fb15"
+    },
+    "th_iau_designer.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "0aad40f415c9173fcc83acd984c0c83c"
+    },
+    "th_iau_designer_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "dcd2bf201a48a7e1389d9be06af7d6f4"
+    },
+    "th_iau_download_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "32f416df1d840bd40d51cd0ac659280c"
+    },
+    "th_iau_download_url_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "fb066adfac9adb6beadcedee782b7eb4"
+    },
+    "th_iau_edit_product_details.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "d278b5da220685127ac6bc4d00a1e00c"
+    },
+    "th_iau_edit_profile.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "47e83325fa8482be654d7a205af9f44c"
+    },
+    "th_iau_faq_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "154829115c84cceafdcebdd2c09e066c"
+    },
+    "th_iau_fetching_products.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "0d070d290ec1ad52fb9c9849f41c673b"
+    },
+    "th_iau_file.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "0b27918290ff5323bea1e3b78a9cf04e"
+    },
+    "th_iau_file_x_not_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "c0cd55338874f530888d9ece82e62bca"
+    },
+    "th_iau_finishing_installation.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "447bef12fba2bd489c31e9fabbb63e06"
+    },
+    "th_iau_from_version.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "5da618e8e4b89c66fe86e32cdafde142"
+    },
+    "th_iau_import_from_local.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "e4efd7f9759c8a462adafae483f4c477"
+    },
+    "th_iau_import_from_uploaded_zip_file.txt": {
+        "global_cache": false,
+        "version_id": 1000012,
+        "version_string": "1.0.0 Alpha 2",
+        "hash": "e81e3b62ced67d442146fe8245c791e4"
+    },
+    "th_iau_import_from_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "f2e4df6b514e3f298ab923518092625b"
+    },
+    "th_iau_install_addon.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "4dcccc83a9fb77d9015251e54ed7c420"
+    },
+    "th_iau_install_from_uploaded_zip_file.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "9c122f564bc84f18dcd7e459f793f53f"
+    },
+    "th_iau_install_from_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "c3f3f29198c73d8a7d9a9d18df596357"
+    },
+    "th_iau_install_upgrade_log.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "013d47600ca19123eaa7131600fe0d8f"
+    },
+    "th_iau_install_upgrade_profiles.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "ce11dcea804c0e896d7d48175dcc2165"
+    },
+    "th_iau_install_version_x.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "f638e8c1b65aa37dac4a9baf1fdbd5f2"
+    },
+    "th_iau_installed_products.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "aaa1e37e24f59df95345d64719f186d7"
+    },
+    "th_iau_language_not_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "6cf73576720519e739771a4fa489410b"
+    },
+    "th_iau_language_successfully_downloaded.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "efc0efc43d7ed501891e958188181e6c"
+    },
+    "th_iau_language_successfully_uploaded.txt": {
+        "global_cache": false,
+        "version_id": 1000012,
+        "version_string": "1.0.0 Alpha 2",
+        "hash": "691bf58a0446abc9c196cbf86a753ffc"
+    },
+    "th_iau_language_upgrades_available.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "5fcb78080bb7cac91d7c56146dd41950"
+    },
+    "th_iau_log_entry.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "fb099750be5e18a58f571b9e1bd932c2"
+    },
+    "th_iau_manually_associate_product.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "1f931d48d6abdaf50f090c54a69f74fa"
+    },
+    "th_iau_new_version_x_available_for_addOn_y.txt": {
+        "global_cache": false,
+        "version_id": 1000033,
+        "version_string": "1.0.0 Beta 3",
+        "hash": "f0880804d0c7be15f2345d954f3ea126"
+    },
+    "th_iau_new_version_x_available_for_style_y.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "8ad8d695d3f14a7c8823ca57dea6722c"
+    },
+    "th_iau_new_xenforo_version_x_available.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "5ce7eb2c9ab56d0f583741f086202b5b"
+    },
+    "th_iau_no_add_on_products_found.txt": {
+        "global_cache": false,
+        "version_id": 1000033,
+        "version_string": "1.0.0 Beta 3",
+        "hash": "02f12e8050839f43c34ea7088b626131"
+    },
+    "th_iau_no_addon_file_found.txt": {
+        "global_cache": false,
+        "version_id": 1000041,
+        "version_string": "1.0.0 Beta 11",
+        "hash": "6fd5098df6ed9a122707db6a6b7af2ba"
+    },
+    "th_iau_no_addon_products_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "02f12e8050839f43c34ea7088b626131"
+    },
+    "th_iau_no_direct_download_url_found.txt": {
+        "global_cache": false,
+        "version_id": 1000012,
+        "version_string": "1.0.0 Alpha 2",
+        "hash": "c37240c9788f95465ed869cf5b4fa868"
+    },
+    "th_iau_no_handler_found_for_x.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "509f3839a587f1bacafc4370fa04176b"
+    },
+    "th_iau_no_language_products_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "81728d9681b83ef1d729a548b5d5aef9"
+    },
+    "th_iau_no_logs_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "3b870a8f43334d4eca0e59b539bb03a0"
+    },
+    "th_iau_no_profile_found_for_x.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "e587a916a6029aa360822c5f57375104"
+    },
+    "th_iau_no_style_products_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "12d0eaca2877d75e980ae1cd4d41036f"
+    },
+    "th_iau_no_themehouse_api_key_found.txt": {
+        "global_cache": false,
+        "version_id": 1000040,
+        "version_string": "1.0.0 Beta 10",
+        "hash": "bcdb540e7598eb55f989d4d3aded7b87"
+    },
+    "th_iau_no_xf_license_found_for_url_x.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "f7eea8064f9f2deb527d56465992ffeb"
+    },
+    "th_iau_no_xf_licenses_found_for_account_x.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "f591db0f22d03923571f9914e173dfc4"
+    },
+    "th_iau_no_xml_files_found_in_package.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "fadcbe44363dfae6929039bd0d44d932"
+    },
+    "th_iau_page_format_not_recognized_may_not_be_resource.txt": {
+        "global_cache": false,
+        "version_id": 1000012,
+        "version_string": "1.0.0 Alpha 2",
+        "hash": "387a50838cbac074c2ef0afd0c5833f3"
+    },
+    "th_iau_product_already_installed_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "aefb4f9aae11172473d1654f2772b2b6"
+    },
+    "th_iau_provider.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "27703c8f150ac4bb0a3a83a7857353af"
+    },
+    "th_iau_provider_not_found_for_profile_x.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "7e5be39ccc4a5134b31b320871eb9906"
+    },
+    "th_iau_provider_not_suported_product_from_url_or_url_invalid.txt": {
+        "global_cache": false,
+        "version_id": 1000012,
+        "version_string": "1.0.0 Alpha 2",
+        "hash": "5d8e6685aa71d319b6056817e3bc9513"
+    },
+    "th_iau_refresh.txt": {
+        "global_cache": false,
+        "version_id": 1000031,
+        "version_string": "1.0.0 Beta 1",
+        "hash": "63a6a88c066880c5ac42394a22803ca6"
+    },
+    "th_iau_response_error.txt": {
+        "global_cache": false,
+        "version_id": 1000013,
+        "version_string": "1.0.0 Alpha 3",
+        "hash": "b6a93ed913782b362695735f4f42d316"
+    },
+    "th_iau_select_languages_for_deletion.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "c47d468a473dd2e43a9630e6804beef3"
+    },
+    "th_iau_select_provider.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "d524568b821947803908b89e908dc031"
+    },
+    "th_iau_select_styles_for_deletion.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "ab4dc18a872e22047c22e98aecb07843"
+    },
+    "th_iau_style_not_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "c649ea23c5f184e42bc96c9ebe6c6c37"
+    },
+    "th_iau_style_successfully_downloaded.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "98ed704e26baf5faca7ae9e26ba9429f"
+    },
+    "th_iau_style_successfully_uploaded.txt": {
+        "global_cache": false,
+        "version_id": 1000012,
+        "version_string": "1.0.0 Alpha 2",
+        "hash": "590a4d4ed3a26b7635966838adcbaa56"
+    },
+    "th_iau_style_upgrades_available.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "003ff430e9ca9fa7c169a1ab51a50126"
+    },
+    "th_iau_support_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "02872528150288b4d5f2f6dd3519add9"
+    },
+    "th_iau_sure_you_want_to_clear_log.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "18e25a26d5f4a7099d99e58d93716b84"
+    },
+    "th_iau_tfa_key.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "897356954c2cd3d41b221e3f24f99bba"
+    },
+    "th_iau_themehouse_api_key.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "8aed111995c93f91303da09be3d2435c"
+    },
+    "th_iau_themehouse_api_key_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "d55c9aeaabf27d512e4768a9798c8f86"
+    },
+    "th_iau_this_style_is_currently_disabled.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "a1fc562160f0c42d9684da86b87d60d6"
+    },
+    "th_iau_to_version.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "e12167aa0a7698e6ebc92b4ce3909b53"
+    },
+    "th_iau_translator.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "8d4f90eeea46d604a6410c9bd877f582"
+    },
+    "th_iau_translator_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "71d0657910167d5a75a2d496f1636f9b"
+    },
+    "th_iau_update_check_complete.txt": {
+        "global_cache": false,
+        "version_id": 1000013,
+        "version_string": "1.0.0 Alpha 3",
+        "hash": "499df5bbc6338568117feefad4a74b5e"
+    },
+    "th_iau_upgrade.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "06933067aafd48425d67bcb01bba5cb6"
+    },
+    "th_iau_upgrade_all.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "71803586f945801418d03befeb4acd99"
+    },
+    "th_iau_upgrade_from_version_x_to_version_y.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "99cbde5f5f7ec4224d0ba63a809a7e56"
+    },
+    "th_iau_version.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "34b6cd75171affba6957e308dcbd92be"
+    },
+    "th_iau_xf2rm_2fa_not_supported.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "4a2fd308272eacee31308d6e319fc16a"
+    },
+    "th_iau_xf2rm_base_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "e806e17f70decb5cb5d978bbda7d9f10"
+    },
+    "th_iau_xf2rm_base_url_expain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "6ed1e3c41ecd7efc0d78f2754ccc7d77"
+    },
+    "th_iau_xf2rm_email_or_username.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "baea4ad64851f9ef8f56c6c81fbd1966"
+    },
+    "th_iau_xf2rm_email_or_username_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "78ccf245d6d36d41c86c10a8ac2c13f5"
+    },
+    "th_iau_xf2rm_has_tfa.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "5b6621b69f5268552cf2811af1375937"
+    },
+    "th_iau_xf2rm_has_tfa_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "1023a4b9cd7f45e61fa878702ebcab94"
+    },
+    "th_iau_xf2rm_page_title.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "12cb401e3a068898222575c6a5ef5ece"
+    },
+    "th_iau_xf2rm_page_title_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "f71f6b67874479549191b390658fbfdd"
+    },
+    "th_iau_xf2rm_password.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "dc647eb65e6711e155375218212b3964"
+    },
+    "th_iau_xf2rm_password_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "9fcefd03b3b216aff9c525f621bbbaa4"
+    },
+    "th_iau_xf_customer_email.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "ce8ae9da5b7cd6c3df2929543a9af92d"
+    },
+    "th_iau_xf_customer_email_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "95550995c910bfc1d5cdaf2e607c3d66"
+    },
+    "th_iau_xf_customer_password.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "dc647eb65e6711e155375218212b3964"
+    },
+    "th_iau_xf_customer_password_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "7b8f21245f8d486c866701ba9bd0b8fe"
+    },
+    "th_iau_xf_customer_password_explain_edit.txt": {
+        "global_cache": false,
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "865fdd2b9b8e2fba266cfaecad951ce3"
+    },
+    "th_iau_xf_license_id_could_not_be_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "2805dc32411f9622155cb74e927314fb"
+    },
+    "th_iau_xf_license_url.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "005bd49bb8ee96218fe07fc11aae8bc5"
+    },
+    "th_iau_xf_license_url_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "7ec46a6c0145822e16366236d3a1b0ed"
+    },
+    "th_iau_you_may_control_which_languages_to_delete_from_list_below.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "68b5e7724f2bda8d7777136cd69e95e3"
+    },
+    "th_iau_you_may_control_which_styles_to_delete_from_list_below.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "60ceb8deaa0447e4173d78b54a7da71e"
+    },
+    "th_iau_you_sure_you_want_to_bulk_delete_languages.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "ba7c0bb0fccfae4b2e9f2df0c9755cb3"
+    },
+    "th_iau_you_sure_you_want_to_bulk_delete_styles.txt": {
+        "global_cache": false,
+        "version_id": 1000014,
+        "version_string": "1.0.0 Alpha 4",
+        "hash": "a1d98a5be916ef565c5ef0d06cb99770"
+    },
+    "thiau_decryption_required.txt": {
+        "global_cache": false,
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "81b42451da0506afd4e0c70cca0fb0a8"
+    },
+    "thiau_encryption_key.txt": {
+        "global_cache": false,
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "517eecff5d2df414b6adfea07856c74e"
+    },
+    "thiau_encryption_key_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000035,
+        "version_string": "1.0.0 Beta 5",
+        "hash": "d06f863246d3a8677fc6b7f19c8f4632"
+    },
+    "thiau_encryption_key_explain_edit.txt": {
+        "global_cache": false,
+        "version_id": 1000036,
+        "version_string": "1.0.0 Beta 6",
+        "hash": "49beb193f7c8ea4ef8953ac210da0b91"
+    },
+    "thiau_language_for_upgrade_not_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "54a4c5f35c676191bcc889c1f074ac59"
+    },
+    "thiau_style_for_upgrade_not_found.txt": {
+        "global_cache": false,
+        "version_id": 1000011,
+        "version_string": "1.0.0 Alpha 1",
+        "hash": "55391ff01f9c7ba657bfb5a5414e6777"
+    }
+}

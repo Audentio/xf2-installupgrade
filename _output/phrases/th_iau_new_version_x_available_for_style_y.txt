@@ -1,0 +1,1 @@
+A new version ({version}) for your style {title} is available.

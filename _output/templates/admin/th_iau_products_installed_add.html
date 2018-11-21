@@ -1,0 +1,73 @@
+<xf:title>
+	{{ phrase('th_iau_manually_associate_product') }}
+</xf:title>
+
+<xf:form action="{{ link('install-upgrade-products/installed/add') }}"
+		 class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:selectrow label="{{ phrase('th_iau_content_type') }}"
+						  name="content_type"
+						  class="js-ContentTypeSelector">
+				<xf:option value="add-on">{{ phrase('add_on') }}</xf:option>
+				<xf:option value="style">{{ phrase('style') }}</xf:option>
+				<xf:option value="language">{{ phrase('language') }}</xf:option>
+			</xf:selectrow>
+			<div class="js-ContentTypes">
+				<div data-content-type="add-on">
+					<xf:selectrow name="content_id[add-on]"
+								  explain="{{ phrase('th_iau_product_already_installed_explain') }}"
+								  label="{{ phrase('add_on') }}">
+						<xf:foreach loop="$addOns" value="$addOn">
+							<xf:if is="!$addOn.THInstallUpgradeData">
+								<xf:option value="{$addOn.addon_id}">
+									{$addOn.title}
+								</xf:option>
+							</xf:if>
+						</xf:foreach>
+					</xf:selectrow>
+				</div>
+				<div data-content-type="style">
+					<xf:selectrow name="content_id[style]"
+								  explain="{{ phrase('th_iau_product_already_installed_explain') }}"
+								  label="{{ phrase('style') }}">
+						<xf:foreach loop="$styles" value="$style">
+							<xf:if is="!$style.THInstallUpgradeData">
+								<xf:option value="{$style.style_id}">
+									{$style.title}
+								</xf:option>
+							</xf:if>
+						</xf:foreach>
+					</xf:selectrow>
+				</div>
+				<div data-content-type="language">
+					<xf:selectrow name="content_id[language]"
+								  explain="{{ phrase('th_iau_product_already_installed_explain') }}"
+								  label="{{ phrase('language') }}">
+						<xf:foreach loop="$languages" value="$language">
+							<xf:if is="!$language.THInstallUpgradeData">
+								<xf:option value="{$language.language_id}">
+									{$language.title}
+								</xf:option>
+							</xf:if>
+						</xf:foreach>
+					</xf:selectrow>
+				</div>
+			</div>
+
+			<xf:textboxrow name="download_url"
+						   label="{{ phrase('th_iau_download_url') }}"
+						   explain="{{ phrase('th_iau_download_url_explain') }}" />
+		</div>
+		<xf:submitrow sticky="true" icon="save" />
+	</div>
+</xf:form>
+
+<xf:js>
+	$(document).on('change', '.js-ContentTypeSelector', function(event) {
+		var contentType = $(this).val();
+		$('.js-ContentTypes > div').hide();
+		$('[data-content-type="' + contentType + '"]').show();
+	});
+	$('.js-ContentTypeSelector').trigger('change');
+</xf:js>

@@ -1,0 +1,9 @@
+{
+    "template": "addon_list_macros",
+    "description": "Add update button",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:elseif is=\"$addOn.canInstall()\" />",
+    "replace": "<xf:elseif is=\"$addOn.THInstallUpgradeData.update_available\" />\n<xf:button href=\"{{ link('install-upgrade/update', { 'content_type': 'addOn', 'content_id': $addOn.addon_id_url }) }}\"\n\t\t   overlay=\"true\">\n\t{{ phrase('upgrade') }}\n</xf:button>\n$0"
+}

@@ -1,0 +1,29 @@
+{
+    "admin_install-upgrade-log_.json": {
+        "hash": "1d1e6039c8a04c5e255af188425435f5"
+    },
+    "admin_install-upgrade-products_.json": {
+        "hash": "9f04803bdc343ca9a15da68b86ece9fc"
+    },
+    "admin_install-upgrade-products_add-ons.json": {
+        "hash": "b22c5992c7ad9c0e57272a8620d2b738"
+    },
+    "admin_install-upgrade-products_available.json": {
+        "hash": "02a58e62576d6aa88f2e6aa8fe163dc7"
+    },
+    "admin_install-upgrade-products_installed.json": {
+        "hash": "e882a1c6cda63078fec9204978ae6c6d"
+    },
+    "admin_install-upgrade-products_languages.json": {
+        "hash": "5fa837c1c9b66f5968f9b900a2046a4f"
+    },
+    "admin_install-upgrade-products_styles.json": {
+        "hash": "255b688d598dc4dd1b41003926dcb12b"
+    },
+    "admin_install-upgrade-profiles_.json": {
+        "hash": "1cd384de7a95c5215e95c4a3eb98ad1d"
+    },
+    "admin_install-upgrade_.json": {
+        "hash": "230c403754c2401dea7f0f11291d5784"
+    }
+}

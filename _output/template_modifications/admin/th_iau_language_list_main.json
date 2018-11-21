@@ -1,0 +1,9 @@
+{
+    "template": "language_list",
+    "description": "Exchange main item on language list and add update button.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/(<xf:main.*?\\/>)/s",
+    "replace": "<xf:main hash=\"{$language.language_id}\">\n\t<xf:label>\n\t\t<xf:if is=\"$language.language_id\">\n\t\t\t<a href=\"{{ link('languages/edit', $language) }}\">{$language.title}</a>\n\t\t\t<xf:else />\n\t\t\t{$language.title}\n\t\t</xf:if>\n\t\t<span class=\"contentRow-muted\">{$language.THInstallUpgradeData.current_version}</span>\n\t</xf:label>\n\t<xf:explain>\n\t\t<div class=\"contentRow-minor\">\n\t\t<xf:macro name=\"extra_info\"\n\t\t\t\t  template=\"th_iau_macros\"\n\t\t\t\t  arg-entity=\"{$language.THInstallUpgradeData}\"\n\t\t\t\t  arg-developerPhrase=\"\" />\n\t\t</div>\n\t</xf:explain>\n</xf:main>\n<xf:if is=\"$style.THInstallUpgradeData.update_available\">\n\t<xf:action class=\"dataList-cell--separated u-hideMedium\"\n\t\t\t   href=\"{{ link('install-upgrade/update', { 'content_type': 'language', 'content_id': $language.language_id }) }}\">\n\t\t{{ phrase('upgrade') }}\n\t</xf:action>\n\t<xf:else />\n\t<xf:cell class=\"u-hideMedium\">&nbsp;</xf:cell>\n</xf:if>"
+}

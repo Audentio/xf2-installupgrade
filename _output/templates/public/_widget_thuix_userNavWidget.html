@@ -1,0 +1,15 @@
+<div class="block" data-widget-definition="th_userNavigation">
+    <div class="block-container">
+        <h3 class="block-minorHeader">User Menu</h3>
+        <div class="block-body">
+            <xf:if is="$xf.visitor.user_id">
+                <a class="blockLink rippleButton" href="{{ link('members', $xf.visitor) }}">{{ phrase('th_profile_uix') }}</a>
+                <a class="blockLink rippleButton" href="{{ link('account/account-details') }}">{{ phrase('account_details') }}</a>
+                <a class="blockLink rippleButton" href="{{ link('whats-new/news-feed') }}">{{ phrase('news_feed') }}</a>
+                <a class="blockLink rippleButton" href="{{ link('logout', null, {'t': csrf_token()}) }}">{{ phrase('log_out') }}</a>
+            <xf:else />
+                <a class="blockLink rippleButton" href="{{ link('login') }}">{{ phrase('login') }}</a>
+            </xf:if>
+        </div>
+    </div>
+</div>

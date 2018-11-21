@@ -1,0 +1,23 @@
+{
+    "addon_post_install_91f87e9dfa0f3664bfee1bc180e33bf9.json": {
+        "hash": "b73a0e4bf2095cd396975fcda9ef2c40"
+    },
+    "addon_post_upgrade_1e0456c7c508ee3b669fc6617b2cf42e.json": {
+        "hash": "be9cbb973dcf73298098bc2ff4c87bf9"
+    },
+    "addon_pre_uninstall_ed58996150ed9c301923f4b12144553a.json": {
+        "hash": "33aa44baca4ca988168254b34131a93e"
+    },
+    "app_setup_fdef7691a67967c8b0f75468db86ef89.json": {
+        "hash": "9ef8ba2de10cedefa346988669bbe000"
+    },
+    "entity_structure_56008af1bb642f6f865f630704961f9f.json": {
+        "hash": "322c47803399f94f8af2c701e0d7d275"
+    },
+    "entity_structure_7724403757df0aafdf6e87aacd176bd2.json": {
+        "hash": "01d115ca22340be4ba5e9d567c1d08f6"
+    },
+    "entity_structure_8dd88191a247f2970c150c6066fa6044.json": {
+        "hash": "378da436a47dbd6776a45b57f70606f0"
+    }
+}

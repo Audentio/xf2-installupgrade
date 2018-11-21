@@ -1,0 +1,9 @@
+{
+    "template": "index",
+    "description": "Add install & upgrade data to index page.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/(\\t*<xf:if is=\"{{ \\$xf\\.visitor\\.hasAdminPermission\\('user'\\) }}\">)/",
+    "replace": "<xf:macro name=\"admin_index\"\n\t\t  template=\"th_iau_macros\"\n\t\t  arg-xenForo=\"{$thIAUXenForo}\"\n\t\t  arg-addOns=\"{$thIAUAddOns}\"\n\t\t  arg-styles=\"{$thIAUStyles}\"\n\t\t  arg-languages=\"{$thIAULanguages}\" />\n\n$0"
+}

@@ -1,0 +1,1 @@
+The download URL of the provider. If the provider does not support downloading via URL, you cannot manually associate products.

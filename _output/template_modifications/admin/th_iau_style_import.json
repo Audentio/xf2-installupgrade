@@ -1,0 +1,9 @@
+{
+    "template": "style_import",
+    "description": "Add found styles to style import.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:uploadrow name=\"upload\" accept=\".xml\"\n\t\t\t\tlabel=\"{{ phrase('import_from_uploaded_xml_file') }}\"/>",
+    "replace": "<xf:if is=\"$files is not empty\">\n\t<xf:hiddenval name=\"product_id\" value=\"{$product.product_id}\" />\n\t<xf:hiddenval name=\"profile_id\" value=\"{$product.profile_id}\" />\n\t\n\t<xf:hiddenval name=\"file_type\" value=\"local\" />\n\t<xf:selectrow name=\"file\" label=\"{{ phrase('th_iau_file') }}\">\n\t\t<xf:foreach loop=\"$files\" value=\"$file\">\n\t\t\t<xf:option value=\"{$file.path}\">{$file.name}.xml</xf:option>\n\t\t</xf:foreach>\n\t</xf:selectrow>\n\t<xf:else />\n\t<xf:radiorow name=\"file_type\" label=\"{{ phrase('th_iau_file') }}\">\n\t\t<xf:option value=\"url\"\n\t\t\t\t   checked=\"{{ true }}\"\n\t\t\t\t   label=\"{{ phrase('th_iau_import_from_url') }}\">\n\t\t\t<xf:dependent>\n\t\t\t\t<xf:textbox name=\"url\" />\n\t\t\t</xf:dependent>\n\t\t</xf:option>\n\t\t<xf:option value=\"upload_zip\"\n\t\t\t\t   label=\"{{ phrase('th_iau_import_from_uploaded_zip_file') }}\">\n\t\t\t<xf:dependent>\n\t\t\t\t<xf:upload name=\"upload_zip\" accept=\".zip\"/>\n\t\t\t</xf:dependent>\n\t\t</xf:option>\n\t\t<xf:option value=\"upload\"\n\t\t\t\t   label=\"{{ phrase('import_from_uploaded_xml_file') }}\">\n\t\t\t<xf:dependent>\n\t\t\t\t<xf:upload name=\"upload\" accept=\".xml\"/>\n\t\t\t</xf:dependent>\n\t\t</xf:option>\n\t</xf:radiorow>\n</xf:if>"
+}

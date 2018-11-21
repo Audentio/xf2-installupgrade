@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\Style",
+    "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Entity\\Style",
+    "execute_order": 10,
+    "active": true
+}

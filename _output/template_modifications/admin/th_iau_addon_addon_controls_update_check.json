@@ -1,0 +1,9 @@
+{
+    "template": "addon_controls",
+    "description": "Add check for update button",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:if is=\"$addOn.isInstalled() AND !$addOn.canUpgrade()\">",
+    "replace": "<xf:if is=\"$addOn.isInstalled() && $addOn.THInstallUpgradeData && $addOn.THInstallUpgradeData.handler\">\n\t<a href=\"{{ link('install-upgrade/update-check', {'content_type': 'addOn', 'content_id': $addOn.addon_id_url}) }}\"\n\t   class=\"menu-linkRow\">\n\t\t{{ phrase('th_iau_check_for_updates') }}\n\t</a>\n</xf:if>\n$0"
+}

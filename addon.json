@@ -1,0 +1,14 @@
+{
+    "legacy_addon_id": "",
+    "title": "[TH] Install & Upgrade",
+    "description": "Installation and upgrades made easy.",
+    "version_id": 1000042,
+    "version_string": "1.0.0 Beta 12",
+    "dev": "ThemeHouse",
+    "dev_url": "https://www.themehouse.com",
+    "faq_url": "",
+    "support_url": "https://www.themehouse.com/help",
+    "extra_urls": [],
+    "require": [],
+    "icon": "install_upgrade.png"
+}

@@ -1,0 +1,37 @@
+<xf:title>{{ phrase('th_iau_log_entry') }}</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:formrow label="{$entry.content_type_phrase}">
+				<a href="{$entry.content_type_url}">
+					{$entry.Content.title}
+				</a>
+			</xf:formrow>
+			<xf:formrow label="{{ phrase('administrator') }}">
+				<xf:username user="{$entry.User}" />
+			</xf:formrow>
+			<xf:formrow label="{{ phrase('date') }}">
+				{{ date_time($entry.timestamp) }}
+			</xf:formrow>
+			<hr class="formRowSep" />
+
+			<xf:formrow label="{{ phrase('action') }}">
+				{$entry.action_phrase}
+			</xf:formrow>
+			<xf:if is="$entry.action == 'upgrade'">
+				<xf:formrow label="{{ phrase('th_iau_from_version') }}">
+					{$entry.from_version}
+				</xf:formrow>
+				<xf:formrow label="{{ phrase('th_iau_to_version') }}">
+					{$entry.to_version}
+				</xf:formrow>
+				<xf:else />
+				<xf:formrow label="{{ phrase('th_iau_version') }}">
+					{$entry.to_version}
+				</xf:formrow>
+			</xf:if>
+
+		</div>
+	</div>
+</div>

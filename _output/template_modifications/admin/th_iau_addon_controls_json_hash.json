@@ -1,0 +1,9 @@
+{
+    "template": "addon_controls",
+    "description": "JSON hash changes",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "$addOn.hasPendingChanges()",
+    "replace": "($0 || $addOn.getInstalledAddOn().isInstallUpgradeJsonHashChanged())"
+}

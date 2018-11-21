@@ -1,0 +1,24 @@
+<xf:title>{{ phrase('th_iau_install_addon') }}</xf:title>
+
+<xf:form action="{{ link('install-upgrade/add-on') }}" upload="true" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:radiorow name="file_type" label="{{ phrase('th_iau_file') }}">
+				<xf:option value="url"
+						   checked="{{ true }}"
+						   label="{{ phrase('th_iau_install_from_url') }}">
+					<xf:dependent>
+						<xf:textbox name="url" />
+					</xf:dependent>
+				</xf:option>
+				<xf:option value="upload_zip"
+						   label="{{ phrase('th_iau_import_from_uploaded_zip_file') }}">
+					<xf:dependent>
+						<xf:upload name="upload_zip" accept=".zip"/>
+					</xf:dependent>
+				</xf:option>
+			</xf:radiorow>
+		</div>
+		<xf:submitrow icon="import" />
+	</div>
+</xf:form>

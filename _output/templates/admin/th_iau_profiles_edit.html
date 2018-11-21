@@ -1,0 +1,21 @@
+<xf:title>
+	<xf:if is="$profile.isInsert()">
+		{{ phrase('th_iau_add_profile') }}
+		<xf:else />
+		{{ phrase('th_iau_edit_profile', {'profile': {$profile.page_title}} )}}
+	</xf:if>
+</xf:title>
+
+<xf:form action="{{ link('install-upgrade-profiles/save', $profile) }}" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:hiddenval name="provider_id" value="{$profile.provider_id}" />
+			<xf:include template="install_upgrade_provider_config_{$profile.provider_id}" />
+
+			<xf:if is="$profile.getHandler().canEncryptCredentials()">
+				<xf:textboxrow name="encryption_secret" label="{{ phrase('thiau_encryption_key') }}" explain="{{ phrase('thiau_encryption_key_explain_edit') }}" />
+			</xf:if>
+			<xf:submitrow sticky="true" icon="save" />
+		</div>
+	</div>
+</xf:form>

@@ -1,0 +1,9 @@
+{
+    "template": "style_list",
+    "description": "Add page actions at end.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "</xf:pageaction>",
+    "replace": "<div class=\"buttonGroup\">\n\t<div class=\"buttonGroup-buttonWrapper\">\n\t\t<xf:button class=\"menuTrigger\" data-xf-click=\"menu\" aria-expanded=\"false\" aria-haspopup=\"true\" title=\"{{ phrase('more_options') }}\">&#8226;&#8226;&#8226;</xf:button>\n\t\t<div class=\"menu\" data-menu=\"menu\" aria-hidden=\"true\">\n\t\t\t<div class=\"menu-content\">\n\t\t\t\t<h4 class=\"menu-header\">{{ phrase('more_options') }}</h4>\n\t\t\t\t<a href=\"{{ link('styles/bulk-delete') }}\" class=\"menu-linkRow\" data-xf-click=\"overlay\">{{ phrase('th_iau_bulk_delete') }}</a>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n$0"
+}

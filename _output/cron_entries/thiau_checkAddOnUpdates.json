@@ -1,0 +1,20 @@
+{
+    "cron_class": "ThemeHouse\\InstallAndUpgrade\\Cron\\CheckAddOnsForUpdates",
+    "cron_method": "run",
+    "run_rules": {
+        "day_type": "dom",
+        "dom": [
+            -1
+        ],
+        "hours": [
+            2,
+            8,
+            14,
+            20
+        ],
+        "minutes": [
+            15
+        ]
+    },
+    "active": true
+}
