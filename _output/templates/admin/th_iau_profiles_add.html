@@ -4,11 +4,7 @@
 	<div class="block-container">
 		<div class="block-body">
 			<xf:selectrow label="{{ phrase('th_iau_provider') }}" name="provider_id">
-				<xf:foreach loop="$providers" value="$provider">
-					<xf:option value="{$provider.provider_id}">
-						{$provider.title}
-					</xf:option>
-				</xf:foreach>
+				<xf:options source="{$providers}" />
 			</xf:selectrow>
 			
 			<xf:submitrow sticky="true" icon="save" />

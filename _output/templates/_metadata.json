@@ -1,4 +1,9 @@
 {
+    "admin/install_upgrade_provider_config_dragonbyte.html": {
+        "version_id": 1000042,
+        "version_string": "1.0.0 Beta 12",
+        "hash": "bc9f5939894c0437e075c2bd80a8d2bf"
+    },
     "admin/install_upgrade_provider_config_themehouse.html": {
         "version_id": 1000036,
         "version_string": "1.0.0 Beta 6",
@@ -115,9 +120,9 @@
         "hash": "1486323d322846f620692874eb24f584"
     },
     "admin/th_iau_profiles_add.html": {
-        "version_id": 1000011,
-        "version_string": "1.0.0 Alpha 1",
-        "hash": "d3d96de994534da2e82c4641ff5936a9"
+        "version_id": 1000042,
+        "version_string": "1.0.0 Beta 12",
+        "hash": "b490574c9a4efdf441ddd77a4b98ff2f"
     },
     "admin/th_iau_profiles_delete.html": {
         "version_id": 1000011,

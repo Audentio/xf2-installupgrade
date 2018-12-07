@@ -8,25 +8,27 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class Log
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer log_id
+ * COLUMNS
+ * @property int log_id
  * @property string content_type
- * @property string content_id
- * @property integer user_id
- * @property integer timestamp
  * @property string action
  * @property string from_version
  * @property string to_version
+ * @property string content_id
+ * @property int user_id
+ * @property int timestamp
  *
- * @property Language|Style|AddOn Content
- * @property Language Language
- * @property Style Style
- * @property AddOn AddOn
- * @property User User
- * @property Phrase content_type_phrase
- * @property string content_type_url
+ * GETTERS
+ * @property null|AddOn|Language|Style Content
+ * @property \XF\Phrase content_type_phrase
+ * @property mixed|null|string content_type_url
+ * @property \XF\Phrase action_phrase
+ *
+ * RELATIONS
+ * @property \XF\Entity\User User
+ * @property \XF\Entity\AddOn AddOn
+ * @property \XF\Entity\Style Style
+ * @property \XF\Entity\Language Language
  */
 class Log extends Entity
 {

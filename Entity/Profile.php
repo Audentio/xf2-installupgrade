@@ -6,17 +6,15 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class Profile
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer profile_id
+ * COLUMNS
+ * @property int|null profile_id
  * @property string provider_id
  * @property string page_title
+ * @property bool has_tfa
  * @property string base_url
  * @property array options
- * @property boolean has_tfa
- *
- * @property Provider Provider
+ * @property bool active
+ * @property bool requires_decryption
  */
 class Profile extends Entity
 {
@@ -28,13 +26,7 @@ class Profile extends Entity
      */
     public function getProductsFromProvider()
     {
-        $provider = $this->Provider;
-
-        if (!$provider) {
-            return null;
-        }
-
-        $handler = $provider->handler;
+        $handler = $this->getHandler();
 
         if (!$handler) {
             return null;
@@ -53,12 +45,12 @@ class Profile extends Entity
     }
 
     /**
-     * @return null|\ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler
+     * @return null|\ThemeHouse\InstallAndUpgrade\Provider\AbstractHandler
      * @throws \Exception
      */
     public function getHandler()
     {
-        return $this->Provider->getHandler();
+        return $this->getHandlerRepo()->getProviderHandler('iau_provider_' . $this->provider_id);
     }
 
     /**
@@ -101,16 +93,16 @@ class Profile extends Entity
             'requires_decryption' => ['type' => self::BOOL, 'default' => 0],
         ];
         $structure->getters = [];
-        $structure->relations = [
-            'Provider' => [
-                'entity' => 'ThemeHouse\InstallAndUpgrade:Provider',
-                'type' => self::TO_ONE,
-                'conditions' => 'provider_id',
-                'primary' => true
-            ]
-        ];
-        $structure->defaultWith = 'Provider';
+        $structure->relations = [];
 
         return $structure;
     }
+	
+	/**
+	 * @return \ThemeHouse\InstallAndUpgrade\Repository\Handler|\XF\Mvc\Entity\Repository
+	 */
+	protected function getHandlerRepo()
+	{
+		return $this->repository('ThemeHouse\InstallAndUpgrade:Handler');
+	}
 }

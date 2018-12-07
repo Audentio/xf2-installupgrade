@@ -8,20 +8,21 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class Style
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer style_id
+ * COLUMNS
+ * @property int style_id
  * @property string download_url
- * @property boolean auto_update
- * @property boolean update_check
- * @property boolean update_available
+ * @property bool auto_update
+ * @property bool update_check
+ * @property bool update_available
  * @property string current_version
  * @property string latest_version
- * @property array extra
+ * @property array|null extra
  * @property string json_hash
  *
- * @property AbstractHandler handler
+ * GETTERS
+ * @property AbstractHandler|null handler
+ *
+ * RELATIONS
  * @property \XF\Entity\Style Style
  */
 class Style extends Entity

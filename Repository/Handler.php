@@ -4,8 +4,8 @@ namespace ThemeHouse\InstallAndUpgrade\Repository;
 
 use ThemeHouse\InstallAndUpgrade\Entity\AddOn;
 use ThemeHouse\InstallAndUpgrade\Entity\Language;
-use ThemeHouse\InstallAndUpgrade\Entity\Provider;
 use ThemeHouse\InstallAndUpgrade\Entity\Style;
+use XF\Mvc\Entity\ArrayCollection;
 use XF\Mvc\Entity\Manager;
 use XF\Mvc\Entity\Repository;
 
@@ -22,9 +22,6 @@ class Handler extends Repository
     public function __construct(Manager $em, $identifier)
     {
         parent::__construct($em, $identifier);
-
-        $class = \XF::extendClass('ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Upload');
-        $this->handlers['upload'] = new $class();
     }
 
     /**
@@ -55,12 +52,14 @@ class Handler extends Repository
                 $handler = $this->getHandlerForUrl($contentId);
         }
 
-        if (!$handler) {
+        if (!$handler)
+        {
             return null;
         }
 
-        if (!isset($this->handlers[$handler])) {
-            $this->initHandler($handler);
+        if (!isset($this->handlers[$handler]))
+        {
+			$this->handlers[$handler] = $this->getProviderHandler('iau_provider_' . $handler);
         }
 
         return $this->handlers[$handler];
@@ -73,8 +72,9 @@ class Handler extends Repository
      */
     public function getHandlerByName($name)
     {
-        if (!isset($this->handlers[$name])) {
-            $this->initHandler($name);
+        if (!isset($this->handlers[$name]))
+        {
+			$this->handlers[$name] = $this->getProviderHandler('iau_provider_' . $name);
         }
 
         return $this->handlers[$name];
@@ -93,29 +93,14 @@ class Handler extends Repository
                 return 'themehouse';
 
             case 'xenforo.com':
-                if (strpos($urlComponents['path'], 'customers') !== false) {
-                    return 'xenforo';
-                } else {
-                    if (strpos($urlComponents['path'], 'resources/') !== false) {
-                        return 'xf2rm';
-                    }
-                }
+				if (strpos($urlComponents['path'], 'resources/') !== false) {
+					return 'xf2rm';
+				}
                 return null;
 
             default:
-                return $this->db()->query('SELECT provider_id FROM xf_th_installupgrade_profile WHERE INSTR(?, base_url)', [$url])->fetchColumn(0);
+                return $this->db()->query('SELECT provider_id FROM xf_th_installupgrade_profile WHERE INSTR(base_url, ?)', [$url])->fetchColumn(0);
         }
-    }
-
-    /**
-     * @param $handler
-     * @throws \Exception
-     */
-    protected function initHandler($handler)
-    {
-        /** @var Provider $provider */
-        $provider = $this->em->find('ThemeHouse\InstallAndUpgrade:Provider', $handler);
-        $this->handlers[$handler] = $provider->getHandler();
     }
 
     /**
@@ -129,11 +114,7 @@ class Handler extends Repository
             $data = $this->em->find('ThemeHouse\InstallAndUpgrade:AddOn', $addOnId);
         }
 
-        if(in_array($addOnId, ['XFRM', 'XFI', 'XFMG', 'XFES'])) {
-            return 'xenforo';
-        }
-
-        if(strpos($addOnId, 'ThemeHouse/') == 0 && isset($data->extra['product_id'])) {
+        if(strpos($addOnId, 'ThemeHouse/') === 0 && isset($data->extra['product_id'])) {
             return 'themehouse';
         }
 
@@ -178,4 +159,49 @@ class Handler extends Repository
             return $this->getHandlerForUrl($data->download_url);
         }
     }
+	
+	/**
+	 * @param bool $arrayCollection
+	 *
+	 * @return \ThemeHouse\InstallAndUpgrade\Provider\AbstractHandler[]|ArrayCollection
+	 * @throws \Exception
+	 */
+	public function getProviderHandlers($arrayCollection = false)
+	{
+		$handlers = [];
+		
+		foreach (\XF::app()->getContentTypeField('th_installupgrade_provider_handler_class') AS $contentType => $handlerClass)
+		{
+			if (class_exists($handlerClass))
+			{
+				$handlerClass = \XF::extendClass($handlerClass);
+				$handlers[$contentType] = new $handlerClass($contentType);
+			}
+		}
+		
+		return $arrayCollection ? new ArrayCollection($handlers) : $handlers;
+	}
+	
+	/**
+	 * @param string $type
+	 *
+	 * @return \ThemeHouse\InstallAndUpgrade\Provider\AbstractHandler|null
+	 * @throws \Exception
+	 */
+	public function getProviderHandler($type)
+	{
+		$handlerClass = \XF::app()->getContentTypeFieldValue($type, 'th_installupgrade_provider_handler_class');
+		if (!$handlerClass)
+		{
+			return null;
+		}
+		
+		if (!class_exists($handlerClass))
+		{
+			return null;
+		}
+		
+		$handlerClass = \XF::extendClass($handlerClass);
+		return new $handlerClass($type);
+	}
 }

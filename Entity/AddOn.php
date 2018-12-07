@@ -2,26 +2,27 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
-use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
+use ThemeHouse\InstallAndUpgrade\Provider\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class AddOn
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
+ * COLUMNS
  * @property string addon_id
- * @property string download_url
- * @property boolean auto_update
- * @property boolean update_check
- * @property boolean update_available
  * @property string latest_version
- * @property string alert_sent
- * @property array extra
+ * @property string download_url
+ * @property bool auto_update
+ * @property bool update_check
+ * @property bool update_available
+ * @property array|null extra
  * @property string json_hash
  *
- * @property AbstractHandler handler
+ * GETTERS
+ * @property AbstractHandler|null handler
+ * @property string addon_id_url
+ *
+ * RELATIONS
  * @property \XF\Entity\AddOn AddOn
  */
 class AddOn extends Entity
@@ -39,13 +40,16 @@ class AddOn extends Entity
 
         parent::_preSave();
     }
-
-    /**
-     * @return AbstractHandler|null
-     */
+	
+	/**
+	 * @return AbstractHandler|null
+	 * @throws \Exception
+	 */
     public function getHandler()
     {
-        return $this->repository('ThemeHouse\InstallAndUpgrade:Handler')->getHandler('addOn',
+    	/** @var \ThemeHouse\InstallAndUpgrade\Repository\Handler $handlerRepo */
+    	$handlerRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Handler');
+        return $handlerRepo->getHandler('addOn',
             $this->addon_id, $this);
     }
 

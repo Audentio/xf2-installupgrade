@@ -3,6 +3,7 @@
 namespace ThemeHouse\InstallAndUpgrade\Admin\Controller;
 
 use XF\Admin\Controller\AbstractController;
+use XF\Mvc\FormAction;
 use XF\Mvc\ParameterBag;
 
 class Profile extends AbstractController
@@ -30,11 +31,13 @@ class Profile extends AbstractController
 
         return $this->view('ThemeHouse\InstallAndUpgrade:Profile\List', 'th_iau_profiles_list', $viewParams);
     }
-
-    /**
-     * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\View
-     */
+	
+	/**
+	 * @param ParameterBag $params
+	 *
+	 * @return \XF\Mvc\Reply\View
+	 * @throws \Exception
+	 */
     public function actionAdd(ParameterBag $params)
     {
         if ($this->isPost()) {
@@ -43,13 +46,27 @@ class Profile extends AbstractController
             $profile->provider_id = $this->filter('provider_id', 'str');
             return $this->profileAddEdit($profile);
         } else {
-            $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')->fetch();
-
-            $providers = $this->finder('ThemeHouse\InstallAndUpgrade:Provider')
-                ->whereOr([
-                    ['is_unique', '<>', 1],
-                    ['provider_id', '<>', $profiles->pluckNamed('provider_id')]
-                ])->fetch();
+            $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')
+				->fetch()
+				->groupBy('provider_id')
+			;
+            
+            $providers = $this->getHandlerRepo()
+				->getProviderHandlers(true)
+				->filter(function(\ThemeHouse\InstallAndUpgrade\Provider\AbstractHandler $handler) use ($profiles)
+				{
+					if ($handler->isUnique && !empty($profiles[$handler->getIdentifier()]))
+					{
+						return null;
+					}
+					
+					return $handler;
+				})
+				->pluck(function(\ThemeHouse\InstallAndUpgrade\Provider\AbstractHandler $handler, $key)
+				{
+					return [$handler->getIdentifier(), $handler->getTitle()];
+				}, false);
+			;
 
             $viewParams = [
                 'providers' => $providers
@@ -76,7 +93,7 @@ class Profile extends AbstractController
             'profile' => $profile
         ];
 
-        return $this->view('ThemeHouse\InstallAndUpgrae:Profile\Edit', 'th_iau_profiles_edit', $viewParams);
+        return $this->view('ThemeHouse\InstallAndUpgrade:Profile\Edit', 'th_iau_profiles_edit', $viewParams);
     }
 
     /**
@@ -84,6 +101,7 @@ class Profile extends AbstractController
      * @return \XF\Mvc\Reply\Redirect
      * @throws \XF\Mvc\Reply\Exception
      * @throws \XF\PrintableException
+	 * @throws \Exception
      */
     public function actionSave(ParameterBag $params)
     {
@@ -95,10 +113,7 @@ class Profile extends AbstractController
         }
 
         $this->profileSaveProcess($profile)->run();
-
-        $profile->getHandler()->setEncryptionSecret($this->filter('encryption_secret', 'str'));
-        $profile->getProductsFromProvider();
-
+        
         return $this->redirect($this->buildLink('install-upgrade-profiles'));
     }
 
@@ -138,33 +153,45 @@ class Profile extends AbstractController
             'has_tfa' => 'bool',
             'options' => 'array-str',
         ]);
-
-        /** @var \ThemeHouse\InstallAndUpgrade\Entity\Profile $testProfile */
-        $testProfile = $this->em()->create('ThemeHouse\InstallAndUpgrade:Profile');
-        $testProfile->provider_id = $input['provider_id'];
-        $handler = $testProfile->getHandler();
-
-        if ($handler->canEncryptCredentials()) {
-            $secret = $this->filter('encryption_secret', 'str');
-            $handler->setEncryptionSecret($secret);
-            $options = $handler->encryptCredentials($input['options']);
-            $input['options'] = $options;
-            $profile->requires_decryption = true;
-        }
-
-        $testProfile->bulkSet($input);
-
-        $result = $handler->tryAuthentication($testProfile);
-        if ($result !== true) {
-            if($result) {
-                throw $result;
-            }
-            else {
-                $form->logError(\XF::phrase('th_iau_authentication_failed'));
-            }
-        }
-
-        $form->basicEntitySave($profile, $input);
+        
+		$form->validate(function(FormAction $form) use ($input, $profile)
+		{
+			/** @var \ThemeHouse\InstallAndUpgrade\Entity\Profile $testProfile */
+			$testProfile = $this->em()->create('ThemeHouse\InstallAndUpgrade:Profile');
+			$testProfile->provider_id = $input['provider_id'];
+			$handler = $testProfile->getHandler();
+			
+			if ($handler->canEncryptCredentials())
+			{
+				$secret = $this->filter('encryption_secret', 'str');
+				$handler->setEncryptionSecret($secret);
+				
+				$options = $handler->encryptCredentials($input['options']);
+				$input['options'] = $options;
+				
+				$profile->requires_decryption = true;
+			}
+			
+			$testProfile->bulkSet($input);
+			
+			$result = $handler->tryAuthentication($testProfile);
+			if ($result !== true)
+			{
+				if ($result)
+				{
+					throw $result;
+				}
+				else
+				{
+					$form->logError(\XF::phrase('th_iau_authentication_failed'));
+				}
+			}
+			
+			$handler->setEncryptionSecret($this->filter('encryption_secret', 'str'));
+			$testProfile->getProductsFromProvider();
+		});
+	
+		$form->basicEntitySave($profile, $input);
 
         return $form;
     }
@@ -188,4 +215,12 @@ class Profile extends AbstractController
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Profile', $id, $with, $phraseKey);
     }
+	
+	/**
+	 * @return \ThemeHouse\InstallAndUpgrade\Repository\Handler|\XF\Mvc\Entity\Repository
+	 */
+    protected function getHandlerRepo()
+	{
+		return $this->repository('ThemeHouse\InstallAndUpgrade:Handler');
+	}
 }

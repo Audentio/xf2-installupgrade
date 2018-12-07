@@ -6,18 +6,17 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class Product
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer profile_id
+ * COLUMNS
+ * @property int profile_id
  * @property string product_id
  * @property string product_type
  * @property string title
  * @property string description
  * @property string version
- * @property array extra
+ * @property array|null extra
  *
- * @property Profile Profile
+ * RELATIONS
+ * @property \ThemeHouse\InstallAndUpgrade\Entity\Profile Profile
  */
 class Product extends Entity
 {
