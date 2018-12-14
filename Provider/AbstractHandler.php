@@ -269,8 +269,6 @@ abstract class AbstractHandler
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $fileName = $zip->getNameIndex($i);
-	
-            $fileName = $fileName{0} == '/' ? substr($fileName, 1) : $fileName;
             
             if (strpos($fileName, 'upload') === 0)
             {
