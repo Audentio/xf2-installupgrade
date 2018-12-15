@@ -1,6 +1,6 @@
 <?php
 
-namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
+namespace ThemeHouse\InstallAndUpgrade\Provider;
 
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Message\ResponseInterface;
@@ -8,7 +8,6 @@ use ThemeHouse\InstallAndUpgrade\Entity\AddOn;
 use ThemeHouse\InstallAndUpgrade\Entity\Language;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
-use ThemeHouse\InstallAndUpgrade\Entity\Provider;
 use ThemeHouse\InstallAndUpgrade\Entity\Style;
 use ThemeHouse\InstallAndUpgrade\Util\Encryption;
 use XF\Mvc\Entity\Entity;
@@ -18,6 +17,8 @@ use XF\Util\File;
 
 abstract class AbstractHandler
 {
+	protected $identifier = '';
+	
     /** @var CookieJar */
     protected $cookieJar;
 
@@ -38,8 +39,11 @@ abstract class AbstractHandler
     protected $secret;
 
     protected $credentials;
-    
-    public $supportsProductList = true;
+	
+	public $supportsProductList = true;
+	
+	public $isUnique = false;
+	
 
     public function encryptCredentials(array $options)
     {
@@ -127,7 +131,7 @@ abstract class AbstractHandler
      */
     protected function service($class)
     {
-        return $this->app->service($class);
+		return call_user_func_array([$this->app, 'service'], func_get_args());
     }
 
     /**
@@ -172,15 +176,21 @@ abstract class AbstractHandler
         ];
         return \XF::app()->templater()->renderTemplate('admin:install_and_upgrade_' . $this->providerId, $data);
     }
+    
+	/**
+	 * @return string
+	 */
+	public function getIdentifier()
+	{
+		return $this->identifier;
+	}
 
     /**
-     * @param Provider $provider
      * @return \XF\Phrase
      */
-    public function getTitle(Provider $provider)
+    public function getTitle()
     {
-        $titlePhrase = 'install_upgrade_provider.' . $provider->provider_id;
-        return \XF::phrase($titlePhrase);
+        return \XF::phrase('install_upgrade_provider.' . $this->getIdentifier());
     }
 
     /**
@@ -245,7 +255,6 @@ abstract class AbstractHandler
      */
     protected function extractZip($file)
     {
-
         $xmls = [];
 
         if (!File::abstractedPathExists($file)) {
@@ -260,13 +269,13 @@ abstract class AbstractHandler
 
         for ($i = 0; $i < $zip->numFiles; $i++) {
             $fileName = $zip->getNameIndex($i);
-
-            if (strpos($fileName, 'upload') === 0) {
-                $realPath = \XF::getRootDirectory() . DIRECTORY_SEPARATOR . substr($fileName, 6);
+            
+            if (strpos($fileName, 'upload') === 0)
+            {
+				$realPath = \XF::getRootDirectory() . DIRECTORY_SEPARATOR . substr($fileName, 6);
                 $tempPath = $tempDir . DIRECTORY_SEPARATOR . $fileName;
-
                 if (file_exists($tempPath) && is_file($tempPath)) {
-                    File::copyFile($tempDir . DIRECTORY_SEPARATOR . $fileName, $realPath);
+                    File::copyFile($tempDir . DIRECTORY_SEPARATOR . $fileName, $realPath, false);
                 }
             } else {
                 $realPath = $tempDir . DIRECTORY_SEPARATOR . $fileName;

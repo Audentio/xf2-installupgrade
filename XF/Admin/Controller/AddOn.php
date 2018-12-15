@@ -109,7 +109,8 @@ class AddOn extends XFCP_AddOn
                 $handler->convertProductToData($product, $entity);
             }
         }
-        else {
+        else if ($response instanceof View)
+        {
             $response->setParam('product', $product);
         }
 

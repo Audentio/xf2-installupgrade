@@ -1,6 +1,6 @@
 <?php
 
-namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
+namespace ThemeHouse\InstallAndUpgrade\Provider;
 
 use GuzzleHttp\Cookie\CookieJar;
 use PHPHtmlParser\Dom;
@@ -13,6 +13,9 @@ use XF\Util\File;
 
 class XF2RM extends AbstractHandler
 {
+	/** @var string */
+	protected $identifier = 'xf2rm';
+	
     /** @var bool */
     protected $authenticated = false;
 

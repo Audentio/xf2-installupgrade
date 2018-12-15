@@ -171,24 +171,20 @@ class Product extends AbstractController
         return $this->view('ThemeHouse\InstallAndUpgrade:Product\AddOn\List', 'th_iau_products_addon_list',
             $viewParams);
     }
-
-    /**
-     * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\PrintableException
-     */
+	
+	/**
+	 * @param ParameterBag $params
+	 *
+	 * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+	 * @throws \XF\PrintableException
+	 * @throws \Exception
+	 */
     public function actionAddOnInstall(ParameterBag $params)
     {
         /** @var Profile $profile */
-        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id,
-            ['Provider']);
+        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id);
 
-        if (!$profile->Provider) {
-            return $this->error(\XF::phrase('th_iau_provider_not_found_for_profile_x',
-                ['profile' => $profile->page_title]));
-        }
-
-        $handler = $profile->Provider->handler;
+        $handler = $profile->getHandler();
         if (!$handler) {
             return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('add_on')]));
         }
@@ -288,15 +284,9 @@ class Product extends AbstractController
     public function actionStyleInstall(ParameterBag $params)
     {
         /** @var Profile $profile */
-        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id,
-            ['Provider']);
+        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id);
 
-        if (!$profile->Provider) {
-            return $this->error(\XF::phrase('th_iau_provider_not_found_for_profile_x',
-                ['profile' => $profile->page_title]));
-        }
-
-        $handler = $profile->Provider->handler;
+        $handler = $profile->getHandler();
         if (!$handler) {
             return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('style')]));
         }
@@ -393,15 +383,9 @@ class Product extends AbstractController
     public function actionLanguageInstall(ParameterBag $params)
     {
         /** @var Profile $profile */
-        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id,
-            ['Provider']);
+        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id);
 
-        if (!$profile->Provider) {
-            return $this->error(\XF::phrase('th_iau_provider_not_found_for_profile_x',
-                ['profile' => $profile->page_title]));
-        }
-
-        $handler = $profile->Provider->handler;
+        $handler = $profile->getHandler();
 
         if (!$handler) {
             return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('language')]));

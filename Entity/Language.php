@@ -8,19 +8,20 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class Language
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer language_id
+ * COLUMNS
+ * @property int language_id
  * @property string download_url
- * @property boolean auto_update
- * @property boolean update_check
- * @property boolean update_available
+ * @property bool auto_update
+ * @property bool update_check
+ * @property bool update_available
  * @property string current_version
  * @property string latest_version
- * @property array extra
+ * @property array|null extra
  *
- * @property AbstractHandler handler
+ * GETTERS
+ * @property AbstractHandler|null handler
+ *
+ * RELATIONS
  * @property \XF\Entity\Language Language
  */
 class Language extends Entity

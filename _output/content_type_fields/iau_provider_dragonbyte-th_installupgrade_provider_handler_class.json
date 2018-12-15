@@ -1,0 +1,5 @@
+{
+    "content_type": "iau_provider_dragonbyte",
+    "field_name": "th_installupgrade_provider_handler_class",
+    "field_value": "ThemeHouse\\InstallAndUpgrade\\Provider\\DragonByte"
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
+namespace ThemeHouse\InstallAndUpgrade\Provider;
 
 use ThemeHouse\Core\Service\ApiRequest;
 use ThemeHouse\InstallAndUpgrade\Entity\AddOn;
@@ -12,11 +12,16 @@ use XF\Util\File;
 
 class ThemeHouse extends AbstractHandler
 {
+	/** @var string */
+	protected $identifier = 'themehouse';
+	
     protected $apiKey;
     protected $apiUrl = 'products/{product_id}/download/{version_id}';
 
     /** @var Profile */
     protected $Profile;
+	
+	public $isUnique = true;
 
     public function tryAuthentication(Profile $profile)
     {

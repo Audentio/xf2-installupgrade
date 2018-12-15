@@ -89,11 +89,11 @@
         "version_string": "1.0.0 Alpha 1",
         "hash": "a6c51588624ada936c7f53cd9eb1a188"
     },
-    "cron_entry.thiau_checkXenForoUpdates.txt": {
+    "install_upgrade_provider.dragonbyte.txt": {
         "global_cache": false,
-        "version_id": 1000011,
-        "version_string": "1.0.0 Alpha 1",
-        "hash": "c028a9ff3e4705b0a41f1ed09562e6be"
+        "version_id": 1000042,
+        "version_string": "1.0.0 Beta 12",
+        "hash": "7f741205a04969cae0c7994eb0dff16c"
     },
     "install_upgrade_provider.themehouse.txt": {
         "global_cache": false,
@@ -310,6 +310,18 @@
         "version_id": 1000031,
         "version_string": "1.0.0 Beta 1",
         "hash": "fb066adfac9adb6beadcedee782b7eb4"
+    },
+    "th_iau_dragonbyte_api_key.txt": {
+        "global_cache": false,
+        "version_id": 1000042,
+        "version_string": "1.0.0 Beta 12",
+        "hash": "fe576d039823a7e3ad2c3693d119c3f7"
+    },
+    "th_iau_dragonbyte_api_key_explain.txt": {
+        "global_cache": false,
+        "version_id": 1000042,
+        "version_string": "1.0.0 Beta 12",
+        "hash": "6c8983150a66c1948597fb50313e716b"
     },
     "th_iau_edit_product_details.txt": {
         "global_cache": false,
