@@ -9,6 +9,8 @@
     "faq_url": "",
     "support_url": "https://www.themehouse.com/help",
     "extra_urls": [],
-    "require": [],
+    "require": {
+        "zip":["1.0", "PHP Zip Extension"]
+    },
     "icon": "install_upgrade.png"
 }
