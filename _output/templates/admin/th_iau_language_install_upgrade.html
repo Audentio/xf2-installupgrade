@@ -1,0 +1,119 @@
+<xf:title>
+	{{ phrase('th_installupgrade_install_upgrade') }}
+</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<h2 class="block-tabHeader block-tabHeader--memberTabs tabs hScroller"
+			data-xf-init="tabs h-scroller"
+			data-panes=".js-installUpgradePanes"
+			data-state="replace"
+			role="tablist">
+			<span class="hScroller-scroll">
+				<xf:if is="$products is not empty">
+					<a href="#available-product"
+					   class="tabs-tab is-active"
+					   role="tab"
+					   aria-controls="available-product">
+						{{ phrase('th_installupgrade_install_from_available_products') }}
+					</a>
+				</xf:if>
+				<a href="#url"
+				   class="tabs-tab {{ $products.count() ? '' : 'is-active' }}"
+				   role="tab"
+				   aria-controls="url">
+					{{ phrase('th_installupgrade_install_from_url') }}
+				</a>
+				<a href="#xml"
+				   class="tabs-tab"
+				   role="tab"
+				   aria-controls="xml">
+					{{ phrase('th_installupgrade_install_from_xml') }}
+				</a>
+			</span>
+		</h2>
+		<ul class="tabPanes js-installUpgradePanes">
+			<xf:if is="$products is not empty">
+				<li class="is-active" role="tabpanel" id="available-product">
+					<xf:form action="{{ link('languages/th-install-upgrade-product') }}">
+						<div class="block-body">
+							<xf:datalist>
+								<xf:foreach loop="$profiles" key="{$profileId}" value="$profile">
+									<xf:if is="$profile.getHandler().getCapability('productList') && count({$products.{$profileId}})">
+										<tbody class="dataList-rowGroup">
+											<xf:datarow rowtype="subsection">
+												<xf:cell colspan="4" overlay="true">
+													{$profile.page_title}
+												</xf:cell>
+											</xf:datarow>
+
+											<xf:foreach loop="{$products.{$profileId}}" value="{$product}">
+												<xf:macro name="product"
+														  template="th_iau_macros"
+														  arg-radio="{{ true }}"
+														  arg-product="{$product}" />
+											</xf:foreach>
+										</tbody>
+									</xf:if>
+								</xf:foreach>
+							</xf:datalist>
+							<xf:macro name="target" arg-languageTree="{$languageTree}" />
+						</div>
+						<xf:submitrow icon="download" submit="{{ phrase('th_installupgrade_install') }}" />
+					</xf:form>
+				</li>
+			</xf:if>
+			<li class="{{ $products.count() ? '' : 'is-active' }}" role="tabpanel" id="url">
+				<xf:form action="{{ link('languages/th-install-upgrade-url') }}">
+					<div class="block-body">
+						<xf:textboxrow name="url"
+									   required="required"
+									   label="{{ phrase('url') }}" />
+						<hr class="formRowSep" />
+						<xf:macro name="target" arg-languageTree="{$languageTree}" />
+					</div>
+					<xf:submitrow icon="download" submit="{{ phrase('download') }}" />
+				</xf:form>
+			</li>
+			<li role="tabpanel" id="xml">
+				<xf:form action="{{ link('languages/import') }}" upload="true">
+					<div class="block-body">
+						<xf:uploadrow name="upload" accept=".xml"
+									  label="{{ phrase('import_from_uploaded_xml_file') }}"/>
+						<xf:macro name="target" arg-languageTree="{$languageTree}" />
+					</div>
+					<xf:submitrow icon="import" />
+				</xf:form>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<xf:macro name="target" arg-languageTree="!">
+
+	<xf:radiorow name="target"
+				 label="{{ phrase('import_as') }}">
+
+		<xf:option value="new" checked="checked"
+				   label="{{ phrase('child_of_language:') }}">
+			<xf:select name="parent_language_id">
+				<xf:option>{{ phrase('(no_parent)') }}</xf:option>
+				<xf:foreach loop="$languageTree.getFlattened(0)" value="$treeEntry">
+					<xf:option value="{$treeEntry.record.style_id}">
+						{{ repeat('--', $treeEntry.depth) }} {$treeEntry.record.title}
+					</xf:option>
+				</xf:foreach>
+			</xf:select>
+		</xf:option>
+		<xf:option value="overwrite"
+				   label="{{ phrase('overwrite_language') }}">
+			<xf:select name="overwrite_language_id">
+				<xf:foreach loop="$languageTree.getFlattened(0)" value="$treeEntry">
+					<xf:option value="{$treeEntry.record.language_id}">{{ repeat('--', $treeEntry.depth) }}
+						{$treeEntry.record.title}
+					</xf:option>
+				</xf:foreach>
+			</xf:select>
+		</xf:option>
+	</xf:radiorow>
+</xf:macro>

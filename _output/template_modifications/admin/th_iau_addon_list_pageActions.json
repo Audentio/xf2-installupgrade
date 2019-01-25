@@ -1,9 +1,0 @@
-{
-    "template": "addon_list",
-    "description": "Add page actions.",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "str_replace",
-    "find": "<xf:pageaction>",
-    "replace": "$0\n<xf:button href=\"{{ link('install-upgrade/addOn/0/update-check-all') }}\" icon=\"refresh\">\n\t{{ phrase('th_iau_check_for_updates') }}\n</xf:button>\n<xf:button href=\"{{ link('install-upgrade/add-on') }}\" icon=\"download\" overlay=\"true\" data-cache=\"0\">\n\t{{ phrase('install') }}\n</xf:button>"
-}

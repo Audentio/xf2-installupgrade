@@ -1,0 +1,1 @@
+Cannot install via Install & Upgrade as not all required directories are writable. Various directories must be writable by the web server user to install via Install & Upgrade. In addition to the XF root directory, some or all of the following paths must be writable: {relativePaths}.

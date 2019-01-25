@@ -1,9 +1,0 @@
-{
-    "parent_navigation_id": "logs",
-    "display_order": 11,
-    "link": "install-upgrade-log",
-    "icon": "",
-    "admin_permission_id": "viewLogs",
-    "debug_only": false,
-    "hide_no_children": false
-}

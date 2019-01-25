@@ -6,51 +6,62 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * COLUMNS
- * @property int|null profile_id
+ * Class Profile
+ * @package ThemeHouse\InstallAndUpgrade\Entity
+ *
+ * @property integer profile_id
  * @property string provider_id
  * @property string page_title
- * @property bool has_tfa
  * @property string base_url
  * @property array options
- * @property bool active
- * @property bool requires_decryption
+ * @property boolean has_tfa
+ *
+ * @property Provider Provider
  */
 class Profile extends Entity
 {
     protected $secret;
     protected $credentials;
 
+//    /**
+//     * @return mixed
+//     */
+//    public function getProductsFromProvider()
+//    {
+//        $provider = $this->Provider;
+//
+//        if (!$provider) {
+//            return null;
+//        }
+//
+//        $handler = $provider->handler;
+//
+//        if (!$handler) {
+//            return null;
+//        }
+//
+//        if ($this->secret) {
+//            $handler->setEncryptionSecret($this->secret);
+//        }
+//        return $handler->getProductsFromProvider($this);
+//    }
+//
+//    protected function _postDelete()
+//    {
+//        \XF::app()->db()->delete('xf_th_installupgrade_product', 'profile_id = ?', [$this->profile_id]);
+//        parent::_postDelete();
+//    }
+
     /**
-     * @return mixed
-     */
-    public function getProductsFromProvider()
-    {
-        $handler = $this->getHandler();
-
-        if (!$handler) {
-            return null;
-        }
-
-        if ($this->secret) {
-            $handler->setEncryptionSecret($this->secret);
-        }
-        return $handler->getProductsFromProvider($this);
-    }
-
-    protected function _postDelete()
-    {
-        \XF::app()->db()->delete('xf_th_installupgrade_product', 'profile_id = ?', [$this->profile_id]);
-        parent::_postDelete();
-    }
-
-    /**
-     * @return null|\ThemeHouse\InstallAndUpgrade\Provider\AbstractHandler
+     * @return null|\ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler
      * @throws \Exception
      */
     public function getHandler()
     {
-        return $this->getHandlerRepo()->getProviderHandler('iau_provider_' . $this->provider_id);
+        $repo = $this->getProfileRepository();
+        $handler = $repo->getHandler($this->provider_id);
+        $handler->setProfile($this);
+        return $handler;
     }
 
     /**
@@ -93,16 +104,16 @@ class Profile extends Entity
             'requires_decryption' => ['type' => self::BOOL, 'default' => 0],
         ];
         $structure->getters = [];
-        $structure->relations = [];
 
         return $structure;
     }
-	
-	/**
-	 * @return \ThemeHouse\InstallAndUpgrade\Repository\Handler|\XF\Mvc\Entity\Repository
-	 */
-	protected function getHandlerRepo()
-	{
-		return $this->repository('ThemeHouse\InstallAndUpgrade:Handler');
-	}
+
+    /**
+     * @return \ThemeHouse\InstallAndUpgrade\Repository\Profile
+     */
+    protected function getProfileRepository()
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
+    }
 }

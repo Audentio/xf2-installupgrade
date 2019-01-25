@@ -1,5 +1,0 @@
-{
-    "content_type": "iau_provider_themehouse",
-    "field_name": "th_installupgrade_provider_handler_class",
-    "field_value": "ThemeHouse\\InstallAndUpgrade\\Provider\\ThemeHouse"
-}

@@ -1,0 +1,9 @@
+{
+    "template": "language_list",
+    "description": "Version string on languages.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "class=\"dataList-cell--d{$depth}\" />",
+    "replace": "class=\"dataList-cell--d{$depth}\">\n\t<xf:hint>{$language.THIAUProduct.current_version}</xf:hint>\n</xf:main>"
+}

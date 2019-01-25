@@ -1,0 +1,13 @@
+<xf:title>{{ phrase('confirm_action') }}</xf:title>
+<xf:form action="{{ link('styles/th-install-upgrade-update', $style) }}" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+					{{ phrase('th_iau_please_confirm_that_you_want_to_upgrade_following_style:') }}
+				<strong>{$style.title} &middot; {$style.th_iau_current_version} -&gt; {$product.latest_version}</strong>
+			</xf:inforow>
+		</div>
+	</div>
+
+	<xf:submitrow icon="upload" />
+</xf:form>

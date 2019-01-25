@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\Language",
+    "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Entity\\Language",
+    "execute_order": 10,
+    "active": true
+}

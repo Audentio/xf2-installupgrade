@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "th-install-upgrade",
+    "sub_name": "install-products",
+    "format": ":int<batch_id>/install-products",
+    "build_class": "",
+    "build_method": "",
+    "controller": "ThemeHouse\\InstallAndUpgrade:InstallUpgrade",
+    "context": "",
+    "action_prefix": "install-products"
+}

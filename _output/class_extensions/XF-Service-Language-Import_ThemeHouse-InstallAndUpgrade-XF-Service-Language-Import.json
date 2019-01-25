@@ -1,6 +1,0 @@
-{
-    "from_class": "XF\\Service\\Language\\Import",
-    "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Service\\Language\\Import",
-    "execute_order": 10,
-    "active": true
-}

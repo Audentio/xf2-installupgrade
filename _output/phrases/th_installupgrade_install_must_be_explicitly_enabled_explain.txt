@@ -1,0 +1,5 @@
+Installing via Install & Upgrade must be explicitly enabled by adding the following line to <code>src/config.php</code>:
+
+<pre><code>$config['enableAddOnArchiveInstaller'] = true;</code></pre>
+
+Various directories must be writable by the web server user to install and this may be considered to be insecure in some hosting environments. Your server must also have ZipArchive support in PHP.

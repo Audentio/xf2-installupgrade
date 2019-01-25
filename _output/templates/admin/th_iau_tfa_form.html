@@ -1,0 +1,20 @@
+<xf:title>{{ phrase('two_step_verification_required') }}</xf:title>
+
+<xf:form action="{$redirectUrl|raw}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:foreach loop="$extra" key="$key" value="$value">
+				<xf:if is="is_array($value)">
+					<xf:foreach loop="$value" key="$subKey" value="$subValue">
+						<xf:hiddenval name="{$key}[]" value="{$subValue|raw}" />
+					</xf:foreach>
+					<xf:else />
+					<xf:hiddenval name="{$key}" value="{$value|raw}" />
+				</xf:if>
+			</xf:foreach>
+			
+			<xf:textboxrow name="tfa_code" label="{{ phrase('th_installupgrade_tfa_code') }}" />
+		</div>
+		<xf:submitrow submit="{{ phrase('continue') }}" rowtype="simple" icon="submit" />
+	</div>
+</xf:form>

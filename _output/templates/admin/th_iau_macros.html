@@ -1,156 +1,27 @@
-<xf:macro name="style_edit" arg-style="!">
-	<xf:set var="$extra" value="{$style.THInstallUpgradeData.extra}" />
-	<hr class="formRowSep" />
-
-	<xf:textboxrow name="extra[dev]" value="{$extra.dev}" label="{{ phrase('th_iau_designer') }}" />
-
-	<xf:textboxrow name="extra[dev_url]" value="{$extra.dev_url}" label="{{ phrase('th_iau_designer_url') }}" />
-
-	<xf:textboxrow name="extra[faq_url]" value="{$extra.faq_url}" label="{{ phrase('th_iau_faq_url') }}" />
-
-	<xf:textboxrow name="extra[support_url]" value="{$extra.support_url}" label="{{ phrase('th_iau_support_url') }}" />
-
-	<hr class="formRowSep" /> 
-
-	<xf:textboxrow name="download_url" value="{$style.THInstallUpgradeData.download_url}" label="{{ phrase('th_iau_download_url') }}" />
-
-	<xf:textboxrow name="current_version" value="{$style.THInstallUpgradeData.current_version}" label="{{ phrase('th_iau_current_version') }}" />
-</xf:macro>
-
-<xf:macro name="language_edit" arg-language="!">
-	<xf:set var="$extra" value="{$language.THInstallUpgradeData.extra}" />
-	<hr class="formRowSep" />
-
-	<xf:textboxrow name="extra[dev]" value="{$extra.dev}" label="{{ phrase('th_iau_translator') }}" />
-
-	<xf:textboxrow name="extra[dev_url]" value="{$extra.dev_url}" label="{{ phrase('th_iau_translator_url') }}" />
-
-	<xf:textboxrow name="extra[faq_url]" value="{$extra.faq_url}" label="{{ phrase('th_iau_faq_url') }}" />
-
-	<xf:textboxrow name="extra[support_url]" value="{$extra.support_url}" label="{{ phrase('th_iau_support_url') }}" />
-
-	<hr class="formRowSep" /> 
-
-	<xf:textboxrow name="download_url" value="{$language.THInstallUpgradeData.download_url}" label="{{ phrase('th_iau_download_url') }}" />
-
-	<xf:textboxrow name="current_version" value="{$language.THInstallUpgradeData.current_version}" label="{{ phrase('th_iau_current_version') }}" />
-</xf:macro>
-
-<xf:macro name="extra_info" arg-description="" arg-entity="!" arg-developerPhrase="">
-	<xf:css src="th_iau_extra_info.less" />
-
-	<ul class="listInline listInline--bullet">
-		<xf:if is="$entity.extra.dev || $entity.extra.dev_url">
-			<li>
-				<xf:if is="$entity.extra.dev && $entity.extra.dev_url">
-					<span class="addOnList-row-noSearch">{$developerPhrase}</span> <a href="{$entity.extra.dev_url}" target="_blank">{$entity.extra.dev}</a>
-					<xf:elseif is="$entity.extra.dev" />
-					<span class="addOnList-row-noSearch">{$developerPhrase}</span> {$entity.extra.dev}
-					<xf:elseif is="$entity.extra.dev_url" />
-					<span class="addOnList-row-noSearch">{$developerPhrase}</span> <a href="{$entity.extra.dev_url}" target="_blank">{$entity.extra.dev_url}</a>
-				</xf:if>
-			</li>
+<xf:macro name="product" arg-product="!" arg-radio="{{ false }}">
+	<xf:css src="th_iau_macros.less" />
+	<xf:datarow>
+		<xf:if is="$radio">
+			<xf:cell class="dataList-cell--iconic">
+				<label class="iconic">
+					<input type="radio" name="install" value="{$product.profile_id}-{$product.product_id}"><i aria-hidden="true"></i>
+				</label>
+			</xf:cell>
+			<xf:else />
+			<xf:toggle name="install[]" value="{$product.profile_id}-{$product.product_id}" />
 		</xf:if>
-		<xf:if is="$entity.extra.faq_url">
-			<li><a href="{$entity.extra.faq_url}" target="_blank">{{ phrase('faq') }}</a></li>
-		</xf:if>
-		<xf:if is="$entity.extra.support_url">
-			<li><a href="{$entity.extra.support_url}" target="_blank">{{ phrase('support') }}</a></li>
-		</xf:if>
-	</ul>
-</xf:macro>
-
-<xf:macro name="admin_index"
-		  arg-xenForo=""
-		  arg-addOns=""
-		  arg-styles=""
-		  arg-languages="">
-	<xf:css src="th_iau_index.less" />
-
-	<xf:if is="$xenForo">
-		<div class="blockMessage blockMessage--important blockMessage--iconic">
-			{{ phrase('th_iau_new_xenforo_version_x_available', {'version': $xenForo.latest_version} )}}
-		</div>
-	</xf:if>
-
-	<xf:if is="$addOns is not empty">
-		<div class="block">
-			<div class="block-container">
-				<h2 class="block-header">
-					<span class="collapseTrigger collapseTrigger--block {{ !is_toggled('collapse_th_iau_addons') ? 'is-active' : '' }}" data-xf-click="toggle" data-xf-init="toggle-storage" data-storage-type="cookie" data-storage-key="collapse_th_iau_addons" data-target="#js-collapse-th-iau-addons">
-						{{ phrase('th_iau_addon_upgrades_available') }}
-					</span>
-				</h2>
-				<xf:datalist class="th-iau-table block-body block-body--collapsible {{ !is_toggled('collapse_th_iau_addons') ? 'is-active' : '' }}" id="js-collapse-th-iau-addons">
-					<xf:foreach loop="$addOns" value="$addOn">
-						<xf:datarow>
-							<xf:cell>
-								{$addOn.AddOn.title}
-							</xf:cell>
-							<xf:cell>
-								<span class="contentRow-muted">{$addOn.AddOn.version_string} <i class="fa fa-chevron-right"></i> {$addOn.latest_version}</span>
-							</xf:cell>
-							<xf:action href="{{ link('install-upgrade/update', {'content_type': 'addOn', 'content_id': $addOn.AddOn.addon_id_url}) }}">
-								{{ phrase('th_iau_upgrade') }}
-							</xf:action>
-						</xf:datarow>
-					</xf:foreach>
-				</xf:datalist>
+		<xf:cell class="dataList-cell--min dataList-cell--alt dataList-cell--image dataList-cell--imageMediumWide">
+			<xf:if is="$product.extra.thumbnail">
+				<image src="{$product.extra.thumbnail}" />
+			</xf:if>
+		</xf:cell>
+		<xf:cell class="dataList-cell--main">
+			<div class="dataList-mainRow">
+				{$product.title}
 			</div>
-		</div>
-	</xf:if>
-
-	<xf:if is="$styles is not empty">
-		<div class="block">
-			<div class="block-container">
-				<h2 class="block-header">
-					<span class="collapseTrigger collapseTrigger--block {{ !is_toggled('collapse_th_iau_styles') ? 'is-active' : '' }}" data-xf-click="toggle" data-xf-init="toggle-storage" data-storage-type="cookie" data-storage-key="collapse_th_iau_styles" data-target="#js-collapse-th-iau-styles">
-						{{ phrase('th_iau_style_upgrades_available') }}
-					</span>
-				</h2>
-				<xf:datalist class="th-iau-table block-body block-body--collapsible {{ !is_toggled('collapse_th_iau_styles') ? 'is-active' : '' }}" id="js-collapse-th-iau-styles">
-					<xf:foreach loop="$styles" value="$style">
-						<xf:datarow>
-							<xf:cell>
-								{$style.Style.title}
-							</xf:cell>
-							<xf:cell>
-								<span class="contentRow-muted">{$style.current_version} <i class="fa fa-chevron-right"></i> {$style.latest_version}</span>
-							</xf:cell>
-							<xf:action href="{{ link('install-upgrade/update', {'content_type': 'style', 'content_id': $style.style_id}) }}">
-								{{ phrase('th_iau_upgrade') }}
-							</xf:action>
-						</xf:datarow>
-					</xf:foreach>
-				</xf:datalist>
+			<div class="dataList-subRow">
+				{$product.description}
 			</div>
-		</div>
-	</xf:if>
-
-	<xf:if is="$languages is not empty">
-		<div class="block">
-			<div class="block-container">
-				<h2 class="block-header">
-					<span class="collapseTrigger collapseTrigger--block {{ !is_toggled('collapse_th_iau_languages') ? 'is-active' : '' }}" data-xf-click="toggle" data-xf-init="toggle-storage" data-storage-type="cookie" data-storage-key="collapse_th_iau_languages" data-target="#js-collapse-th-iau-languages">
-						{{ phrase('th_iau_language_upgrades_available') }}
-					</span>
-				</h2>
-				<xf:datalist class="th-iau-table block-body block-body--collapsible {{ !is_toggled('collapse_th_iau_languages') ? 'is-active' : '' }}" id="js-collapse-th-iau-languages">
-					<xf:foreach loop="$languages" value="$language">
-						<xf:datarow>
-							<xf:cell>
-								{$language.Language.title}
-							</xf:cell>
-							<xf:cell>
-								<span class="contentRow-muted">{$language.current_version} <i class="fa fa-chevron-right"></i> {$language.latest_version}</span>
-							</xf:cell>
-							<xf:action href="{{ link('install-upgrade/update', {'content_type': 'language', 'content_id': $language.language_id}) }}">
-								{{ phrase('th_iau_upgrade') }}
-							</xf:action>
-						</xf:datarow>
-					</xf:foreach>
-				</xf:datalist>
-			</div>
-		</div>
-	</xf:if>
+		</xf:cell>
+	</xf:datarow>
 </xf:macro>

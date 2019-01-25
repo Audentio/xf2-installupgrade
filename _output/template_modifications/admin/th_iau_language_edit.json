@@ -1,9 +1,0 @@
-{
-    "template": "language_edit",
-    "description": "Add extra fields to language edit.",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "preg_replace",
-    "find": "/(\\s*<hr class=\"formRowSep\" \\/>\\s*<xf:textboxrow name=\"decimal_point\")/s",
-    "replace": "<xf:macro template=\"th_iau_macros\" name=\"language_edit\" arg-language=\"{$language}\" />\n$0"
-}

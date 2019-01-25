@@ -1,11 +1,8 @@
 {
-    "thiau_checkAddOnUpdates.json": {
-        "hash": "0ee2efdabe44a30295a5d9e75337e6f1"
+    "th_iau_get_products.json": {
+        "hash": "8eddca2ec0afb72af623eb485e460776"
     },
-    "thiau_checkLanguagUpdates.json": {
-        "hash": "33714d6ab148d9a582b33fc99c4378ca"
-    },
-    "thiau_checkStyleUpdates.json": {
-        "hash": "6fcf52b8b2d2ee1a4036f1b92b7dd2bd"
+    "th_iau_update_check.json": {
+        "hash": "21916a0c3e4b922962c3c55b0b3d825f"
     }
 }

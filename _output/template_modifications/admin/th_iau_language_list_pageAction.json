@@ -1,0 +1,9 @@
+{
+    "template": "language_list",
+    "description": "Alter language list page action",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:button href=\"{{ link('languages/import') }}\" icon=\"import\" />",
+    "replace": "<xf:button href=\"{{ link('languages/th-install-upgrade') }}\" overlay=\"true\" icon=\"add\">\n\t{{ phrase('th_installupgrade_install_upgrade') }}\n</xf:button>"
+}

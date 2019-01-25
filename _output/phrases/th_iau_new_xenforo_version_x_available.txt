@@ -1,1 +1,0 @@
-<a href="https://xenforo.com/customers" target="_blank">A new version of XenForo ({version}) is available for download.</a>

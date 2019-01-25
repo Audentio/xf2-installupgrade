@@ -1,0 +1,1 @@
+Activate, if this account is protected by two-factor authentication. Install & Upgrade will prompt you for the two-factor code when required.

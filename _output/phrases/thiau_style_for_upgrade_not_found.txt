@@ -1,1 +1,0 @@
-The style with the id {style_id} could was not found when atempting to upgrade it.

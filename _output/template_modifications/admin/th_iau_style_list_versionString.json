@@ -1,0 +1,9 @@
+{
+    "template": "style_list",
+    "description": "Version string on styles",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:hint><xf:if is=\"$xf.designer AND $style.designer_mode\">",
+    "replace": "<xf:hint>{$style.th_iau_current_version}<xf:if is=\"$xf.designer AND $style.designer_mode\">&nbsp;"
+}

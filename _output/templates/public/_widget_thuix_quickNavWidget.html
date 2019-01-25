@@ -1,0 +1,18 @@
+<div class="block" data-widget-definition="th_navigation">
+    <div class="block-container">
+        <h3 class="block-minorHeader">Quick Navigation</h3>
+        <div class="block-body">
+            <xf:if is="$xf.options.homePageUrl">
+            <a class="blockLink rippleButton" href="{$xf.options.homePageUrl}">{{ phrase('home') }}</a>
+            </xf:if>
+            <a class="blockLink rippleButton" href="{{ link('forums') }}">{{ phrase('forums') }}</a>
+            <xf:if is="$xf.visitor.canUseContactForm()">
+                <xf:if is="$xf.options.contactUrl.type == 'default'">
+                    <a class="blockLink rippleButton" href="{{ link('misc/contact') }}" data-xf-click="overlay">{{ phrase('contact_us') }}</a>
+                <xf:elseif is="$xf.options.contactUrl.type == 'custom'" />
+                    <a class="blockLink rippleButton" href="{$xf.options.contactUrl.custom}" data-xf-click="{{ $xf.options.contactUrl.overlay ? 'overlay' : '' }}">{{ phrase('contact_us') }}</a>
+                </xf:if>
+            </xf:if>
+        </div>
+    </div>
+</div>

@@ -1,1 +1,0 @@
-A new version ({version}) for your add-on {title} is available.

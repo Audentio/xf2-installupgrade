@@ -1,0 +1,47 @@
+<xf:if is="$xf.visitor.hasAdminPermission('addOn') AND $th_iau_upgrades.addOns is not empty">
+	<div class="blockMessage blockMessage--highlight blockMessage--iconic">
+		{{ phrase('th_installupgrade_following_updates_add_ons_now_available:') }}
+		<ul class="listInline listInline--comma listInline--selfInline">
+			<xf:foreach loop="$th_iau_upgrades.addOns" value="$entry">
+				<li>{$entry.addOn.title} ({$entry.product.latest_version})</li>
+			</xf:foreach>
+		</ul>
+		<div style="margin-top: .5em">
+			<xf:button href="{{ link('add-ons') }}" class="button--link">
+				{{ phrase('upgrade_now') }}
+			</xf:button>
+		</div>
+	</div>
+</xf:if>
+
+<xf:if is="$xf.visitor.hasAdminPermission('style') AND $th_iau_upgrades.styles is not empty">
+	<div class="blockMessage blockMessage--highlight blockMessage--iconic">
+		{{ phrase('th_installupgrade_following_updates_styles_now_available:') }}
+		<ul class="listInline listInline--comma listInline--selfInline">
+			<xf:foreach loop="$th_iau_upgrades.styles" value="$entry">
+				<li>{$entry.style.title} ({$entry.product.latest_version})</li>
+			</xf:foreach>
+		</ul>
+		<div style="margin-top: .5em">
+			<xf:button href="{{ link('styles') }}" class="button--link">
+				{{ phrase('upgrade_now') }}
+			</xf:button>
+		</div>
+	</div>
+</xf:if>
+
+<xf:if is="$xf.visitor.hasAdminPermission('language') AND $th_iau_upgrades.languages is not empty">
+	<div class="blockMessage blockMessage--highlight blockMessage--iconic">
+		{{ phrase('th_installupgrade_following_updates_languages_now_available:') }}
+		<ul class="listInline listInline--comma listInline--selfInline">
+			<xf:foreach loop="$th_iau_upgrades.styles" value="$entry">
+				<li>{$entry.language.title} ({$entry.product.latest_version})</li>
+			</xf:foreach>
+		</ul>
+		<div style="margin-top: .5em">
+			<xf:button href="{{ link('languages') }}" class="button--link">
+				{{ phrase('upgrade_now') }}
+			</xf:button>
+		</div>
+	</div>
+</xf:if>

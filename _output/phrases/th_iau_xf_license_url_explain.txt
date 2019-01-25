@@ -1,1 +1,0 @@
-The URL, that the license that the updater should pick is registered to.

@@ -1,5 +1,9 @@
 {
     "require": {
-        "thesoftwarefanatics/php-html-parser": "^1.8.0"
+        "thesoftwarefanatics/php-html-parser": "^1.8.0",
+        "tunaabutbul/cloudflare-middleware": "^1.2"
+    },
+    "replace": {
+        "guzzlehttp/guzzle":"*"
     }
 }

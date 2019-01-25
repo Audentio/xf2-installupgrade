@@ -1,1 +1,0 @@
-Enable this option if your account is protected by two-step authentication. Enabling this option will exclude all products from this provider from the bulk update and automated update checks. If you want to keep automated checks, use an account that is not protected by two-step authentication instead.

@@ -1,0 +1,9 @@
+{
+    "template": "language_list",
+    "description": "Show available language update list.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:if is=\"$languageTree is not empty\">",
+    "replace": "<xf:include template=\"th_iau_language_update_list\" />\n$0"
+}

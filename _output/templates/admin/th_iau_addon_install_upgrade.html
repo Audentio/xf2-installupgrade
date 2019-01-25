@@ -1,0 +1,89 @@
+<xf:title>
+	{{ phrase('th_installupgrade_install_upgrade') }}
+</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<h2 class="block-tabHeader block-tabHeader--memberTabs tabs hScroller"
+			data-xf-init="tabs h-scroller"
+			data-panes=".js-installUpgradePanes"
+			data-state="replace"
+			role="tablist">
+			<span class="hScroller-scroll">
+				<xf:if is="$products is not empty">
+					<a href="#available-products"
+					   class="tabs-tab is-active"
+					   role="tab"
+					   aria-controls="available-products">
+						{{ phrase('th_installupgrade_install_from_available_products') }}
+					</a>
+				</xf:if>
+				<a href="#url"
+				   class="tabs-tab {{ $products.count() ? '' : 'is-active' }}"
+				   role="tab"
+				   aria-controls="url">
+					{{ phrase('th_installupgrade_install_from_url') }}
+				</a>
+				<a href="#archive"
+				   class="tabs-tab"
+				   role="tab"
+				   aria-controls="archive">
+					{{ phrase('th_installupgrade_install_from_archive') }}
+				</a>
+			</span>
+		</h2>
+		<ul class="tabPanes js-installUpgradePanes">
+			<xf:if is="$products is not empty">
+				<li class="is-active" role="tabpanel" id="available-products">
+					<xf:form action="{{ link('add-ons/th-install-upgrade-products') }}">
+						<div class="block-body">
+							<xf:datalist>
+								<xf:foreach loop="$profiles" key="{$profileId}" value="$profile">
+									<xf:if is="$profile.getHandler().getCapability('productList') && count({$products.{$profileId}})">
+										<tbody class="dataList-rowGroup">
+											<xf:datarow rowtype="subsection">
+												<xf:cell>
+													<xf:checkbox standalone="true">
+														<xf:option check-all="< .dataList-rowGroup" />
+													</xf:checkbox>
+												</xf:cell>
+
+												<xf:cell colspan="3" overlay="true">
+													{$profile.page_title}
+												</xf:cell>
+											</xf:datarow>
+
+											<xf:foreach loop="{$products.{$profileId}}" value="{$product}">
+												<xf:macro name="product"
+														  template="th_iau_macros"
+														  arg-product="{$product}" />
+											</xf:foreach>
+										</tbody>
+									</xf:if>
+								</xf:foreach>
+							</xf:datalist>
+						</div>
+						<xf:submitrow icon="download" submit="{{ phrase('th_installupgrade_install') }}" />
+					</xf:form>
+				</li>
+			</xf:if>
+			<li role="tabpanel" id="url" class="{{ $products.count() ? '' : 'is-active' }}">
+				<xf:form action="{{ link('add-ons/th-install-upgrade-url') }}">
+					<div class="block-body">
+						<xf:textboxrow name="urls[]" data-xf-init="field-adder" label="{{ phrase('url') }}" />
+					</div>
+					<xf:submitrow icon="download" submit="{{ phrase('download') }}" />
+				</xf:form>
+			</li>
+			<li role="tabpanel" id="archive">
+				<xf:form action="{{ link('add-ons/install-from-archive') }}" upload="true">
+					<div class="block-body">
+						<xf:uploadrow name="uploads[]" multiple="multiple" required="required" accept=".zip"
+									  label="{{ phrase('add_on_archives') }}" />
+					</div>
+					<xf:submitrow icon="upload" submit="{{ phrase('upload') }}" />
+				</xf:form>
+			</li>
+		</ul>
+	</div>
+</div>

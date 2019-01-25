@@ -1,31 +1,24 @@
-<xf:textboxrow label="{{ phrase('th_iau_xf2rm_base_url') }}"
+<xf:textboxrow label="{{ phrase('th_installupgrade_xf2rm_base_url') }}"
 			   name="base_url"
 			   value="{$profile.base_url}"
 			   required="required"
-			   explain="{{ phrase('th_iau_xf2rm_base_url_expain') }}" />
+			   explain="{{ phrase('th_installupgrade_xf2rm_base_url_expain') }}" />
 
-<xf:textboxrow label="{{ phrase('th_iau_xf2rm_page_title') }}"
+<xf:textboxrow label="{{ phrase('th_installupgrade_page_title') }}"
 			   name="page_title"
 			   value="{$profile.page_title}"
 			   required="required"
-			   explain="{{ phrase('th_iau_xf2rm_page_title_explain') }}" />
+			   explain="{{ phrase('th_installupgrade_page_title_explain') }}" />
 
 <hr class="formRowSep" />
 
-<xf:textboxrow label="{{ phrase('th_iau_xf2rm_email_or_username') }}"
+<xf:textboxrow label="{{ phrase('th_installupgrade_username_or_email') }}"
 			   name="options[user]"
 			   value="{$profile.options.user}"
 			   required="required"
-			   explain="{{ phrase('th_iau_xf2rm_email_or_username_explain') }}" />
+			   explain="{{ phrase('th_installupgrade_username_or_email_explain') }}" />
 
-<xf:textboxrow label="{{ phrase('th_iau_xf2rm_password') }}"
+<xf:textboxrow label="{{ phrase('th_installupgrade_password') }}"
 			   name="options[password]"
 			   required="required"
-			   explain="{{ phrase('th_iau_xf2rm_password_explain') }}" />
-
-<xf:checkboxrow explain="{{ phrase('th_iau_xf2rm_has_tfa_explain') }}">
-	<xf:option name="has_tfa"
-			   value="1"
-			   label="{{ phrase('th_iau_xf2rm_has_tfa') }}"
-			   checked="{$profile.has_tfa}" />
-</xf:checkboxrow>
+			   explain="{{ phrase('th_installupgrade_password_explain') }}" />

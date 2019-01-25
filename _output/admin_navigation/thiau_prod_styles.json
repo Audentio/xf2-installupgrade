@@ -1,9 +1,0 @@
-{
-    "parent_navigation_id": "stylesAndTemplates",
-    "display_order": 1,
-    "link": "install-upgrade-products/styles",
-    "icon": "",
-    "admin_permission_id": "style",
-    "debug_only": false,
-    "hide_no_children": false
-}

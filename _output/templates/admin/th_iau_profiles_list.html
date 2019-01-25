@@ -1,13 +1,13 @@
-<xf:title>{{ phrase('th_iau_install_upgrade_profiles') }}</xf:title>
+<xf:title>{{ phrase('th_installupgrade_profiles') }}</xf:title>
 
 <xf:pageaction>
-	<xf:button href="{{ link('install-upgrade-profiles/add') }}" icon="add" overlay="true">{{ phrase('th_iau_add_install_upgrade_profile') }}</xf:button>
+	<xf:button href="{{ link('th-install-upgrade-profiles/add') }}" icon="add" overlay="true">{{ phrase('th_installupgrade_add_profile') }}</xf:button>
 </xf:pageaction>
 
 <xf:if is="$profiles is not empty">
 	<xf:form class="block"
 			 ajax="true"
-			 action="{{ link('install-upgrade-profiles/toggle') }}">
+			 action="{{ link('th-install-upgrade-profiles/toggle') }}">
 		<div class="block-container">
 			<div class="block-body">
 				<xf:datalist>
@@ -15,9 +15,9 @@
 						<xf:datarow
 									label="{$profile.page_title}"
 									hint="{{ $profile.base_url ?: '' }}"
-									href="{{ link('install-upgrade-profiles/edit', $profile) }}"
+									href="{{ link('th-install-upgrade-profiles/edit', $profile) }}"
 									toggle=""
-									delete="{{ link('install-upgrade-profiles/delete', $profile) }}">
+									delete="{{ link('th-install-upgrade-profiles/delete', $profile) }}">
 
 							<xf:toggle name="active[{$profile.profile_id}]" selected="$profile.active"
 									   class="dataList-cell--separated" submit="true"

@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Entity\\AddOnInstallBatch",
+    "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Entity\\AddOnInstallBatch",
+    "execute_order": 10,
+    "active": true
+}

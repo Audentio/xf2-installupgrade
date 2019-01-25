@@ -1,0 +1,11 @@
+{
+    "route_type": "admin",
+    "route_prefix": "th-install-upgrade-profiles",
+    "sub_name": "",
+    "format": ":int<profile_id>",
+    "build_class": "",
+    "build_method": "",
+    "controller": "ThemeHouse\\InstallAndUpgrade:Profile",
+    "context": "th_iau_profiles",
+    "action_prefix": ""
+}

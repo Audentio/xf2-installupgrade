@@ -1,0 +1,27 @@
+<xf:title>
+	{{ phrase('th_iau_select_xmls_to_import') }}
+</xf:title>
+
+<xf:form action="{$redirectUrl}" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:if is="$single">
+				<xf:radiorow name="xmls[]">
+					<xf:foreach loop="$xmls" key="$key" value="$xml">
+						<xf:option checked="{{ $selectedXml ? $xml.path == $selectedXml : !$key }}" value="{$xml.path}" label="{$xml.title}" />
+					</xf:foreach>
+				</xf:radiorow>
+				<xf:else />
+				<xf:checkboxrow>
+					<xf:foreach loop="$xmls" key="$key" value="$xml">
+						<xf:option name="xmls[]" checked="{{ !$key }}" value="{$xml.path}" label="{$xml.title}" />
+					</xf:foreach>
+				</xf:checkboxrow>
+			</xf:if>
+			<xf:hiddenval name="target" value="{$target}" />
+			<xf:hiddenval name="overwrite_style_id" value="{$overwrite}" />
+			<xf:hiddenval name="parent_style_id" value="{$parent}" />
+		</div>
+		<xf:submitrow icon="import" />
+	</div>
+</xf:form>

@@ -1,9 +1,0 @@
-{
-    "template": "style_edit",
-    "description": "Add extra fields to style edit.",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "preg_replace",
-    "find": "/(\\s*<\\/div>\\s*<xf:submitrow sticky=\"true\" icon=\"save\" \\/>)/s",
-    "replace": "<xf:macro template=\"th_iau_macros\" name=\"style_edit\" arg-style=\"{$style}\" />\n$0"
-}

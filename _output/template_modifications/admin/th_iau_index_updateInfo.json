@@ -1,0 +1,9 @@
+{
+    "template": "index",
+    "description": "Add update info",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/<xf:if is=\"\\$upgradeCheck\">(.*?)<\\/xf:if>/s",
+    "replace": "$0\n<xf:include template=\"th_iau_upgrade_info\" />"
+}

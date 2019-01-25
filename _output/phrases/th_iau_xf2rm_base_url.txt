@@ -1,1 +1,0 @@
-XenForo 2 installation base URL

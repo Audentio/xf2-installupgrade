@@ -1,1 +1,0 @@
-The email or username used to log into the account on this provider.

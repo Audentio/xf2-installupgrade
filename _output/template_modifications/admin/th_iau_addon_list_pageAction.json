@@ -1,0 +1,9 @@
+{
+    "template": "addon_list",
+    "description": "Alter add-on list page action",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:button href=\"{{ link('add-ons/install-from-archive') }}\" overlay=\"true\" icon=\"add\">\n\t\t{{ phrase('install_upgrade_from_archive') }}\n\t</xf:button>",
+    "replace": "<xf:button href=\"{{ link('add-ons/th-install-upgrade') }}\" overlay=\"true\" icon=\"add\">\n\t\t{{ phrase('th_installupgrade_install_upgrade') }}\n\t</xf:button>"
+}

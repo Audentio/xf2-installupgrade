@@ -1,9 +1,0 @@
-{
-    "event_id": "addon_post_install",
-    "execute_order": 10,
-    "callback_class": "ThemeHouse\\InstallAndUpgrade\\Listener\\AddOnPostInstall",
-    "callback_method": "run",
-    "active": true,
-    "hint": "",
-    "description": ""
-}

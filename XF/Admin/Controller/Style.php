@@ -3,287 +3,212 @@
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
+use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
+use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
-use ThemeHouse\InstallAndUpgrade\Repository\Handler;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
+use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
+use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\View;
-use XF\Util\File;
-use XF\Util\Xml;
 
 class Style extends XFCP_Style
 {
-    /**
-     * @return View
-     */
     public function actionIndex()
     {
         $response = parent::actionIndex();
 
         if ($response instanceof View) {
-            $styles = $response->getParam('styleTree')->getFlattened();
+            $styles = $response->getParam('styleTree');
+            $styles = $styles->getFlattened(0);
 
-            $updates = false;
+            $updates = [];
             foreach ($styles as $style) {
-                /** @var \XF\Entity\Style $style */
-                if ($style['record']->getRelationOrDefault('THInstallUpgradeData')->update_available) {
-                    $updates = true;
-                    break;
+                /** @var Product $product */
+                $product = $style['record']->THIAUProduct;
+
+                if ($product && !empty($product->Profile->getHandler())
+                    && $product->Profile->getHandler()->compareVersions($style['record']->th_iau_current_version,
+                        $product->latest_version)) {
+                    $updates[] = $style['record'];
                 }
             }
 
-            $response->setParam('th_iau_updates_available', $updates);
+            $response->setParam('updates', $updates);
         }
 
         return $response;
     }
 
-    /**
-     * @param \XF\Entity\Style $style
-     * @return \XF\Mvc\FormAction
-     */
-    protected function styleSaveProcess(\XF\Entity\Style $style)
+    public function actionThInstallUpgrade()
     {
-        $form = parent::styleSaveProcess($style);
+        /** @var InstallAndUpgrade $repo */
+        $repo = $this->getInstallUpgradeRepo();
 
-        $installUpgradeData = $style->getRelationOrDefault('THInstallUpgradeData');
+        if (!$repo->canUseInstallUpgrade($error)) {
+            return $this->error($error);
+        }
 
-        $dataInput = $this->filter([
-            'current_version' => 'str',
-            'download_url' => 'str',
-            'extra' => 'array-str'
+        $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')
+            ->fetch();
+
+        $products = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
+            ->where('product_type', '=', 'style')
+            ->fetch()->groupBy('profile_id');
+
+        return $this->view('ThemeHouse\InstallAndUpgrade:Style\InstallUpgrade', 'th_iau_style_install_upgrade', [
+            'products' => $products,
+            'profiles' => $profiles,
+            'styleTree' => $this->repository('XF:Style')->getStyleTree(false)
         ]);
-
-        $form->basicEntitySave($installUpgradeData, $dataInput);
-
-        return $form;
     }
 
     /**
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|View
      * @throws \XF\Mvc\Reply\Exception
      * @throws \Exception
      */
-    public function actionImport()
+    public function actionThInstallUpgradeProduct()
     {
-        if ($this->isPost()) {
+        $productId = $this->filter('install', 'str');
+        /** @var Product $product */
+        $product = $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Product', explode('-', $productId),
+            ['Profile']);
 
-            switch ($this->filter('file_type', 'str')) {
-                case 'local':
-                    $file = $this->filter('file', 'str');
+        $profile = $product->Profile;
+        /** @var AbstractHandler $handler */
+        $handler = $profile->getHandler();
+        if (!$handler || !$handler->getCapability('productList')) {
+            return $this->error('th_installupgrade_provider_not_found_or_cannot_install_from_product_list');
+        }
 
-                    $abstractPath = 'internal-data://install-upgrade/xmls/' . $file;
+        if ($product->product_type != 'style') {
+            return $this->error('th_installupgrade_selected_product_must_be_style');
+        }
 
-                    if (!File::abstractedPathExists($abstractPath)) {
-                        return $this->error(\XF::phrase('th_iau_file_x_not_found', ['file' => $abstractPath]));
-                    }
+        /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
+        $controllerPlugin = $this->plugin('ThemeHouse\InstallAndUpgrade:Profile');
 
-                    $filePath = File::copyAbstractedPathToTempFile($abstractPath);
-                    break;
+        return $controllerPlugin->handleReply($handler, $product->Profile, function () use ($handler, $product) {
+            /** @var ProductBatch $productBatch */
+            $productBatch = $this->em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
+            /** @var StyleHandler $handler */
+            $productBatch->addProduct($product, $handler->downloadStyleProduct($product));
+            $productBatch->save();
 
-                case 'url':
-                    return $this->downloadStyle();
-
-                case 'upload_zip':
-                    /** @var Handler $repository */
-                    $repository = $this->repository('ThemeHouse\InstallAndUpgrade:Handler');
-                    /** @var \ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Upload $handler */
-                    $handler = $repository->getHandlerByName('upload');
-
-                    $files = $handler->installStyle();
-
-                    if (!$files || empty($files)) {
-                        return $this->error(\XF::phrase('th_iau_no_xml_files_found_in_package'));
-                    }
-
-                    return $this->redirect($this->buildLink('styles/import', null, ['files' => $files]),
-                        \XF::phrase('th_iau_style_successfully_uploaded'));
-
-                case 'upload':
-                default:
-                    return parent::actionImport();
-            }
-
-            /** @var \XF\Service\Style\Import $styleImporter */
-            $styleImporter = $this->service('XF:Style\Import');
-
-            try {
-                $document = Xml::openFile($filePath);
-            } catch (\Exception $e) {
-                $document = null;
-            }
-
-            if (!$styleImporter->isValidXml($document, $error)) {
-                return $this->error($error);
-            }
-
-            $input = $this->filter([
-                'target' => 'str',
-                'parent_style_id' => 'uint',
-                'overwrite_style_id' => 'uint'
-            ]);
-
-            if ($input['target'] == 'overwrite') {
-                /** @var \XF\Entity\Style $overwriteStyle */
-                $overwriteStyle = $this->assertRecordExists('XF:Style', $input['overwrite_style_id']);
-                $styleImporter->setOverwriteStyle($overwriteStyle);
-            } else {
-                $parentStyle = $input['parent_style_id']
-                    ? $this->assertRecordExists('XF:Style', $input['parent_style_id'])
-                    : null;
-                $styleImporter->setParentStyle($parentStyle);
-            }
-
-            $style = $styleImporter->importFromXml($document);
-
-            /** @var Product $product */
-            $product = $this->em()->find('ThemeHouse\InstallAndUpgrade:Product', $this->filter([
-                'profile_id' => 'uint',
-                'product_id' => 'str'
+            return $this->redirect($this->buildLink('th-install-upgrade/install-products', $productBatch, [
+                'target' => $this->filter('target', 'str'),
+                'overwrite_style_id' => $this->filter('overwrite_style_id', 'uint'),
+                'parent_style_id' => $this->filter('parent_style_id', 'uint')
             ]));
-
-            $data = $style->getRelationOrDefault('THInstallUpgradeData');
-            $data->extra = array_merge($data->extra, [
-                'child' => strpos($file, 'child') !== false
-            ]);
-
-            if($product) {
-                $product->Profile->handler->convertProductToData($product, $data);
-            }
-            else {
-                $data->save();
-            }
-
-            return $this->redirect($this->buildLink('styles'));
-        }
-
-        $response = parent::actionImport();
-
-        if (!$this->isPost() && $response instanceof View) {
-            $response->setParam('files', $this->filter('files', 'array-array-str'));
-            $response->setParam('style_id', $this->filter('style_id', 'uint'));
-        }
-
-        return $response;
+        }, [
+            'target' => $this->filter('target', 'str'),
+            'overwrite_style_id' => $this->filter('overwrite_style_id', 'uint'),
+            'parent_style_id' => $this->filter('parent_style_id', 'uint')
+        ]);
     }
 
     /**
+     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\View
      * @throws \Exception
      */
-    protected function downloadStyle()
+    public function actionThInstallUpgradeUrl()
     {
         $url = $this->filter('url', 'str');
 
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            return $this->error('No valid URL entered.');
-        }
+        /** @var InstallAndUpgrade $repo */
+        $repo = $this->getInstallUpgradeRepo();
 
-        /** @var Handler $repository */
-        $repository = $this->repository('ThemeHouse\InstallAndUpgrade:Handler');
-
-        /** @var AbstractHandler $handler */
-        $handler = $repository->getHandler('url', $url);
-
-        if (!$handler) {
-            return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => $url]));
-        }
-
-        $profile = $handler->getProfileForUrl($url);
+        /** @var Profile $profile */
+        $profile = $repo->getProfileFromUrl($url, $error);
 
         if (!$profile) {
-            return $this->error(\XF::phrase('th_iau_no_profile_found_for_x', ['item' => $url]));
+            return $this->error($error);
         }
 
-        $parentStyleId = $this->filter('parent_style_id', 'int');
+        $handler = $profile->getHandler();
 
-        $encryptionSecret = null;
-        if ($profile->requires_decryption) {
-            if (isset(\XF::config('installAndUpgrade')['secrets'][$profile->profile_id])) {
-                $encryptionSecret = \XF::config('installAndUpgrade')['secrets'][$profile->profile_id];
-                $handler->setEncryptionSecret($encryptionSecret);
-            } else {
-                if ($encryptionSecret = $this->filter('encryption_secret', 'str')) {
-                    $handler->setEncryptionSecret($encryptionSecret);
-                } else {
-                    $viewParams = [
-                        'profile' => $profile,
-                        'extra' => [
-                            'parent_style_id' => $parentStyleId,
-                            'file_type' => 'url',
-                            'url' => $url,
-                        ],
-                        'return_url' => $this->buildLink('styles/import')
-                    ];
-                    return $this->view('ThemeHouse\InstallAndUpgrade:Decrypt', 'th_iau_encryption_secret', $viewParams);
-                }
-            }
+        if (!$handler->getCapability('style')) {
+            return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_styles'));
         }
 
-        if ($profile->has_tfa) {
-            if ($key = $this->filter('tfa_key', 'str')) {
-                $handler->setTfaKey($key);
-            } else {
-                $viewParams = [
-                    'profile' => $profile,
-                    'encryptionSecret' => $encryptionSecret,
-                    'extra' => [
-                        'parent_style_id' => $parentStyleId,
-                        'file_type' => 'url',
-                        'url' => $url,
-                    ],
-                    'return_url' => $this->buildLink('styles/import')
-                ];
-                return $this->view('ThemeHouse\InstallAndUpgrade:TFA', 'th_iau_tfa_key', $viewParams);
-            }
-        }
+        /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
+        $controllerPlugin = $this->plugin('ThemeHouse\InstallAndUpgrade:Profile');
 
-        $product = $handler->createProductFromUrl($url, 'style');
+        return $controllerPlugin->handleReply($handler, $profile, function () use ($handler, $url) {
 
-        if (!$product) {
-            return $this->error(\XF::phrase('th_iau_provider_not_suported_product_from_url_or_url_invalid'));
-        }
+            /** @var ProductBatch $productBatch */
+            $productBatch = $this->em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
+            /** @var StyleHandler $handler */
+            $product = $handler->createStyleProductFromURL($url);
+            $productBatch->addProduct($product, $handler->downloadStyleProduct($product));
+            $productBatch->save();
 
-        if ($product instanceof \Exception) {
-            return $this->error($product->getMessage());
-        }
-
-        $files = $handler->installStyle($product, $profile);
-
-        if (!$files || empty($files)) {
-            return $this->error(\XF::phrase('th_iau_no_xml_files_found_in_package'));
-        }
-
-        return $this->redirect($this->buildLink('styles/import', null, ['files' => $files, 'product' => $product]),
-            \XF::phrase('th_iau_style_successfully_downloaded'));
+            return $this->redirect($this->buildLink('th-install-upgrade/install-products', $productBatch, [
+                'target' => $this->filter('target', 'str'),
+                'overwrite_style_id' => $this->filter('overwrite_style_id', 'uint'),
+                'parent_style_id' => $this->filter('parent_style_id', 'uint')
+            ]));
+        }, [
+            'target' => $this->filter('target', 'str'),
+            'overwrite_style_id' => $this->filter('overwrite_style_id', 'uint'),
+            'parent_style_id' => $this->filter('parent_style_id', 'uint'),
+            'url' => $this->filter('url', 'str')
+        ]);
     }
 
     /**
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|View
-     * @throws \XF\PrintableException
+     * @param ParameterBag $params
+     * @return View
+     * @throws \Exception
      */
-    public function actionBulkDelete()
+    public function actionThInstallUpgradeUpdate(ParameterBag $params)
     {
+        /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\Style $style */
+        $style = $this->assertStyleExists($params->style_id);
+        /** @var Product $product */
+        $product = $style->THIAUProduct;
+
+        if (!$product->update_available) {
+            return $this->notFound();
+        }
+
         if ($this->isPost()) {
-            $styleIds = $this->filter('to_delete', 'array-int');
-            $styles = $this->finder('XF:Style')->where('style_id', '=', $styleIds)->fetch();
+            $handler = $product->Profile->getHandler();
 
-            foreach ($styles as $style) {
-                /** @var \XF\Entity\Style $style */
-                if (!$style->preDelete()) {
-                    return $this->error($style->getErrors());
-                }
-            }
+            /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
+            $controllerPlugin = $this->plugin('ThemeHouse\InstallAndUpgrade:Profile');
 
-            foreach ($styles as $style) {
-                $style->delete();
-            }
+            return $controllerPlugin->handleReply($handler, $product->Profile,
+                function () use ($handler, $product, $style) {
+                    /** @var ProductBatch $productBatch */
+                    $productBatch = $this->em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
+                    /** @var StyleHandler $handler */
+                    $productBatch->addProduct($product, $handler->downloadStyleProduct($product));
+                    $productBatch->save();
 
-            return $this->redirect($this->buildLink('styles'));
+                    return $this->redirect($this->buildLink('th-install-upgrade/install-products', $productBatch, [
+                        'target' => 'overwrite',
+                        'overwrite_style_id' => $style->style_id
+                    ]));
+                }, [
+                    'target' => 'overwrite',
+                    'overwrite_style_id' => $style->style_id
+                ]);
         } else {
             $viewParams = [
-                'styles' => $this->getStyleRepo()->getStyleTree()->getFlattened()
+                'style' => $style,
+                'product' => $product
             ];
 
-            return $this->view('ThemeHouse\InstallAndUpgrade:Style\BulkDelete', 'th_iau_style_bulk_delete',
-                $viewParams);
+            return $this->view('ThemeHouse\InstallAndUpgrade:Style\Upgrade', 'th_iau_style_upgrade', $viewParams);
         }
+    }
+
+    /**
+     * @return InstallAndUpgrade
+     */
+    protected function getInstallUpgradeRepo()
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
     }
 }

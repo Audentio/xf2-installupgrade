@@ -1,0 +1,76 @@
+<xf:title>{{ phrase('th_installupgrade_log') }}</xf:title>
+
+<xf:form action="{{ link('th-installupgrade-log') }}" class="block">
+	<div class="block-outer">
+		<div class="filterBlock">
+			<ul class="listInline">
+				<li>
+					<xf:select name="content_type" class="filterBlock-input" value="{$linkFilters.content_type}">
+						<xf:option>{{ phrase('(all_content_types)') }}</xf:option>
+						<xf:foreach loop="$contentTypes" key="$contentType" value="$phrase">
+							<xf:option value="{$contentType}">{$phrase}</xf:option>
+						</xf:foreach>
+					</xf:select>
+				</li>
+				<li>
+					<xf:textbox name="username" value="{$linkFilters.username}" ac="single"
+								class="input filterBlock-input"
+								placeholder="{{ phrase('user_name') }}" />
+				</li>
+				<li>
+					<div class="inputGroup inputGroup--auto inputGroup--inline">
+						<xf:dateinput name="start" value="{{ $linkFilters.start ? date($linkFilters.start, 'Y-m-d') : '' }}"
+									  class="filterBlock-input filterBlock-input--small" />
+						<span class="inputGroup-text">-</span>
+						<xf:dateinput name="end" value="{{ $linkFilters.end ? date($linkFilters.end, 'Y-m-d') : '' }}"
+									  class="filterBlock-input filterBlock-input--small" />
+						<span class="inputGroup-splitter"></span>
+					</div>
+				</li>
+				<li>
+					<xf:select name="date_preset" class="js-presetChange filterBlock-input">
+						<xf:option label="{{ phrase('date_presets:') }}" value="-1" />
+						<xf:optgroup>
+							<xf:options source="{$datePresets}" />
+							<xf:option value="1995-01-01">{{ phrase('all_time') }}</xf:option>
+						</xf:optgroup>
+					</xf:select>
+				</li>
+				<li>
+					<xf:button type="submit" class="button--small">{{ phrase('go') }}</xf:button>
+				</li>
+			</ul>
+		</div>
+	</div>
+</xf:form>
+
+<xf:if is="$entries">
+	<div class="block">
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist data-xf-init="responsive-data-list">
+					<xf:datarow rowtype="header">
+						<xf:cell>{{ phrase('action') }}</xf:cell>
+						<xf:cell>{{ phrase('user') }}</xf:cell>
+						<xf:cell>{{ phrase('date_time') }}</xf:cell>
+					</xf:datarow>
+					<xf:foreach loop="$entries" value="$entry">
+						<xf:datarow>
+							<xf:cell class="u-ltr">{$entry.action_phrase}</xf:cell>
+							<xf:cell><xf:username user="$entry.User" href="{{ link('users/edit', $entry.User) }}" /></xf:cell>
+							<xf:cell><xf:date time="{$entry.log_date}" /></xf:cell>
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($entries, $total) }}</span>
+			</div>
+		</div>
+		<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}"
+					link="logs/admin" params="{$linkFilters}"
+					wrapperclass="block-outer block-outer--after" />
+	</div>
+	<xf:else />
+	<div class="blockMessage">{{ phrase('no_entries_have_been_logged') }}</div>
+</xf:if>

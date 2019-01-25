@@ -1,9 +1,0 @@
-{
-    "parent_navigation_id": "",
-    "display_order": 110,
-    "link": "install-upgrade",
-    "icon": "fa-download",
-    "admin_permission_id": "",
-    "debug_only": false,
-    "hide_no_children": true
-}

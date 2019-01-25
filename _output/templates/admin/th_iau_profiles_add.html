@@ -1,10 +1,12 @@
-<xf:title>{{ phrase('th_iau_select_provider') }}</xf:title>
+<xf:title>{{ phrase('th_installupgrade_select_provider') }}</xf:title>
 
-<xf:form action="{{ link('install-upgrade-profiles/add') }}" class="block">
+<xf:form action="{{ link('th-install-upgrade-profiles/add') }}" class="block">
 	<div class="block-container">
 		<div class="block-body">
-			<xf:selectrow label="{{ phrase('th_iau_provider') }}" name="provider_id">
-				<xf:options source="{$providers}" />
+			<xf:selectrow label="{{ phrase('th_installupgrade_provider') }}" name="provider_id">
+				<xf:foreach loop="$providers" value="$provider" key="$providerId">
+					<xf:option value="{$providerId}">{$provider.title}</xf:option>
+				</xf:foreach>
 			</xf:selectrow>
 			
 			<xf:submitrow sticky="true" icon="save" />

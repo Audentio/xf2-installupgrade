@@ -1,56 +1,29 @@
 {
-    "admin/th_iau_addon_addon_controls_update_check.json": {
-        "hash": "661e2b7ca3a85f7fa12c610fc75d2cdb"
+    "admin/th_iau_addon_list_macros_upgradeButton.json": {
+        "hash": "721dceda1d1405889d405edaf0c8e2b6"
     },
-    "admin/th_iau_addon_controls_json_hash.json": {
-        "hash": "b2f26982a6762aa0e8e90a43a113d4bf"
+    "admin/th_iau_addon_list_pageAction.json": {
+        "hash": "4aa03e964aaab07ceb1d89963d3399e9"
     },
-    "admin/th_iau_addon_install.json": {
-        "hash": "ab87039df24baed423c18b57dbb1c85e"
+    "admin/th_iau_index_updateInfo.json": {
+        "hash": "650b3d82db476d17d98dbede2fdb7113"
     },
-    "admin/th_iau_addon_list_macros_json_hash.json": {
-        "hash": "03ed075100bead8698def61da9683d0a"
+    "admin/th_iau_language_list_pageAction.json": {
+        "hash": "625bfc79a604072f9d05ae21280a722f"
     },
-    "admin/th_iau_addon_list_macros_update.json": {
-        "hash": "86975ca3327aaa43f4f4443c230fc6bc"
+    "admin/th_iau_language_list_updateList.json": {
+        "hash": "dd333c9f7f9ca2555da247abbae940af"
     },
-    "admin/th_iau_addon_list_pageActions.json": {
-        "hash": "c15aaf9c1ac358bdddd5788e97625271"
+    "admin/th_iau_language_list_versionString.json": {
+        "hash": "7336a82b5808d9580ea4ae3e9d074db6"
     },
-    "admin/th_iau_index.json": {
-        "hash": "ccf8ba6189f0e8c7f320aa7d2600483a"
+    "admin/th_iau_style_list_pageAction.json": {
+        "hash": "fb3c1ff6453f954986d5d19212c39f7a"
     },
-    "admin/th_iau_language_edit.json": {
-        "hash": "3a962d2abef8758c6041ea285d94ffb0"
+    "admin/th_iau_style_list_updateList.json": {
+        "hash": "38bfc775cdb05d1aaf31bb130afa5066"
     },
-    "admin/th_iau_language_import.json": {
-        "hash": "6c5a7fc4506c510f38c34da1927923e8"
-    },
-    "admin/th_iau_language_list_main.json": {
-        "hash": "420e7ce78a1faefc840ece5abc65fe31"
-    },
-    "admin/th_iau_language_list_pageActions.json": {
-        "hash": "d2170724cfc9cff8ec0f4506287a0ed8"
-    },
-    "admin/th_iau_language_list_pageActions_end.json": {
-        "hash": "3ecfbff47c64ba497825a40612dcd618"
-    },
-    "admin/th_iau_style_edit.json": {
-        "hash": "15fd6891e6d1771ea062efa671d38dd2"
-    },
-    "admin/th_iau_style_import.json": {
-        "hash": "c4b3f49a2324dde827aebf8365c9340a"
-    },
-    "admin/th_iau_style_list_main.json": {
-        "hash": "18256f1851c4f6c6e6551ddd1cf30c68"
-    },
-    "admin/th_iau_style_list_pageActions.json": {
-        "hash": "509d56db274f15fc76b384b556af2a5f"
-    },
-    "admin/th_iau_style_list_pageActions_end.json": {
-        "hash": "4d8d2680f896e7cdd5b55d9937488a47"
-    },
-    "public/th_iau_PAGE_CONTAINER_copyright.json": {
-        "hash": "c2a851ed8ee2cc1e29ad687e1510e679"
+    "admin/th_iau_style_list_versionString.json": {
+        "hash": "921b9d00db1f5bd69045797fe4e1ef76"
     }
 }

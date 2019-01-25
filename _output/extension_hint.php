@@ -11,25 +11,15 @@ namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller
 	class XFCP_Style extends \XF\Admin\Controller\Style {}
 }
 
-namespace ThemeHouse\InstallAndUpgrade\XF
-{
-	class XFCP_DesignerOutput extends \XF\DesignerOutput {}
-}
-
 namespace ThemeHouse\InstallAndUpgrade\XF\Entity
 {
 	class XFCP_AddOn extends \XF\Entity\AddOn {}
+	class XFCP_AddOnInstallBatch extends \XF\Entity\AddOnInstallBatch {}
+	class XFCP_Language extends \XF\Entity\Language {}
 	class XFCP_Style extends \XF\Entity\Style {}
 }
 
-namespace ThemeHouse\InstallAndUpgrade\XF\Service\Language
+namespace ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive
 {
-	class XFCP_Export extends \XF\Service\Language\Export {}
-	class XFCP_Import extends \XF\Service\Language\Import {}
-}
-
-namespace ThemeHouse\InstallAndUpgrade\XF\Service\Style
-{
-	class XFCP_Export extends \XF\Service\Style\Export {}
-	class XFCP_Import extends \XF\Service\Style\Import {}
+	class XFCP_InstallBatchCreator extends \XF\Service\AddOnArchive\InstallBatchCreator {}
 }

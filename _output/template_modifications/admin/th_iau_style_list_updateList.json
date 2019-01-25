@@ -1,0 +1,9 @@
+{
+    "template": "style_list",
+    "description": "Show available style update list.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<xf:if is=\"$styleTree is not empty\">",
+    "replace": "<xf:include template=\"th_iau_style_update_list\" />\n$0"
+}

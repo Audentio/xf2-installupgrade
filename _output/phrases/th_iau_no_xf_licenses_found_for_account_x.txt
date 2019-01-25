@@ -1,1 +1,0 @@
-No XenForo licenses found for account {account}.

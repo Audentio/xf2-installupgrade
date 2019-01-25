@@ -1,0 +1,45 @@
+<xf:if is="$updates is not empty">
+	<div class="block">
+		<div class="block-container">
+			<h3 class="block-header">
+				{{ phrase('th_installupgrade_upgradeable_languages') }}
+			</h3>
+			<ol class="block-body">
+				<div class="addOnList">
+					<xf:foreach loop="$updates" value="$update">
+						<xf:macro name="language_update" arg-language="{$update}" />
+					</xf:foreach>
+				</div>
+			</ol>
+		</div>
+	</div>
+</xf:if>
+
+<xf:macro name="language_update" arg-language="!">
+	<xf:css src="addon_list.less" />
+
+	<li class="block-row block-row--separated addonList-row">
+		<div class="contentRow">
+			<div class="contentRow-figure">
+				<div class="contentRow-figureIcon">
+					<xf:if is="$language.THIAUProduct.extra.thumbnail">
+						<image src="{$language.THIAUProduct.extra.thumbnail}" />
+					</xf:if>
+				</div>
+			</div>
+			<div class="contentRow-main">
+				<div class="contentRow-extra">
+					<xf:button href="{{ link('languages/th-install-upgrade-update', $language) }}" overlay="true">
+						{{ phrase('upgrade') }}
+					</xf:button>
+				</div>
+				<h3 class="contentRow-header js-filterSearchable">
+					{$language.title} <span class="contentRow-muted">{$language.THIAUProduct.latest_version}</span>
+				</h3>
+				<div class="contentRow-lesser js-filterSearchable{{ !$language.THIAUProduct.description ? ' no-description' : '' }}">
+					{{ snippet($language.THIAUProduct.description, 200)|nl2br }}
+				</div>
+			</div>
+		</div>
+	</li>
+</xf:macro>

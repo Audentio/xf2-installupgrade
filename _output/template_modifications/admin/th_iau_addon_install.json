@@ -1,9 +1,0 @@
-{
-    "template": "addon_install",
-    "description": "",
-    "execution_order": 10,
-    "enabled": true,
-    "action": "str_replace",
-    "find": "</xf:form>",
-    "replace": "<xf:hiddenval name=\"product_id\" value=\"{$product.product_id}\" />\n<xf:hiddenval name=\"profile_id\" value=\"{$product.profile_id}\" />\n$0"
-}

@@ -1,1 +1,0 @@
-This key will be used to encrypt the sensitive credentials for this profile. If you forget this key you will need to recreate the profile as it is not able to be recovered.

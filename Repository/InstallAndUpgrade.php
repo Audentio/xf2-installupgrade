@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
+use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use XF\Entity\Admin;
 use XF\Entity\User;
@@ -9,127 +10,117 @@ use XF\Mvc\Entity\Repository;
 
 class InstallAndUpgrade extends Repository
 {
-    /**
-     * @param User $user
-     * @param $type
-     * @param $action
-     * @param array $extra
-     * @return bool
-     */
-    public function sendAdminAlert(User $user, $type, $action, array $extra = [])
+    public function canUseInstallUpgrade(&$error, $bypassConfig = false)
     {
-        /** @var \XF\Repository\UserAlert $alertRepo */
-        $alertRepo = $this->repository('XF:UserAlert');
-        $alertRepo->alert(
-            $user,
-            0, '',
-            'user', $user->user_id,
-            "th_iau_{$type}_{$action}", $extra
-        );
+        if (!$bypassConfig && !$this->app()->config('enableAddOnArchiveInstaller')) {
+            $error = \XF::phrase('th_installupgrade_install_must_be_explicitly_enabled_explain');
+            return false;
+        }
+
+        if (!class_exists('ZipArchive')) {
+            $error = \XF::phrase('th_installupgrade_installing_is_only_supported_if_you_have_ziparchive_support');
+            return false;
+        }
+
+        $root = \XF::getRootDirectory();
+        $ds = DIRECTORY_SEPARATOR;
+
+        $mustBeWritable = [
+            "{$root}",
+            "{$root}{$ds}js",
+            "{$root}{$ds}src{$ds}addons",
+            "{$root}{$ds}styles",
+            __FILE__
+        ];
+
+        $writable = true;
+
+        foreach ($mustBeWritable AS $path) {
+            if (!is_writable($path)) {
+                $writable = false;
+                break;
+            }
+        }
+
+        if (!$writable) {
+            unset($mustBeWritable[0]);
+            $relativePaths = array_map('XF\Util\File::stripRootPathPrefix', $mustBeWritable);
+
+            $error = \XF::phrase('th_installupgrade_cannot_install_as_not_all_required_directories_writable',
+                ['relativePaths' => implode(', ', $relativePaths)]);
+            return false;
+        }
 
         return true;
     }
 
-    /**
-     * @param $url
-     * @return mixed|null|Profile
-     */
-    public function getProfileFromUrl($url)
+    public function getProfileFromUrl($url, &$error)
     {
-        $finder = $this->finder('ThemeHouse\InstallAndUpgrade:Profile');
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        $profileRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profiles = $profileRepo->findProfiles()->fetch();
 
-        $profiles = $finder->fetch();
         foreach ($profiles as $profile) {
-            /** @var Profile $profile */
-            if (strpos($profile->base_url, $url) === 0) {
+            if (strpos($url, $profile->base_url) === 0) {
                 return $profile;
             }
         }
 
+        $error = \XF::phrase('th_installupgrade_no_profile_found_for_url');
         return null;
     }
 
     /**
-     * @param $type
-     * @param $action
-     * @param array $extra
+     * @return array
+     * @throws \XF\PrintableException
      */
-    public function sendAdminAlerts($type, $action, array $extra = [])
+    public function getIndexUpdateInfo()
     {
-        $admins = $this->finder('XF:Admin')
-            ->with('User')
-            ->fetch();
+        $products = $this->finder('ThemeHouse\InstallAndUpgrade:Product')->fetch()->groupBy('product_type');
 
-        foreach ($admins as $admin) {
-            /** @var Admin $admin */
-            if ($admin->hasAdminPermission($type)) {
-                $this->sendAdminAlert($admin->User, $type, $action, $extra);
+        $updates = [
+            'addOns' => [],
+            'styles' => [],
+            'languages' => []
+        ];
+
+        if(isset($products['addOn'])) {
+            foreach ($products['addOn'] as $addOn) {
+                /** @var Product $addOn */
+                if ($addOn->update_available && $addOn->installed) {
+                    $addOnContent = $addOn->getContent();
+                    if(!$addOnContent) {
+                        $addOn->bulkSet([
+                            'update_available' => 0,
+                            'installed' => 0
+                        ]);
+                        $addOn->save();
+                    }
+                    else {
+                        $updates['addOns'][$addOn->content_id] = [
+                            'addOn' => $addOnContent,
+                            'product' => $addOn
+                        ];
+                    }
+                }
             }
         }
-    }
+        
+        $styles = $this->finder('XF:Style')->with('THIAUProduct', true)->fetch();
+        foreach ($styles as $style) {
+            $product = $style->THIAUProduct;
+            if ($product && !empty($product->Profile->getHandler())
+                && $product->Profile->getHandler()->compareVersions($style->th_iau_current_version,
+                    $product->latest_version)) {
+                $updates['styles'][$style->style_id] = [
+                    'style' => $style,
+                    'product' => $product
+                ];
+            }
+        }
 
-    /**
-     * @return null|\XF\Mvc\Entity\Entity
-     */
-    public function getAvailableXenForoUpgrade()
-    {
-        $finder = $this->finder('ThemeHouse\InstallAndUpgrade:AddOn');
+        // TODO: Languages
 
-        $finder
-            ->with('AddOn', true)
-            ->where('addon_id', '=', 'XF')
-            ->where('update_check', '=', 1)
-            ->where('update_available', '=', 1);
-
-        return $finder->fetchOne();
-    }
-
-    /**
-     * @return \XF\Mvc\Entity\Finder
-     */
-    public function getAvailableAddOnUpgrades()
-    {
-        $finder = $this->finder('ThemeHouse\InstallAndUpgrade:AddOn');
-
-        $finder
-            ->with('AddOn', true)
-            ->where('addon_id', '<>', 'XF')
-            ->where('update_check', '=', 1)
-            ->where('update_available', '=', 1)
-            ->setDefaultOrder('AddOn.title');
-
-        return $finder;
-    }
-
-    /**
-     * @return \XF\Mvc\Entity\Finder
-     */
-    public function getAvailableStyleUpgrades()
-    {
-        $finder = $this->finder('ThemeHouse\InstallAndUpgrade:Style');
-
-        $finder
-            ->with('Style', true)
-            ->where('update_check', '=', 1)
-            ->where('update_available', '=', 1)
-            ->setDefaultOrder('Style.title');
-
-        return $finder;
-    }
-
-    /**
-     * @return \XF\Mvc\Entity\Finder
-     */
-    public function getAvailableLanguageUpgrades()
-    {
-        $finder = $this->finder('ThemeHouse\InstallAndUpgrade:Language');
-
-        $finder
-            ->with('Language', true)
-            ->where('update_check', '=', 1)
-            ->where('update_available', '=', 1)
-            ->setDefaultOrder('Language.title');
-
-        return $finder;
+        return $updates;
     }
 }

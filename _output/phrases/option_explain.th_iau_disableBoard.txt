@@ -1,1 +1,0 @@
-When enabled, the install & upgrade process will automatically disable your board while any action is performed.

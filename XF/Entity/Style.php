@@ -2,73 +2,60 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Entity;
 
+use ThemeHouse\InstallAndUpgrade\Entity\Product;
+use XF\Mvc\Entity\Structure;
 use XF\Util\File;
 use XF\Util\Hash;
 use XF\Util\Json;
 
+
+/**
+ * Class Style
+ * @package ThemeHouse\InstallAndUpgrade\XF\Entity
+ *
+ * @property integer th_iau_profile_id
+ * @property string th_iau_product_id
+ * @property string th_iau_xml
+ * @property string th_iau_current_version
+ *
+ * @property Product THIAUProduct
+ */
 class Style extends XFCP_Style
 {
-    public function isInstallUpgradeJsonHashChanged()
+    public static function getStructure(Structure $structure)
     {
-        $designerModePath = \XF::app()->designerOutput()->getDesignerModePath($this->designer_mode);
-        $jsonPath = $designerModePath . DIRECTORY_SEPARATOR . 'install-upgrade.json';
+        $structure = parent::getStructure($structure);
 
-        if (!file_exists($jsonPath)) {
-            return false;
-        }
+        $structure->columns['th_iau_profile_id'] = [
+            'type' => self::UINT,
+            'default' => 0
+        ];
 
-        $currentHash = Hash::hashTextFile($jsonPath, 'sha256');
-        $oldHash = $this->getRelationOrDefault('THInstallUpgradeData')->json_hash;
-        return $currentHash !== $oldHash;
-    }
+        $structure->columns['th_iau_product_id'] = [
+            'type' => self::STR,
+            'default' => 0
+        ];
 
-    /**
-     * @throws \XF\PrintableException
-     */
-    public function importInstallUpgradeJSON()
-    {
-        if(!$this->designer_mode) {
-            return;
-        }
+        $structure->columns['th_iau_xml'] = [
+            'type' => self::STR,
+            'default' => 0
+        ];
 
-        /** @var Style $data */
-        $data = $this->getRelationOrDefault('THInstallUpgradeData');
+        $structure->columns['th_iau_current_version'] = [
+            'type' => self::STR,
+            'default' => 0
+        ];
 
-        $designerModePath = \XF::app()->designerOutput()->getDesignerModePath($this->designer_mode);
-        $jsonPath = $designerModePath . DIRECTORY_SEPARATOR . 'install-upgrade.json';
+        $structure->relations['THIAUProduct'] = [
+            'entity' => 'ThemeHouse\InstallAndUpgrade:Product',
+            'type' => self::TO_ONE,
+            'conditions' => [
+                ['product_type', '=', 'style'],
+                ['product_id', '=', '$th_iau_product_id'],
+                ['profile_id', '=', '$th_iau_profile_id']
+            ]
+        ];
 
-        if (!file_exists($jsonPath)) {
-            return;
-        }
-
-        $jsonData = json_decode(file_get_contents($jsonPath), true);
-        $data->bulkSet($jsonData);
-        $data->json_hash = Hash::hashTextFile($jsonPath, 'sha256');
-        $data->save();
-    }
-
-    public function exportInstallUpgradeJSON()
-    {
-        if(!$this->designer_mode) {
-            return;
-        }
-
-        $designerModePath = \XF::app()->designerOutput()->getDesignerModePath($this->designer_mode);
-        $jsonPath = $designerModePath . DIRECTORY_SEPARATOR . 'install-upgrade.json';
-
-
-        if (!file_exists($jsonPath)) {
-            /** @var Style $data */
-            $data = $this->getRelationOrDefault('THInstallUpgradeData');
-            $fileData = [
-                'download_url' => $data->download_url,
-                'current_version' => $data->current_version,
-                'extra' => $data->extra
-            ];
-
-            File::writeFile($jsonPath, Json::jsonEncodePretty($fileData), false);
-            $data->json_hash = Hash::hashTextFile($jsonPath, 'sha256');
-            $data->save();
-        }
+        return $structure;
     }
 }

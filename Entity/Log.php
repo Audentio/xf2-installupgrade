@@ -2,96 +2,52 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
-use XF\Entity\Phrase;
-use XF\Entity\User;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * COLUMNS
- * @property int log_id
- * @property string content_type
+ * Class Log
+ * @package ThemeHouse\InstallAndUpgrade\Entity
+ *
+ * @property integer log_id
+ * @property integer profile_id
+ * @property string product_Id
+ * @property integer user_id
+ * @property integer log_date
  * @property string action
- * @property string from_version
- * @property string to_version
+ * @property string content_type
  * @property string content_id
- * @property int user_id
- * @property int timestamp
+ * @property array extra
  *
- * GETTERS
- * @property null|AddOn|Language|Style Content
- * @property \XF\Phrase content_type_phrase
- * @property mixed|null|string content_type_url
- * @property \XF\Phrase action_phrase
- *
- * RELATIONS
+ * @property Entity Content
  * @property \XF\Entity\User User
- * @property \XF\Entity\AddOn AddOn
- * @property \XF\Entity\Style Style
- * @property \XF\Entity\Language Language
+ * @property Product Product
+ * @property Profile Profile
  */
 class Log extends Entity
 {
-    /**
-     * @return null|AddOn|Language|Style
-     */
     public function getContent()
     {
-        switch ($this->content_type) {
-            case 'language':
-                return $this->Language;
+        $types = [
+            'addOn' => 'XF:AddOn',
+            'style' => 'XF:Style',
+            'language' => 'XF:Language'
+        ];
 
-            case 'style':
-                return $this->Style;
-
-            case 'addOn':
-                return $this->AddOn;
-
-            default:
-                return null;
+        if ($this->content_type && $this->content_id) {
+            return $this->em()->find($types[$this->content_type], $this->content_id);
         }
+
+        return null;
     }
 
-    /**
-     * @return mixed|null|string
-     */
-    public function getContentTypeUrl()
-    {
-        switch ($this->content_type) {
-            case 'language':
-                return \XF::app()->router('admin')->buildLink('languages');
-
-            case 'style':
-                return \XF::app()->router('admin')->buildLink('styles');
-
-            case 'addOn':
-                return \XF::app()->router('admin')->buildLink('add-ons');
-
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * @return \XF\Phrase
-     */
-    public function getContentTypePhrase()
-    {
-        switch ($this->content_type) {
-            case 'addOn':
-                return \XF::phrase('add_on');
-
-            default:
-                return \XF::phrase($this->content_type);
-        }
-    }
-
-    /**
-     * @return \XF\Phrase
-     */
-    public function getActionPhrase()
-    {
-        return \XF::phrase("th_iau_action_{$this->action}");
+    public function getActionPhrase() {
+        $args = array_merge(
+            $this->Product->toArray(),
+            $this->extra,
+            $this->Content ? $this->Content->toArray() : []
+        );
+        return \XF::phrase('th_iau_log_action_' . $this->content_type . '_' . $this->action, $args);
     }
 
     public static function getStructure(Structure $structure)
@@ -99,34 +55,23 @@ class Log extends Entity
         $structure->table = 'xf_th_installupgrade_log';
         $structure->shortName = 'ThemeHouse\InstallAndUpgrade:Log';
         $structure->primaryKey = 'log_id';
+
         $structure->columns = [
             'log_id' => ['type' => self::UINT, 'autoIncrement' => true],
-            'content_type' => [
-                'type' => self::STR,
-                'maxLength' => 25,
-                'required' => true,
-                'allowedValues' => ['addOn', 'language', 'style']
-            ],
-            'action' => [
-                'type' => self::STR,
-                'default' => 'upgrade',
-                'allowedValues' => ['install', 'upgrade']
-            ],
-            'from_version' => ['type' => self::STR],
-            'to_version' => ['type' => self::STR],
-            'content_id' => ['type' => self::STR, 'required' => true],
-            'user_id' => ['type' => self::UINT, 'default' => 0],
-            'timestamp' => ['type' => self::UINT, 'default' => \XF::$time]
+            'profile_id' => ['type' => self::UINT, 'required' => true],
+            'product_id' => ['type' => self::STR, 'maxLength' => 200, 'default' => ''],
+            'user_id' => ['type' => self::UINT, 'default' => \XF::visitor()->user_id],
+            'log_date' => ['type' => self::UINT, 'default' => \XF::$time],
+            'action' => ['type' => self::STR, 'required' => true],
+            'content_type' => ['type' => self::STR, 'maxLength' => 100, 'default' => ''],
+            'content_id' => ['type' => self::STR, 'maxLength' => 200, 'default' => ''],
+            'extra' => ['type' => self::JSON, 'default' => []]
         ];
 
         $structure->getters = [
             'Content' => true,
-            'content_type_phrase' => true,
-            'content_type_url' => true,
-            'action_phrase' => true,
+            'action_phrase' => true
         ];
-
-        $structure->defaultWith = ['User'];
 
         $structure->relations = [
             'User' => [
@@ -135,25 +80,18 @@ class Log extends Entity
                 'conditions' => 'user_id',
                 'primary' => true
             ],
-            'AddOn' => [
-                'entity' => 'XF:AddOn',
+            'Profile' => [
+                'entity' => 'ThemeHouse\InstallAndUpgrade:Profile',
                 'type' => self::TO_ONE,
-                'conditions' => [
-                    ['addon_id', '=', '$content_id']
-                ]
+                'conditions' => 'profile_id',
+                'primary' => true
             ],
-            'Style' => [
-                'entity' => 'XF:Style',
+            'Product' => [
+                'entity' => 'ThemeHouse\InstallAndUpgrade:Product',
                 'type' => self::TO_ONE,
                 'conditions' => [
-                    ['style_id', '=', '$content_id']
-                ]
-            ],
-            'Language' => [
-                'entity' => 'XF:Language',
-                'type' => self::TO_ONE,
-                'conditions' => [
-                    ['language_id', '=', '$content_id']
+                    ['product_id', '=', '$product_id'],
+                    ['profile_id', '=', '$profile_id']
                 ]
             ]
         ];

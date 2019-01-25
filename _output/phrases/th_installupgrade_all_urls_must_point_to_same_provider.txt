@@ -1,0 +1,1 @@
+All URLs must point to the same provider.

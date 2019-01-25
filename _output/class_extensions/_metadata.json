@@ -11,25 +11,19 @@
     "XF-Admin-Controller-Style_ThemeHouse-InstallAndUpgrade-XF-Admin-Controller-Style.json": {
         "hash": "7a3e87dba9b6106531dc2f1c3ba74989"
     },
-    "XF-DesignerOutput_ThemeHouse-InstallAndUpgrade-XF-DesignerOutput.json": {
-        "hash": "30c8e8fd802d4f2146f2ea22341c0a40"
+    "XF-Entity-AddOnInstallBatch_ThemeHouse-InstallAndUpgrade-XF-Entity-AddOnInstallBatch.json": {
+        "hash": "5023bffeae805ea4e96ce0e5f2cac1fb"
     },
     "XF-Entity-AddOn_ThemeHouse-InstallAndUpgrade-XF-Entity-AddOn.json": {
         "hash": "7430acebf85649f251e21b1d3a3ec1a9"
     },
+    "XF-Entity-Language_ThemeHouse-InstallAndUpgrade-XF-Entity-Language.json": {
+        "hash": "180d6e6e6994780246ac163c6a6a710d"
+    },
     "XF-Entity-Style_ThemeHouse-InstallAndUpgrade-XF-Entity-Style.json": {
         "hash": "d318e3997f62e8ead6499583839c80be"
     },
-    "XF-Service-Language-Export_ThemeHouse-InstallAndUpgrade-XF-Service-Language-Export.json": {
-        "hash": "839804fdc71bd78b8d22e072b41b27ff"
-    },
-    "XF-Service-Language-Import_ThemeHouse-InstallAndUpgrade-XF-Service-Language-Import.json": {
-        "hash": "af8852dd0465ce6c0d59211dab91a070"
-    },
-    "XF-Service-Style-Export_ThemeHouse-InstallAndUpgrade-XF-Service-Style-Export.json": {
-        "hash": "770d2b34cd029e9f46150c2e44cf2e77"
-    },
-    "XF-Service-Style-Import_ThemeHouse-InstallAndUpgrade-XF-Service-Style-Import.json": {
-        "hash": "8d1d1ee1a1cd33425791950144a6f367"
+    "XF-Service-AddOnArchive-InstallBatchCreator_ThemeHouse-InstallAndUpgrade-XF-Service-AddOnArchive-InstallBatchCreator.json": {
+        "hash": "d03a18ce203160d720bd0faa35848a20"
     }
 }
