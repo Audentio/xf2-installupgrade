@@ -8,35 +8,63 @@ use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\AddonHandlerTrait;
-use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\HttpClientTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\VersioningTrait;
 use XF\PrintableException;
 use XF\Util\File;
+use XFApi\Client;
+use XFApi\Exception\XFApiException;
 
 class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
 {
-    use VersioningTrait, AddonHandlerTrait, HttpClientTrait;
-
-    protected $baseUrl = 'http://localhost/devboards/xf21/api/dbtech-ecommerce/';
-
+    use VersioningTrait, AddonHandlerTrait;
+    
+    protected $apiUrl = 'https://www.dragonbyte-tech.com/api';
+    
+    protected $client;
+    
+    
+    /**
+     * @return \XF\Phrase
+     */
     public function getTitle()
     {
         return \XF::phrase('install_upgrade_provider.dragonbyte');
     }
-
+    
+    /**
+     * @return string
+     */
     public function getProfileOptionsTemplate()
     {
         return 'install_upgrade_provider_config_dragonbyte';
     }
-
+    
+    /**
+     * @return array
+     */
     public function getProfileDefaultOptions()
     {
         return [];
     }
-
+    
+    /**
+     * @param array $options
+     *
+     * @return bool
+     * @throws PrintableException
+     */
     public function verifyOptions(array $options)
     {
-        // TODO: Implement verifyOptions() method.
+        $client = $this->getApiClient($options['api_key']);
+        
+        try {
+            $client->xf->index->get('/');
+        }
+        catch (XFApiException $e) {
+            throw new PrintableException($e->getMessage());
+        }
+    
+        return true;
     }
 
     /**
@@ -44,20 +72,44 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
      */
     public function getProducts()
     {
-        $installed = null; //TODO: Get Installed Products
+        $installed = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
+            ->where('content_id', 'LIKE', 'DBTech/%')
+            ->fetch()
+            ->pluckNamed('extra')
+        ;
+    
+        $installed = array_map(function ($i) {
+            return $i['product_id'];
+        }, array_filter($installed, function ($i) {
+            return $i && isset($i['product_id']);
+        }));
+        
+        $client = $this->getApiClient();
 
         // Rather than a bunch of if statements, we'll just construct the product filter this way
-        //	If no products match the platform filter, it'll just return an empty array anyway
+        //    If no products match the platform filter, it'll just return an empty array anyway
         $version = explode('.', \XF::$version);
         $platform = 'xf' . $version[0] . $version[1];
 
-        $categoryIds = in_array($this->app->request()->getIp(), ['::1', '127.0.0.1', '172.21.0.1']) ? [1, 2] : [5];
-
-        // Response should be an array representation of License entities
-        $addOns = $this->_getApiResponse('purchased/', [
-            'category_ids' => $categoryIds,
-            'platforms' => [$platform]
-        ]);
+        $categoryIds = strpos($this->apiUrl, 'http://localhost') !== false ? [1, 2] : [5];
+    
+        try {
+            $addOns = $client->dbtech_ecommerce->product->getPurchases($categoryIds, [$platform]);
+        }
+        catch (XFApiException $e) {
+            switch ($e->getCode())
+            {
+                case 402:
+                    $this->logProfileError('addOns', $e->getMessage());
+                    return;
+                    break;
+                    
+                default:
+                    \XF::logException($e);
+                    return;
+                    break;
+            }
+        }
 
         if (empty($addOns['products'])) {
             return;
@@ -145,11 +197,6 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
         }
 
         return $response['downloads'];
-    }
-
-    protected function getApiKey()
-    {
-        return empty($this->profile->extra['api_key']) ? null : $this->profile->extra['api_key'];
     }
 
     protected function _getApiHeaders()
@@ -308,5 +355,27 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
         }
 
         return $tempPath;
+    }
+    
+    /**
+     * @return string|null
+     */
+    protected function getApiKey()
+    {
+        return isset($this->profile->options['api_key']) ? $this->profile->options['api_key'] : null;
+    }
+    
+    /**
+     * @param string|null $apiKey
+     *
+     * @return Client
+     */
+    protected function getApiClient($apiKey = null)
+    {
+        if (!$this->client) {
+            $this->client = new Client($this->apiUrl, $apiKey ?: $this->getApiKey());
+        }
+        
+        return $this->client;
     }
 }
