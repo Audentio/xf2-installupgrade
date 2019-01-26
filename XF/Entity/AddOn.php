@@ -63,7 +63,8 @@ class AddOn extends XFCP_AddOn
             'conditions' => [
                 ['product_type', '=', 'addOn'],
                 ['content_id', '=', '$addon_id']
-            ]
+            ],
+            'defaultWith' => ['Profile']
         ];
 
         return $structure;

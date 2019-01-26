@@ -10,19 +10,19 @@ use XF\Mvc\Entity\Structure;
  * @property int profile_id
  * @property string product_id
  * @property string product_type
+ * @property string content_id
  * @property string title
  * @property string description
  * @property string current_version
- * @property array|null extra
- * @property integer content_id
  * @property string latest_version
- * @property boolean installed
+ * @property bool update_available
+ * @property array|null extra
+ * @property bool installed
  * @property string json_hash
- * @property boolean update_available
  *
  * GETTERS
- * @property string content_type
- * @property Entity Content
+ * @property mixed content_type
+ * @property mixed Content
  *
  * RELATIONS
  * @property \ThemeHouse\InstallAndUpgrade\Entity\Profile Profile

@@ -4,6 +4,7 @@ namespace ThemeHouse\InstallAndUpgrade;
 
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1000040;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1010030;
+use ThemeHouse\InstallAndUpgrade\Setup\Patch1010130;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
@@ -100,9 +101,12 @@ class Setup extends AbstractSetup
 
     /** 1.0.0 Beta 10 */
     use Patch1000040;
-
+    
     /** 1.1.0 */
     use Patch1010030;
+    
+    /** 1.1.1 */
+    use Patch1010130;
 
     /** ---- UNINSTALL ---- */
 

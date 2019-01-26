@@ -6,23 +6,25 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class Log
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer log_id
- * @property integer profile_id
- * @property string product_Id
- * @property integer user_id
- * @property integer log_date
+ * COLUMNS
+ * @property int log_id
+ * @property int profile_id
+ * @property string product_id
+ * @property int user_id
+ * @property int log_date
  * @property string action
  * @property string content_type
  * @property string content_id
- * @property array extra
+ * @property array|null extra
  *
- * @property Entity Content
+ * GETTERS
+ * @property mixed Content
+ * @property mixed action_phrase
+ *
+ * RELATIONS
  * @property \XF\Entity\User User
- * @property Product Product
- * @property Profile Profile
+ * @property \ThemeHouse\InstallAndUpgrade\Entity\Profile Profile
+ * @property \ThemeHouse\InstallAndUpgrade\Entity\Product Product
  */
 class Log extends Entity
 {

@@ -13,31 +13,6 @@ use XF\Mvc\Reply\View;
 
 class Language extends XFCP_Language
 {
-    public function actionIndex()
-    {
-        $response = parent::actionIndex();
-
-        if ($response instanceof View) {
-            $languages = $response->getParam('languageTree');
-            $languages = $languages->getFlattened(0);
-
-            $updates = [];
-            foreach ($languages as $language) {
-                /** @var Product $product */
-                $product = $language['record']->THIAUProduct;
-
-                if ($product && !empty($product->Profile->getHandler())
-                    && $product->update_available) {
-                    $updates[] = $language['record'];
-                }
-            }
-
-            $response->setParam('updates', $updates);
-        }
-
-        return $response;
-    }
-
     /**
      * @param ParameterBag $params
      * @return View

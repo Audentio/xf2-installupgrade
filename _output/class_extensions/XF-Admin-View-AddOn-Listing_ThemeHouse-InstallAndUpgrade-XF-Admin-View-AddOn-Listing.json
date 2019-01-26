@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Admin\\View\\AddOn\\Listing",
+    "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Admin\\View\\AddOn\\Listing",
+    "execute_order": 10,
+    "active": true
+}
