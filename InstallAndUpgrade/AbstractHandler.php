@@ -85,6 +85,8 @@ abstract class AbstractHandler implements \ArrayAccess
      * @param Product $product
      * @param $action
      * @param array $extra
+     *
+     * @throws \XF\PrintableException
      */
     protected function log(Product $product, $action, $extra = []) {
         /** @var Log $repo */
