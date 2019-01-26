@@ -12,7 +12,26 @@ class Listing extends XFCP_Listing
         {
             parent::renderHtml();
         }
-        
+    
+        $errors = [];
+        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+            ->findProfiles()
+            ->where('last_error_messages', '!=', '[]')
+            ->fetch()
+        ;
+        foreach ($profiles as $profile)
+        {
+            if (!empty($profile->last_error_messages['languages']))
+            {
+                $errors[$profile->profile_id] = [
+                    'errors' => $profile->last_error_messages['languages'],
+                    'profile' => $profile
+                ];
+            }
+        }
+    
+        $this->params['th_iau_errors'] = $errors;
+    
         $languages = $this->params['languageTree'];
         $languages = $languages->getFlattened(0);
     

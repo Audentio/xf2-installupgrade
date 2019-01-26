@@ -13,6 +13,25 @@ class Listing extends XFCP_Listing
             parent::renderHtml();
         }
     
+        $errors = [];
+        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+            ->findProfiles()
+            ->where('last_error_messages', '!=', '[]')
+            ->fetch()
+        ;
+        foreach ($profiles as $profile)
+        {
+            if (!empty($profile->last_error_messages['styles']))
+            {
+                $errors[$profile->profile_id] = [
+                    'errors' => $profile->last_error_messages['styles'],
+                    'profile' => $profile
+                ];
+            }
+        }
+    
+        $this->params['th_iau_errors'] = $errors;
+    
         $styles = $this->params['styleTree'];
         $styles = $styles->getFlattened(0);
     

@@ -60,6 +60,29 @@ class Language extends XFCP_Language
             return $this->view('ThemeHouse\InstallAndUpgrade:Language\Upgrade', 'th_iau_language_upgrade', $viewParams);
         }
     }
+    
+    public function actionThInstallUpgradeDismiss()
+    {
+        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+            ->findProfiles()
+            ->where('last_error_messages', '!=', '[]')
+            ->fetch()
+        ;
+        foreach ($profiles as $profile)
+        {
+            /** @var Profile $profile */
+            $errorMessages = $profile->last_error_messages;
+            
+            if (!empty($errorMessages['languages']))
+            {
+                unset($errorMessages['languages']);
+                
+                $profile->fastUpdate('last_error_messages', $errorMessages);
+            }
+        }
+        
+        return $this->redirect($this->buildLink('languages'));
+    }
 
     public function actionThInstallUpgrade()
     {
