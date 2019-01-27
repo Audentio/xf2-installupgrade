@@ -6,6 +6,6 @@ class UpdateCheck
 {
     public static function run()
     {
-        \XF::app()->jobManager()->enqueue('ThemeHouse\InstallAndUpgrade:UpdateCheck', [], true);
+        \XF::app()->jobManager()->enqueue('ThemeHouse\InstallAndUpgrade:UpdateCheck');
     }
 }
