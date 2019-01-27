@@ -190,41 +190,54 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     
         return $getVersionId ? $latestVersion->download_id : $latestVersion->version_string;
     }
-
+    
     /**
      * @param Product $product
+     *
      * @return mixed
      * @throws PrintableException
+     * @throws XFApiException
      */
     protected function downloadProduct(Product $product)
     {
         $page = 0;
+        $downloadableId = null;
         $client = $this->getApiClient();
         $context = $this->getContext();
     
-        $downloadableId = null;
-        do
-        {
-           $page++;
-           
-            try {
-                /** @var \XFApi\Dto\DBTech\eCommerce\DownloadsDto $downloads */
-                $downloads = $client->dbtech_ecommerce->product->getDownloads($product->product_id, $context['platform'], $context['type'], $page);
-            }
-            catch (XFApiException $e) {
-                throw new PrintableException('[DragonByte Install & Upgrade] ' . $e->getMessage());
+        if ($product->update_available) {
+            /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $latestVersion */
+            $latestVersion = $client->dbtech_ecommerce->product->getLatestVersion($product->product_id, $context['platform'], $context['type']);
+            
+            if (!$latestVersion->can_download) {
+                throw new PrintableException('Your license has expired, and you cannot download this version.<br />Please renew your license here: <a href="https://www.dragonbyte-tech.com/dbtech-ecommerce/licenses/" target="_blank">Your licenses</a>');
             }
             
-            /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $download */
-            foreach ($downloads as $download) {
-                if ($download->can_download) {
-                    $downloadableId = $download->download_id;
-                    break;
+            $downloadableId = $latestVersion->download_id;
+        }
+        else {
+            do {
+                $page++;
+               
+                try {
+                    /** @var \XFApi\Dto\DBTech\eCommerce\DownloadsDto $downloads */
+                    $downloads = $client->dbtech_ecommerce->product->getDownloads($product->product_id, $context['platform'], $context['type'], $page);
+                }
+                catch (XFApiException $e) {
+                    throw new PrintableException('[DragonByte Install & Upgrade] ' . $e->getMessage());
+                }
+                
+                /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $download */
+                foreach ($downloads as $download) {
+                    if ($download->can_download) {
+                        $downloadableId = $download->download_id;
+                        break;
+                    }
                 }
             }
+            while ($downloadableId === null && $downloads->pagination->current_page < $downloads->pagination->last_page);
         }
-        while ($downloadableId === null && $downloads->pagination->current_page < $downloads->pagination->last_page);
-
+    
         if (!$downloadableId) {
             throw new PrintableException('[DragonByte Install & Upgrade] No downloadable versions could be found.');
         }
