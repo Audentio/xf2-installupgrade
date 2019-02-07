@@ -18,6 +18,9 @@
 		<xf:cell class="dataList-cell--main">
 			<div class="dataList-mainRow">
 				{$product.title}
+				<xf:if is="$product.installed">
+					<span class="dataList-hint" dir="auto">{{ $product.update_available ? phrase('th_installupgrade_update_available') : phrase('th_installupgrade_installed') }}</span>
+				</xf:if>
 			</div>
 			<div class="dataList-subRow">
 				{$product.description}
