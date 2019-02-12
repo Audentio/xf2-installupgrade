@@ -21,9 +21,9 @@
 			</xf:if>
 
 			<xf:if is="$handler.capabilities.encryptCredentials">
-				<xf:textboxrow name="encryption_secret"
-							   label="{{ phrase('th_installupgrade_encryption_secret') }}"
-							   explain="{{ phrase('th_installupgrade_encryption_secret_explain') }}" />
+				<xf:passwordboxrow name="encryption_secret"
+								   label="{{ phrase('th_installupgrade_encryption_secret') }}"
+								   explain="{{ phrase('th_installupgrade_encryption_secret_explain') }}" />
 			</xf:if>
 			<xf:submitrow sticky="true" icon="save" />
 		</div>

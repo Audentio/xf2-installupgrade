@@ -93,7 +93,6 @@ class Setup extends AbstractSetup
     public function postInstall(array &$stateChanges)
     {
         $jobManager = \XF::app()->jobManager();
-        $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:PostInstall');
         $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
     }
 

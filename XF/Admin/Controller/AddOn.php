@@ -28,6 +28,7 @@ class AddOn extends XFCP_AddOn
 
         $products = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
             ->where('product_type', '=', 'addOn')
+            ->order(['installed', 'title'], 'ASC')
             ->fetch()->groupBy('profile_id');
 
         return $this->view('ThemeHouse\InstallAndUpgrade:AddOn\InstallUpgrade', 'th_iau_addon_install_upgrade', [
@@ -81,13 +82,7 @@ class AddOn extends XFCP_AddOn
         }
 
         /** @var AddOnHandler $handler */
-        $redirect = $handler->installAddOnProduct($product, $errors);
-
-        if ($errors) {
-            return $this->error($errors);
-        }
-
-        return $this->redirect($redirect);
+        return $handler->installAddOnProduct($product);
     }
 
     /**
