@@ -1,7 +1,14 @@
 {
+    "repositories": [
+        {
+            "type":"vcs",
+            "url":"https://github.com/filliph/xfapi-php"
+        }
+    ],
     "require": {
         "thesoftwarefanatics/php-html-parser": "^1.8.0",
-        "tunaabutbul/cloudflare-middleware": "^1.2"
+        "tunaabutbul/cloudflare-middleware": "^1.2",
+        "jakebooher/xfapi-php": "dev-master"
     },
     "replace": {
         "guzzlehttp/guzzle":"*"

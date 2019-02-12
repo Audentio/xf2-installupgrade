@@ -4,8 +4,55 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39909abc8346fdd3f8ab8f7dd4be7a6b",
+    "content-hash": "42807c6566cb3e369b79bdb907109d07",
     "packages": [
+        {
+            "name": "jakebooher/xfapi-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/filliph/xfapi-php.git",
+                "reference": "9a6ba0c55c2e46bd3edbf0655310a959b3e91b2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/filliph/xfapi-php/zipball/9a6ba0c55c2e46bd3edbf0655310a959b3e91b2c",
+                "reference": "9a6ba0c55c2e46bd3edbf0655310a959b3e91b2c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^6.3",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5",
+                "symfony/var-dumper": "^4.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "XFApi\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jake Booher",
+                    "email": "jakebooher@protonmail.com"
+                },
+                {
+                    "name": "Lukas Wieditz"
+                }
+            ],
+            "description": "A PHP library for XenForo's REST API",
+            "support": {
+                "source": "https://github.com/filliph/xfapi-php/tree/master"
+            },
+            "time": "2019-02-12T19:37:28+00:00"
+        },
         {
             "name": "paquettg/string-encode",
             "version": "0.1.1",
@@ -54,16 +101,16 @@
         },
         {
             "name": "thesoftwarefanatics/php-html-parser",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thesoftwarefanatics/php-html-parser.git",
-                "reference": "3502f0b530b20bea9a72361377510553a69e766a"
+                "reference": "2dff8676821bdbc309f64980a96b4c62020c79c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thesoftwarefanatics/php-html-parser/zipball/3502f0b530b20bea9a72361377510553a69e766a",
-                "reference": "3502f0b530b20bea9a72361377510553a69e766a",
+                "url": "https://api.github.com/repos/thesoftwarefanatics/php-html-parser/zipball/2dff8676821bdbc309f64980a96b4c62020c79c3",
+                "reference": "2dff8676821bdbc309f64980a96b4c62020c79c3",
                 "shasum": ""
             },
             "require": {
@@ -112,7 +159,7 @@
                 "html",
                 "parser"
             ],
-            "time": "2018-01-10T14:47:57+00:00"
+            "time": "2018-12-21T07:45:56+00:00"
         },
         {
             "name": "tunaabutbul/cloudflare-middleware",
@@ -160,7 +207,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "jakebooher/xfapi-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
