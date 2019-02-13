@@ -13,31 +13,6 @@ use XF\Mvc\Reply\View;
 
 class Language extends XFCP_Language
 {
-    public function actionIndex()
-    {
-        $response = parent::actionIndex();
-
-        if ($response instanceof View) {
-            $languages = $response->getParam('languageTree');
-            $languages = $languages->getFlattened(0);
-
-            $updates = [];
-            foreach ($languages as $language) {
-                /** @var Product $product */
-                $product = $language['record']->THIAUProduct;
-
-                if ($product && !empty($product->Profile->getHandler())
-                    && $product->update_available) {
-                    $updates[] = $language['record'];
-                }
-            }
-
-            $response->setParam('updates', $updates);
-        }
-
-        return $response;
-    }
-
     /**
      * @param ParameterBag $params
      * @return View
@@ -84,6 +59,29 @@ class Language extends XFCP_Language
 
             return $this->view('ThemeHouse\InstallAndUpgrade:Language\Upgrade', 'th_iau_language_upgrade', $viewParams);
         }
+    }
+    
+    public function actionThInstallUpgradeDismiss()
+    {
+        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+            ->findProfiles()
+            ->where('last_error_messages', '!=', '[]')
+            ->fetch()
+        ;
+        foreach ($profiles as $profile)
+        {
+            /** @var Profile $profile */
+            $errorMessages = $profile->last_error_messages;
+            
+            if (!empty($errorMessages['languages']))
+            {
+                unset($errorMessages['languages']);
+                
+                $profile->fastUpdate('last_error_messages', $errorMessages);
+            }
+        }
+        
+        return $this->redirect($this->buildLink('languages'));
     }
 
     public function actionThInstallUpgrade()

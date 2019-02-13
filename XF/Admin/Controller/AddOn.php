@@ -14,29 +14,6 @@ use XF\Mvc\Reply\View;
 
 class AddOn extends XFCP_AddOn
 {
-    public function actionIndex()
-    {
-        $response = parent::actionIndex();
-
-        if ($response instanceof View) {
-            $installed = $response->getParam('installed');
-            $upgradeAble = $response->getParam('upgradeable');
-
-            foreach ($installed as $addOnId => $addOn) {
-                /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\AddOn $addOn */
-                if ($addOn->THIAUProduct && $addOn->THIAUProduct->update_available) {
-                    $upgradeAble[$addOnId] = $addOn;
-                    unset($installed[$addOnId]);
-                }
-            }
-
-            $response->setParam('installed', $installed);
-            $response->setParam('upgradeable', $upgradeAble);
-        }
-
-        return $response;
-    }
-
     public function actionThInstallUpgrade()
     {
         /** @var InstallAndUpgrade $repo */
@@ -58,6 +35,29 @@ class AddOn extends XFCP_AddOn
             'products' => $products,
             'profiles' => $profiles
         ]);
+    }
+    
+    public function actionThInstallUpgradeDismiss()
+    {
+        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+            ->findProfiles()
+            ->where('last_error_messages', '!=', '[]')
+            ->fetch()
+        ;
+        foreach ($profiles as $profile)
+        {
+            /** @var Profile $profile */
+            $errorMessages = $profile->last_error_messages;
+            
+            if (!empty($errorMessages['addOns']))
+            {
+                unset($errorMessages['addOns']);
+                
+                $profile->fastUpdate('last_error_messages', $errorMessages);
+            }
+        }
+    
+        return $this->redirect($this->buildLink('add-ons'));
     }
 
     /**

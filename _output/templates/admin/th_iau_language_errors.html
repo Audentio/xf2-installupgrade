@@ -1,0 +1,17 @@
+<xf:if is="$th_iau_errors is not empty">
+	<xf:css src="th_iau_errors.less" />
+
+	<div class="blockMessage blockMessage--error blockMessage--iconic">
+		<div class="error-content">
+			<a href="{{ link('languages/th-install-upgrade-dismiss') }}" class="error-dismiss" data-xf-init="tooltip" title="{{ phrase('th_installupgrade_dismiss_errors')|for_attr }}"></a>
+			{{ phrase('th_installupgrade_following_errors_returned_fetching_products:') }}
+			<ul>
+				<xf:foreach loop="$th_iau_errors" value="$errorInfo">
+					<xf:foreach loop="$errorInfo.errors" value="$error">
+						<li>{$errorInfo.profile.page_title}: {$error}</li>
+					</xf:foreach>
+				</xf:foreach>
+			</ul>
+		</div>
+	</div>
+</xf:if>

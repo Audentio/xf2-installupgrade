@@ -13,32 +13,6 @@ use XF\Mvc\Reply\View;
 
 class Style extends XFCP_Style
 {
-    public function actionIndex()
-    {
-        $response = parent::actionIndex();
-
-        if ($response instanceof View) {
-            $styles = $response->getParam('styleTree');
-            $styles = $styles->getFlattened(0);
-
-            $updates = [];
-            foreach ($styles as $style) {
-                /** @var Product $product */
-                $product = $style['record']->THIAUProduct;
-
-                if ($product && !empty($product->Profile->getHandler())
-                    && $product->Profile->getHandler()->compareVersions($style['record']->th_iau_current_version,
-                        $product->latest_version)) {
-                    $updates[] = $style['record'];
-                }
-            }
-
-            $response->setParam('updates', $updates);
-        }
-
-        return $response;
-    }
-
     public function actionThInstallUpgrade()
     {
         /** @var InstallAndUpgrade $repo */
@@ -60,6 +34,29 @@ class Style extends XFCP_Style
             'profiles' => $profiles,
             'styleTree' => $this->repository('XF:Style')->getStyleTree(false)
         ]);
+    }
+    
+    public function actionThInstallUpgradeDismiss()
+    {
+        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+            ->findProfiles()
+            ->where('last_error_messages', '!=', '[]')
+            ->fetch()
+        ;
+        foreach ($profiles as $profile)
+        {
+            /** @var Profile $profile */
+            $errorMessages = $profile->last_error_messages;
+            
+            if (!empty($errorMessages['styles']))
+            {
+                unset($errorMessages['styles']);
+                
+                $profile->fastUpdate('last_error_messages', $errorMessages);
+            }
+        }
+        
+        return $this->redirect($this->buildLink('styles'));
     }
 
     /**

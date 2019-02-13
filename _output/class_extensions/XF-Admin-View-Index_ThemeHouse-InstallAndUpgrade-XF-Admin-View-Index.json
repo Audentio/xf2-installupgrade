@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Admin\\View\\Index",
+    "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Admin\\View\\Index",
+    "execute_order": 10,
+    "active": true
+}

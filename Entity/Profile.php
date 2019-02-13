@@ -6,17 +6,16 @@ use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
 /**
- * Class Profile
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer profile_id
+ * COLUMNS
+ * @property int|null profile_id
  * @property string provider_id
  * @property string page_title
+ * @property bool has_tfa
  * @property string base_url
  * @property array options
- * @property boolean has_tfa
- *
- * @property Provider Provider
+ * @property bool active
+ * @property bool requires_decryption
+ * @property array last_error_messages
  */
 class Profile extends Entity
 {
@@ -84,6 +83,20 @@ class Profile extends Entity
         $this->secret = $secret;
     }
 
+    protected function _postSave()
+    {
+        if (($this->isInsert() || $this->isChanged('options')) && $this->active) {
+            $handler = $this->getHandler();
+    
+            if ($handler->getCapability('productList')) {
+                $this->app()
+                    ->jobManager()
+                    ->enqueue('ThemeHouse\InstallAndUpgrade:GetProducts', [], true)
+                ;
+            }
+        }
+    }
+    
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_th_installupgrade_profile';
@@ -102,6 +115,7 @@ class Profile extends Entity
             'options' => ['type' => self::JSON_ARRAY, 'default' => []],
             'active' => ['type' => self::BOOL, 'default' => 1],
             'requires_decryption' => ['type' => self::BOOL, 'default' => 0],
+            'last_error_messages' => ['type' => self::JSON_ARRAY, 'default' => []],
         ];
         $structure->getters = [];
 

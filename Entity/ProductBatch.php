@@ -7,14 +7,12 @@ use XF\Mvc\Entity\Structure;
 use XF\Util\File;
 
 /**
- * Class ProductBatch
- * @package ThemeHouse\InstallAndUpgrade\Entity
- *
- * @property integer batch_id
- * @property integer start_date
- * @property integer complete_date
+ * COLUMNS
+ * @property int|null batch_id
+ * @property int start_date
+ * @property int complete_date
  * @property array product_ids
- * @property integer results
+ * @property array results
  */
 class ProductBatch extends Entity
 {

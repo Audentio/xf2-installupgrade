@@ -80,10 +80,12 @@ abstract class AbstractHandler implements \ArrayAccess
     {
         return $this->db();
     }
-
+    
     /**
      * @param Product $product
      * @param $action
+     * @param array $extra
+     *
      * @throws \XF\PrintableException
      */
     protected function log(Product $product, $action, $extra = []) {
@@ -198,6 +200,28 @@ abstract class AbstractHandler implements \ArrayAccess
     protected function exception($message)
     {
         throw new Exception(new Error($message));
+    }
+    
+    /**
+     * @param string $type Either "style", "language" or "addOn"
+     * @param string $error The error message itself
+     * @param bool $overwrite If true, this will overwrite all previous error messages for this type
+     */
+    protected function logProfileError($type, $error, $overwrite = true)
+    {
+        if (!$this->profile)
+        {
+            return;
+        }
+        
+        $existingErrors = $this->profile->last_error_messages;
+        if (empty($existingErrors[$type]) || $overwrite)
+        {
+            $existingErrors[$type] = [];
+        }
+        
+        $existingErrors[$type][] = $error;
+        $this->profile->fastUpdate('last_error_messages', $existingErrors);
     }
 
     public function getCapabilities()
