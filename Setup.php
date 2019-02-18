@@ -31,6 +31,7 @@ class Setup extends AbstractSetup
             $table->addColumn('options', 'blob');
             $table->addColumn('active', 'bool')->setDefault(1);
             $table->addColumn('requires_decryption', 'bool')->setDefault(0);
+            $table->addColumn('last_error_messages', 'blob');
         });
     }
 
