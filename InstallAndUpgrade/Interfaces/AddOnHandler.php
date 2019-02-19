@@ -4,7 +4,6 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
-use XF\Mvc\Entity\ArrayCollection;
 
 interface AddOnHandler
 {

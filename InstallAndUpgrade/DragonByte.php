@@ -2,8 +2,6 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
 
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\RequestException;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
@@ -17,12 +15,12 @@ use XFApi\Exception\XFApiException;
 class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
 {
     use VersioningTrait, AddonHandlerTrait;
-    
+
     protected $apiUrl = 'https://www.dragonbyte-tech.com/api';
-    
+
     protected $client;
-    
-    
+
+
     /**
      * @return \XF\Phrase
      */
@@ -30,7 +28,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     {
         return \XF::phrase('install_upgrade_provider.dragonbyte');
     }
-    
+
     /**
      * @return string
      */
@@ -38,7 +36,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     {
         return 'install_upgrade_provider_config_dragonbyte';
     }
-    
+
     /**
      * @return array
      */
@@ -46,7 +44,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     {
         return [];
     }
-    
+
     /**
      * @param array $options
      *
@@ -56,14 +54,13 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     public function verifyOptions(array $options)
     {
         $client = $this->getApiClient($options['api_key']);
-        
+
         try {
             $client->xf->index->get('/');
-        }
-        catch (XFApiException $e) {
+        } catch (XFApiException $e) {
             throw new PrintableException($e->getMessage());
         }
-    
+
         return true;
     }
 
@@ -75,36 +72,33 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
         $installed = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
             ->where('content_id', 'LIKE', 'DBTech/%')
             ->fetch()
-            ->pluckNamed('extra')
-        ;
-    
+            ->pluckNamed('extra');
+
         $installed = array_map(function ($i) {
             return $i['product_id'];
         }, array_filter($installed, function ($i) {
             return $i && isset($i['product_id']);
         }));
-        
+
         $client = $this->getApiClient();
-    
+
         try {
             $context = $this->getContext();
             $addOns = $client->dbtech_ecommerce->product->getPurchases($context['categoryIds'], [$context['platform']]);
-        }
-        catch (XFApiException $e) {
-            switch ($e->getCode())
-            {
+        } catch (XFApiException $e) {
+            switch ($e->getCode()) {
                 case 402:
                     $this->logProfileError('addOns', $e->getMessage());
                     break;
-                    
+
                 default:
                     \XF::logException($e);
                     break;
             }
-            
+
             return;
         }
-        
+
         if (empty($addOns)) {
             return;
         }
@@ -135,7 +129,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
             }
         }
     }
-    
+
     /**
      * @param $url
      *
@@ -146,7 +140,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');
     }
-    
+
     /**
      * @param $url
      * @param $error
@@ -157,7 +151,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     {
         return false;
     }
-    
+
     /**
      * @param $product
      * @param bool $getVersionId
@@ -169,28 +163,27 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
         $client = $this->getApiClient();
         try {
             $context = $this->getContext();
-            
+
             /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $latestVersion */
-            $latestVersion = $client->dbtech_ecommerce->product->getLatestVersion($product->product_id, $context['platform'], $context['type']);
-        }
-        catch (XFApiException $e) {
-            switch ($e->getCode())
-            {
+            $latestVersion = $client->dbtech_ecommerce->product->getLatestVersion($product->product_id,
+                $context['platform'], $context['type']);
+        } catch (XFApiException $e) {
+            switch ($e->getCode()) {
                 case 404:
                     $this->logProfileError('addOns', $e->getMessage());
                     break;
-        
+
                 default:
                     \XF::logException($e);
                     break;
             }
-            
+
             return '';
         }
-    
+
         return $getVersionId ? $latestVersion->download_id : $latestVersion->version_string;
     }
-    
+
     /**
      * @param Product $product
      *
@@ -204,29 +197,29 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
         $downloadableId = null;
         $client = $this->getApiClient();
         $context = $this->getContext();
-    
+
         if ($product->update_available) {
             /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $latestVersion */
-            $latestVersion = $client->dbtech_ecommerce->product->getLatestVersion($product->product_id, $context['platform'], $context['type']);
-            
+            $latestVersion = $client->dbtech_ecommerce->product->getLatestVersion($product->product_id,
+                $context['platform'], $context['type']);
+
             if (!$latestVersion->can_download) {
                 throw new PrintableException('Your license has expired, and you cannot download this version.<br />Please renew your license here: <a href="https://www.dragonbyte-tech.com/dbtech-ecommerce/licenses/" target="_blank">Your licenses</a>');
             }
-            
+
             $downloadableId = $latestVersion->download_id;
-        }
-        else {
+        } else {
             do {
                 $page++;
-               
+
                 try {
                     /** @var \XFApi\Dto\DBTech\eCommerce\DownloadsDto $downloads */
-                    $downloads = $client->dbtech_ecommerce->product->getDownloads($product->product_id, $context['platform'], $context['type'], $page);
-                }
-                catch (XFApiException $e) {
+                    $downloads = $client->dbtech_ecommerce->product->getDownloads($product->product_id,
+                        $context['platform'], $context['type'], $page);
+                } catch (XFApiException $e) {
                     throw new PrintableException('[DragonByte Install & Upgrade] ' . $e->getMessage());
                 }
-                
+
                 /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $download */
                 foreach ($downloads as $download) {
                     if ($download->can_download) {
@@ -234,26 +227,25 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
                         break;
                     }
                 }
-            }
-            while ($downloadableId === null && $downloads->pagination->current_page < $downloads->pagination->last_page);
+            } while ($downloadableId === null && $downloads->pagination->current_page < $downloads->pagination->last_page);
         }
-    
+
         if (!$downloadableId) {
             throw new PrintableException('[DragonByte Install & Upgrade] No downloadable versions could be found.');
         }
 
         $tempPath = File::getNamedTempFile('dbtech-' . $product->product_type . \XF::$time . '.zip');
-    
+
         try {
-            $client->dbtech_ecommerce->download->downloadFile($downloadableId, $context['platform'], $context['type'], $tempPath);
-        }
-        catch (XFApiException $e) {
+            $client->dbtech_ecommerce->download->downloadFile($downloadableId, $context['platform'], $context['type'],
+                $tempPath);
+        } catch (XFApiException $e) {
             throw new PrintableException('[DragonByte Install & Upgrade] ' . $e->getMessage());
         }
-    
+
         return $tempPath;
     }
-    
+
     /**
      * @return array
      */
@@ -261,14 +253,14 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     {
         // Rather than a bunch of if statements, we'll just construct the product filter this way
         $version = explode('.', \XF::$version);
-    
+
         return [
             'platform' => 'xf' . $version[0] . $version[1],
             'type' => 'full', // We don't support demo downloads
             'categoryIds' => strpos($this->apiUrl, 'http://localhost') !== false ? [1, 2] : [5]
         ];
     }
-    
+
     /**
      * @return string|null
      */
@@ -276,7 +268,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     {
         return isset($this->profile->options['api_key']) ? $this->profile->options['api_key'] : null;
     }
-    
+
     /**
      * @param string|null $apiKey
      *
@@ -287,7 +279,7 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
         if (!$this->client) {
             $this->client = new Client($this->apiUrl, $apiKey ?: $this->getApiKey());
         }
-        
+
         return $this->client;
     }
 }

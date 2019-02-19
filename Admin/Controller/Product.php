@@ -42,6 +42,9 @@ class Product extends AbstractController
         }
     }
 
+    /**
+     * @return \XF\Mvc\Reply\View
+     */
     public function actionAvailable()
     {
         $addOns = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
@@ -68,6 +71,9 @@ class Product extends AbstractController
             $viewParams);
     }
 
+    /**
+     * @return \XF\Mvc\Reply\View
+     */
     public function actionInstalled()
     {
         $addOns = $this->finder('ThemeHouse\InstallAndUpgrade:AddOn')
@@ -94,6 +100,9 @@ class Product extends AbstractController
             $viewParams);
     }
 
+    /**
+     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     */
     public function actionInstalledAdd()
     {
         if ($this->isPost()) {
@@ -150,6 +159,9 @@ class Product extends AbstractController
         }
     }
 
+    /**
+     * @return \XF\Mvc\Reply\View
+     */
     public function actionAddOn()
     {
         $addOns = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
@@ -254,6 +266,9 @@ class Product extends AbstractController
         }
     }
 
+    /**
+     * @return \XF\Mvc\Reply\View
+     */
     public function actionStyle()
     {
         $styles = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
@@ -353,6 +368,9 @@ class Product extends AbstractController
         }
     }
 
+    /**
+     * @return \XF\Mvc\Reply\View
+     */
     public function actionLanguage()
     {
         $languages = $this->finder('ThemeHouse\InstallAndUpgrade:Product')

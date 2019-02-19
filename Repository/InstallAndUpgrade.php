@@ -3,13 +3,15 @@
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
-use ThemeHouse\InstallAndUpgrade\Entity\Profile;
-use XF\Entity\Admin;
-use XF\Entity\User;
 use XF\Mvc\Entity\Repository;
 
 class InstallAndUpgrade extends Repository
 {
+    /**
+     * @param $error
+     * @param bool $bypassConfig
+     * @return bool
+     */
     public function canUseInstallUpgrade(&$error, $bypassConfig = false)
     {
         if (!$bypassConfig && !$this->app()->config('enableAddOnArchiveInstaller')) {
@@ -54,6 +56,11 @@ class InstallAndUpgrade extends Repository
         return true;
     }
 
+    /**
+     * @param $url
+     * @param $error
+     * @return mixed|null
+     */
     public function getProfileFromUrl($url, &$error)
     {
         /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
@@ -84,19 +91,18 @@ class InstallAndUpgrade extends Repository
             'languages' => []
         ];
 
-        if(isset($products['addOn'])) {
+        if (isset($products['addOn'])) {
             foreach ($products['addOn'] as $addOn) {
                 /** @var Product $addOn */
                 if ($addOn->update_available && $addOn->installed) {
                     $addOnContent = $addOn->getContent();
-                    if(!$addOnContent) {
+                    if (!$addOnContent) {
                         $addOn->bulkSet([
                             'update_available' => 0,
                             'installed' => 0
                         ]);
                         $addOn->save();
-                    }
-                    else {
+                    } else {
                         $updates['addOns'][$addOn->content_id] = [
                             'addOn' => $addOnContent,
                             'product' => $addOn
@@ -105,7 +111,7 @@ class InstallAndUpgrade extends Repository
                 }
             }
         }
-        
+
         $styles = $this->finder('XF:Style')->with('THIAUProduct', true)->fetch();
         foreach ($styles as $style) {
             $product = $style->THIAUProduct;
@@ -119,7 +125,18 @@ class InstallAndUpgrade extends Repository
             }
         }
 
-        // TODO: Languages
+        $languages = $this->finder('XF:Language')->with('THIAUProduct', true)->fetch();
+        foreach ($languages as $language) {
+            $product = $style->THIAUProduct;
+            if ($product && !empty($product->Profile->getHandler())
+                && $product->Profile->getHandler()->compareVersions($product->current_version,
+                    $product->latest_version)) {
+                $updates['languages'][$language->language_id] = [
+                    'language' => $language,
+                    'product' => $product
+                ];
+            }
+        }
 
         return $updates;
     }

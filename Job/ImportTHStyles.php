@@ -2,7 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Job;
 
-use ThemeHouse\InstallAndUpgrade\Entity\Style;
+use ThemeHouse\InstallAndUpgrade\XF\Entity\Style;
 use XF\Job\AbstractJob;
 
 class ImportTHStyles extends AbstractJob
@@ -15,7 +15,7 @@ class ImportTHStyles extends AbstractJob
      */
     public function run($maxRunTime)
     {
-        if(!isset($this->app->get('addon.cache')['ThemeHouse/UIX'])) {
+        if (!isset($this->app->get('addon.cache')['ThemeHouse/UIX'])) {
             return $this->complete();
         }
 
@@ -24,10 +24,10 @@ class ImportTHStyles extends AbstractJob
         $styles = $this->app->em()->getFinder('XF:Style')->fetch();
         foreach ($styles as $style) {
             /** @var \ThemeHouse\UIX\XF\Entity\Style $style */
-            if(!$style->th_product_id_uix) {
+            if (!$style->th_product_id_uix) {
                 continue;
             }
-            
+
             /** @var Style $product */
             $product = $style->getRelationOrDefault('THInstallUpgradeData');
             $product->bulkSet([

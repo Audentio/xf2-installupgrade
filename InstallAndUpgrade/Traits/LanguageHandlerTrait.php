@@ -6,7 +6,6 @@ use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Service\LanguageArchive\Extractor;
 use XF\Entity\Language;
-use XF\Mvc\Entity\ArrayCollection;
 use XF\Util\Xml;
 
 trait LanguageHandlerTrait
@@ -53,13 +52,12 @@ trait LanguageHandlerTrait
         /** @var \XF\Service\Language\Import $languageImporter */
         $languageImporter = $this->service('XF:Language\Import');
 
-        if($target == 'overwrite') {
+        if ($target == 'overwrite') {
             /** @var Language $language */
             $language = \XF::em()->find('XF:Language', $overwrite);
             $languageImporter->setOverwriteLanguage($language);
-        }
-        else {
-            if($target == 'parent' && $parent) {
+        } else {
+            if ($target == 'parent' && $parent) {
                 /** @var Language $language */
                 $language = \XF::em()->find('XF:Language', $parent);
                 $languageImporter->setParentLanguage($language);
@@ -81,6 +79,11 @@ trait LanguageHandlerTrait
         return $this->redirect($this->buildLink('languages'));
     }
 
+    /**
+     * @param $archive
+     * @param bool $parentOnly
+     * @return array
+     */
     protected function getLanguageXMLs($archive, $parentOnly = false)
     {
         /** @var Extractor $extractor */
@@ -109,7 +112,6 @@ trait LanguageHandlerTrait
 
     /**
      * @param Product $language
-     * @throws \XF\PrintableException
      */
     public function checkLanguageProductForUpdates(Product $language)
     {

@@ -4,10 +4,6 @@ namespace ThemeHouse\InstallAndUpgrade\XF\Entity;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use XF\Mvc\Entity\Structure;
-use XF\Util\File;
-use XF\Util\Hash;
-use XF\Util\Json;
-
 
 /**
  * Class Style
@@ -22,6 +18,10 @@ use XF\Util\Json;
  */
 class Style extends XFCP_Style
 {
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure = parent::getStructure($structure);

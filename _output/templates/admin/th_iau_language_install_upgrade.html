@@ -19,7 +19,7 @@
 					</a>
 				</xf:if>
 				<a href="#url"
-				   class="tabs-tab {{ $products.count() ? '' : 'is-active' }}"
+				   class="tabs-tab {{ $products && count($products) ? '' : 'is-active' }}"
 				   role="tab"
 				   aria-controls="url">
 					{{ phrase('th_installupgrade_install_from_url') }}
@@ -99,7 +99,7 @@
 			<xf:select name="parent_language_id">
 				<xf:option>{{ phrase('(no_parent)') }}</xf:option>
 				<xf:foreach loop="$languageTree.getFlattened(0)" value="$treeEntry">
-					<xf:option value="{$treeEntry.record.style_id}">
+					<xf:option value="{$treeEntry.record.language_id}">
 						{{ repeat('--', $treeEntry.depth) }} {$treeEntry.record.title}
 					</xf:option>
 				</xf:foreach>

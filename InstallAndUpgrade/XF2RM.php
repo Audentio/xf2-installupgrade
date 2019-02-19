@@ -29,6 +29,9 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
      */
     protected $authenticated = false;
 
+    /**
+     * @return bool
+     */
     protected function authenticate()
     {
         if ($this->authenticated) {
@@ -83,6 +86,11 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         return $this->createProductFromUrl($url, 'addOn');
     }
 
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
     public function isValidAddOnUrl($url, &$error)
     {
         return $this->isValidXFRMUrl($url, $error);
@@ -98,6 +106,11 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         return $this->createProductFromUrl($url, 'language');
     }
 
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
     public function isValidLanguageUrl($url, &$error)
     {
         return $this->isValidXFRMUrl($url, $error);
@@ -113,11 +126,21 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         return $this->createProductFromUrl($url, 'style');
     }
 
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
     public function isValidStyleUrl($url, &$error)
     {
         return $this->isValidXFRMUrl($url, $error);
     }
 
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
     protected function isValidXFRMUrl($url, &$error)
     {
         $this->authenticate();
@@ -241,6 +264,10 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         return $tempFile;
     }
 
+    /**
+     * @param Product $product
+     * @return string
+     */
     protected function getLatestVersion(Product $product)
     {
         if (!isset($product->extra['download_url'])) {
@@ -259,16 +286,25 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         return $versionContainer->offsetExists(0) ? $versionContainer->offsetGet(0)->text() : '0.0.0';
     }
 
+    /**
+     * @return \XF\Phrase
+     */
     public function getTitle()
     {
         return \XF::phrase('install_upgrade_provider.xf2rm');
     }
 
+    /**
+     * @return string
+     */
     public function getProfileOptionsTemplate()
     {
         return 'install_upgrade_provider_config_xf2rm';
     }
 
+    /**
+     * @return array
+     */
     public function getProfileDefaultOptions()
     {
         return [
@@ -277,9 +313,12 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         ];
     }
 
+    /**
+     * @param array $options
+     * @return bool
+     */
     public function verifyOptions(array $options)
     {
-        // TODO: Implement verifyOptions() method.
         return true;
     }
 }

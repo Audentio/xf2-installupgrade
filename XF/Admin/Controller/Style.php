@@ -13,6 +13,9 @@ use XF\Mvc\Reply\View;
 
 class Style extends XFCP_Style
 {
+    /**
+     * @return \XF\Mvc\Reply\Error|View
+     */
     public function actionThInstallUpgrade()
     {
         /** @var InstallAndUpgrade $repo */
@@ -22,11 +25,13 @@ class Style extends XFCP_Style
             return $this->error($error);
         }
 
-        $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')
-            ->fetch();
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        $profileRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profiles = $profileRepo->getProductListProfiles();
 
-        $products = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
-            ->where('product_type', '=', 'style')
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Product $productRepo */
+        $productRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Product');
+        $products = $productRepo->findProductListProductsForProfiles($profiles, 'style')
             ->fetch()->groupBy('profile_id');
 
         return $this->view('ThemeHouse\InstallAndUpgrade:Style\InstallUpgrade', 'th_iau_style_install_upgrade', [
@@ -35,27 +40,28 @@ class Style extends XFCP_Style
             'styleTree' => $this->repository('XF:Style')->getStyleTree(false)
         ]);
     }
-    
+
+    /**
+     * @return \XF\Mvc\Reply\Redirect
+     */
     public function actionThInstallUpgradeDismiss()
     {
         $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
             ->findProfiles()
             ->where('last_error_messages', '!=', '[]')
-            ->fetch()
-        ;
-        foreach ($profiles as $profile)
-        {
+            ->fetch();
+
+        foreach ($profiles as $profile) {
             /** @var Profile $profile */
             $errorMessages = $profile->last_error_messages;
-            
-            if (!empty($errorMessages['styles']))
-            {
+
+            if (!empty($errorMessages['styles'])) {
                 unset($errorMessages['styles']);
-                
+
                 $profile->fastUpdate('last_error_messages', $errorMessages);
             }
         }
-        
+
         return $this->redirect($this->buildLink('styles'));
     }
 

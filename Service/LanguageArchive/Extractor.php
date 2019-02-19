@@ -4,7 +4,6 @@ namespace ThemeHouse\InstallAndUpgrade\Service\LanguageArchive;
 
 use XF\App;
 use XF\Service\AbstractService;
-use XF\Util\File;
 
 // ######## NOTE: SIMILARITY TO XF CORE UPGRADER CODE ############
 // Much of this code is similar to the XFUpgraderExtractor class in src/XF/Install/_upgrader/core.php.
@@ -19,6 +18,11 @@ class Extractor extends AbstractService
      */
     protected $_zip;
 
+    /**
+     * Extractor constructor.
+     * @param App $app
+     * @param $fileName
+     */
     public function __construct(App $app, $fileName)
     {
         parent::__construct($app);
@@ -26,6 +30,9 @@ class Extractor extends AbstractService
         $this->fileName = $fileName;
     }
 
+    /**
+     * @return bool
+     */
     public function open()
     {
         if (!$this->_zip) {
@@ -41,12 +48,18 @@ class Extractor extends AbstractService
         return true;
     }
 
+    /**
+     * @return null|\ZipArchive
+     */
     protected function zip()
     {
         $this->open();
         return $this->_zip;
     }
 
+    /**
+     * @return array
+     */
     public function getXMLFiles()
     {
         $zip = $this->zip();
@@ -63,6 +76,10 @@ class Extractor extends AbstractService
         return $xmls;
     }
 
+    /**
+     * @param $path
+     * @return resource
+     */
     public function getFile($path)
     {
         $zip = $this->zip();

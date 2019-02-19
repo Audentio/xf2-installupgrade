@@ -35,11 +35,12 @@ class InstallUpgrade extends AbstractController
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
         $controllerPlugin = $this->plugin('ThemeHouse\InstallAndUpgrade:Profile');
 
-        return $controllerPlugin->handleReply($handler, $product->Profile, function() use ($handler, $product, $productBatch) {
-            $method = "install" . ucfirst($product->product_type) . "Products";
-            $errors = null;
-            return $handler->$method($productBatch, $errors);
-        });
+        return $controllerPlugin->handleReply($handler, $product->Profile,
+            function () use ($handler, $product, $productBatch) {
+                $method = "install" . ucfirst($product->product_type) . "Products";
+                $errors = null;
+                return $handler->$method($productBatch, $errors);
+            });
     }
 
     /**
@@ -64,7 +65,7 @@ class InstallUpgrade extends AbstractController
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
         $controllerPlugin = $this->plugin('ThemeHouse\InstallAndUpgrade:Profile');
 
-        return $controllerPlugin->handleReply($handler, $product->Profile, function() use ($handler, $product) {
+        return $controllerPlugin->handleReply($handler, $product->Profile, function () use ($handler, $product) {
             $method = "install" . ucfirst($product->product_type) . "Product";
             $errors = null;
             return $handler->$method($product, $errors);

@@ -6,6 +6,9 @@ use PHPHtmlParser\Dom;
 
 trait HtmlParserTrait
 {
+    /**
+     * @return Dom
+     */
     public function htmlParser()
     {
         return new Dom();

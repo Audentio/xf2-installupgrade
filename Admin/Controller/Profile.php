@@ -203,6 +203,9 @@ class Profile extends AbstractController
         return $form;
     }
 
+    /**
+     * @return \XF\Mvc\Reply\Message
+     */
     public function actionToggle()
     {
         /** @var \XF\ControllerPlugin\Toggle $plugin */

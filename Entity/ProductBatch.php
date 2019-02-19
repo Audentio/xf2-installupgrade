@@ -18,6 +18,10 @@ class ProductBatch extends Entity
 {
     protected $storeFiles;
 
+    /**
+     * @param Product $product
+     * @param null $file
+     */
     public function addProduct(Product $product, $file = null)
     {
         $ids = $this->product_ids;
@@ -29,6 +33,9 @@ class ProductBatch extends Entity
         }
     }
 
+    /**
+     * @return string
+     */
     public function getAbstractedBatchPath()
     {
         if (!$this->batch_id) {
@@ -38,11 +45,19 @@ class ProductBatch extends Entity
         return "internal-data://th_iau_product_batch/{$this->batch_id}";
     }
 
+    /**
+     * @param $productId
+     * @return string
+     */
     public function getAbstractedProductBatchPath($productId)
     {
         return $this->getAbstractedBatchPath() . "/{$productId}.zip";
     }
 
+    /**
+     * @param Product $product
+     * @param $file
+     */
     protected function storeFile(Product $product, $file)
     {
         $this->storeFiles[$product->product_id] = $file;
@@ -59,6 +74,10 @@ class ProductBatch extends Entity
         }
     }
 
+    /**
+     * @param Product $product
+     * @return bool|null|string
+     */
     public function getFile(Product $product)
     {
         $filePath = $this->getAbstractedProductBatchPath($product->product_id);
@@ -73,6 +92,9 @@ class ProductBatch extends Entity
         File::deleteAbstractedDirectory($this->getAbstractedBatchPath());
     }
 
+    /**
+     * @return \XF\Mvc\Entity\ArrayCollection
+     */
     public function getProducts()
     {
         return $this->finder('ThemeHouse\InstallAndUpgrade:Product')
@@ -80,6 +102,10 @@ class ProductBatch extends Entity
             ->fetch();
     }
 
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_th_installupgrade_product_batch';

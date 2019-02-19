@@ -18,28 +18,49 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
 
     protected $apiUrl = 'products/{product_id}/download/{version_id}';
 
+    /**
+     * @return null
+     */
     protected function getApiKey()
     {
         return isset($this->profile->options['api_key']) ? $this->profile->options['api_key'] : null;
     }
 
+    /**
+     * @param $url
+     * @throws \Exception
+     */
     public function createAddOnProductFromUrl($url)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');
     }
 
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
     public function isValidAddOnUrl($url, &$error)
     {
         return false;
     }
 
+    /**
+     * @param $url
+     * @throws \Exception
+     */
     public function createStyleProductFromUrl($url)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');
     }
 
+    /**
+     * @param $productId
+     * @param $versionId
+     * @return array|mixed|object|\Psr\Http\Message\ResponseInterface
+     */
     protected function getVersion($productId, $versionId)
     {
         /** @var \ThemeHouse\Core\Service\ApiRequest $apiService */
@@ -50,6 +71,11 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
         return $apiService->get($url);
     }
 
+    /**
+     * @param $product
+     * @param bool $getVersionId
+     * @return string
+     */
     protected function getLatestVersion($product, $getVersionId = false)
     {
         /** @var ApiRequest $apiRequest */
@@ -72,6 +98,10 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
         }
     }
 
+    /**
+     * @param Product $product
+     * @return bool|null|string
+     */
     protected function downloadProduct(Product $product)
     {
         $productId = $product->extra['product_id'];
@@ -100,26 +130,44 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
         return $tempFile;
     }
 
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
     public function isValidStyleUrl($url, &$error)
     {
         return false;
     }
 
+    /**
+     * @return \XF\Phrase
+     */
     public function getTitle()
     {
         return \XF::phrase('install_upgrade_provider.themehouse');
     }
 
+    /**
+     * @return string
+     */
     public function getProfileOptionsTemplate()
     {
         return 'install_upgrade_provider_config_themehouse';
     }
 
+    /**
+     * @return array
+     */
     public function getProfileDefaultOptions()
     {
         return [];
     }
 
+    /**
+     * @param array $options
+     * @return bool
+     */
     public function verifyOptions(array $options)
     {
         return true;
@@ -175,7 +223,8 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
     protected function productFromPayload($payload, $productType, $profileId)
     {
         $product = $this->em->find('ThemeHouse\InstallAndUpgrade:Product', [
-            $profileId, $payload['id']
+            $profileId,
+            $payload['id']
         ]);
 
         if (!$product) {

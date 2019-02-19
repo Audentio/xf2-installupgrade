@@ -29,6 +29,9 @@ use XF\Mvc\Entity\Structure;
  */
 class Product extends Entity
 {
+    /**
+     * @return null|string
+     */
     public function getContentType()
     {
         switch ($this->product_type) {
@@ -46,11 +49,18 @@ class Product extends Entity
         }
     }
 
+    /**
+     * @return null|Entity
+     */
     public function getContent()
     {
         return $this->em()->find($this->content_type, $this->content_id);
     }
 
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_th_installupgrade_product';

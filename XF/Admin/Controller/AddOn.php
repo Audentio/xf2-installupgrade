@@ -2,18 +2,19 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
-use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
-use XF\Mvc\Entity\ArrayCollection;
+use ThemeHouse\InstallAndUpgrade\Repository\Product;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\Redirect;
-use XF\Mvc\Reply\View;
 
 class AddOn extends XFCP_AddOn
 {
+    /**
+     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\View
+     */
     public function actionThInstallUpgrade()
     {
         /** @var InstallAndUpgrade $repo */
@@ -23,12 +24,13 @@ class AddOn extends XFCP_AddOn
             return $this->error($error);
         }
 
-        $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')
-            ->fetch();
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        $profileRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profiles = $profileRepo->getProductListProfiles();
 
-        $products = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
-            ->where('product_type', '=', 'addOn')
-            ->order(['installed', 'title'], 'ASC')
+        /** @var Product $productRepo */
+        $productRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Product');
+        $products = $productRepo->findProductListProductsForProfiles($profiles, 'addOn')
             ->fetch()->groupBy('profile_id');
 
         return $this->view('ThemeHouse\InstallAndUpgrade:AddOn\InstallUpgrade', 'th_iau_addon_install_upgrade', [
@@ -36,27 +38,28 @@ class AddOn extends XFCP_AddOn
             'profiles' => $profiles
         ]);
     }
-    
+
+    /**
+     * @return Redirect
+     */
     public function actionThInstallUpgradeDismiss()
     {
         $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
             ->findProfiles()
             ->where('last_error_messages', '!=', '[]')
-            ->fetch()
-        ;
-        foreach ($profiles as $profile)
-        {
+            ->fetch();
+
+        foreach ($profiles as $profile) {
             /** @var Profile $profile */
             $errorMessages = $profile->last_error_messages;
-            
-            if (!empty($errorMessages['addOns']))
-            {
+
+            if (!empty($errorMessages['addOns'])) {
                 unset($errorMessages['addOns']);
-                
+
                 $profile->fastUpdate('last_error_messages', $errorMessages);
             }
         }
-    
+
         return $this->redirect($this->buildLink('add-ons'));
     }
 
@@ -100,7 +103,7 @@ class AddOn extends XFCP_AddOn
 
         $profileId = 0;
         $productIdsSplit = [];
-        foreach($productIds as $productId) {
+        foreach ($productIds as $productId) {
             $productId = explode('-', $productId);
             $productIdsSplit[] = $productId[1];
 
@@ -156,7 +159,7 @@ class AddOn extends XFCP_AddOn
         /** @var Profile $lastProfile */
         $lastProfile = null;
         foreach ($urls as $url) {
-            if(!$url) {
+            if (!$url) {
                 continue;
             }
 

@@ -70,7 +70,7 @@
 			<li role="tabpanel" id="url" class="{{ count($products) ? '' : 'is-active' }}">
 				<xf:form action="{{ link('add-ons/th-install-upgrade-url') }}">
 					<div class="block-body">
-						<xf:textboxrow name="urls[]" data-xf-init="field-adder" label="{{ phrase('url') }}" />
+						<xf:textboxrow name="urls[]" label="{{ phrase('url') }}" />
 					</div>
 					<xf:submitrow icon="download" submit="{{ phrase('download') }}" />
 				</xf:form>

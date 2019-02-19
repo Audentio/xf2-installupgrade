@@ -40,8 +40,36 @@ class Profile extends Repository
         return $this->handlers[$key];
     }
 
+    /**
+     * @return \XF\Mvc\Entity\Finder
+     */
     public function findProfiles()
     {
         return $this->finder('ThemeHouse\InstallAndUpgrade:Profile');
+    }
+
+    /**
+     * @return \XF\Mvc\Entity\ArrayCollection
+     */
+    public function getProductListProfiles()
+    {
+        $profiles = $this->findProfiles()->fetch();
+
+        foreach ($profiles as $key => $profile) {
+            /** @var \ThemeHouse\InstallAndUpgrade\Entity\Profile $profile */
+            try {
+                /** @var AbstractHandler $handler */
+                $handler = $profile->getHandler();
+            } catch (\Exception $e) {
+                $handler = null;
+            }
+
+            if (!$handler || !$handler->getCapability('productList')) {
+                $profiles->offsetUnset($key);
+                continue;
+            }
+        }
+
+        return $profiles;
     }
 }

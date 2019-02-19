@@ -60,30 +60,33 @@ class Language extends XFCP_Language
             return $this->view('ThemeHouse\InstallAndUpgrade:Language\Upgrade', 'th_iau_language_upgrade', $viewParams);
         }
     }
-    
+
+    /**
+     * @return \XF\Mvc\Reply\Redirect
+     */
     public function actionThInstallUpgradeDismiss()
     {
         $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
             ->findProfiles()
             ->where('last_error_messages', '!=', '[]')
-            ->fetch()
-        ;
-        foreach ($profiles as $profile)
-        {
+            ->fetch();
+        foreach ($profiles as $profile) {
             /** @var Profile $profile */
             $errorMessages = $profile->last_error_messages;
-            
-            if (!empty($errorMessages['languages']))
-            {
+
+            if (!empty($errorMessages['languages'])) {
                 unset($errorMessages['languages']);
-                
+
                 $profile->fastUpdate('last_error_messages', $errorMessages);
             }
         }
-        
+
         return $this->redirect($this->buildLink('languages'));
     }
 
+    /**
+     * @return \XF\Mvc\Reply\Error|View
+     */
     public function actionThInstallUpgrade()
     {
         /** @var InstallAndUpgrade $repo */
@@ -93,11 +96,13 @@ class Language extends XFCP_Language
             return $this->error($error);
         }
 
-        $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')
-            ->fetch();
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        $profileRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profiles = $profileRepo->getProductListProfiles();
 
-        $products = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
-            ->where('product_type', '=', 'language')
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Product $productRepo */
+        $productRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Product');
+        $products = $productRepo->findProductListProductsForProfiles($profiles, 'language')
             ->fetch()->groupBy('profile_id');
 
         /** @var \XF\Repository\Language $languageRepo */

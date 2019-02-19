@@ -2,15 +2,20 @@
 
 namespace ThemeHouse\InstallAndUpgrade\ControllerPlugin;
 
-use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\TFA;
+use \ThemeHouse\InstallAndUpgrade\Entity\Profile as ProfileEntity;
 use XF\ControllerPlugin\AbstractPlugin;
 
 class Profile extends AbstractPlugin
 {
-    public function credentialsForm(\ThemeHouse\InstallAndUpgrade\Entity\Profile $profile, array $extra)
+    /**
+     * @param ProfileEntity $profile
+     * @param array $extra
+     * @return \XF\Mvc\Reply\View
+     */
+    public function credentialsForm(ProfileEntity $profile, array $extra)
     {
         $viewParams = [
             'profile' => $profile,
@@ -22,7 +27,12 @@ class Profile extends AbstractPlugin
             $viewParams);
     }
 
-    public function tfaForm(\ThemeHouse\InstallAndUpgrade\Entity\Profile $profile, array $extra)
+    /**
+     * @param ProfileEntity $profile
+     * @param array $extra
+     * @return \XF\Mvc\Reply\View
+     */
+    public function tfaForm(ProfileEntity $profile, array $extra)
     {
         $viewParams = [
             'profile' => $profile,
@@ -33,12 +43,14 @@ class Profile extends AbstractPlugin
         return $this->view('ThemeHouse\InstallAndUpgrade:Profile\CredentialsForm', 'th_iau_tfa_form', $viewParams);
     }
 
-    public function handleReply(
-        AbstractHandler $handler,
-        \ThemeHouse\InstallAndUpgrade\Entity\Profile $profile,
-        callable $successFunction,
-        array $params = []
-    ) {
+    /**
+     * @param AbstractHandler $handler
+     * @param ProfileEntity $profile
+     * @param callable $successFunction
+     * @param array $params
+     * @return \XF\Mvc\Reply\View
+     */
+    public function handleReply(AbstractHandler $handler, ProfileEntity $profile, callable $successFunction, array $params = []) {
         $session = $this->app->session();
 
         if ($handler->getCapability('encryptCredentials')) {

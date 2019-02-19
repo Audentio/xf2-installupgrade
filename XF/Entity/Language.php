@@ -6,6 +6,10 @@ use XF\Mvc\Entity\Structure;
 
 class Language extends XFCP_Language
 {
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure = parent::getStructure($structure);

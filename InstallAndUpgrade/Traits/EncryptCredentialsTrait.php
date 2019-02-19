@@ -20,16 +20,26 @@ trait EncryptCredentialsTrait
         ];
     }
 
+    /**
+     * @param $secret
+     */
     public function setEncryptionSecret($secret)
     {
         $this->secret = $secret;
     }
 
+    /**
+     * @return array
+     */
     public function getCredentials()
     {
         return $this->decryptCredentials();
     }
 
+    /**
+     * @param array $input
+     * @return array
+     */
     public function encryptCredentials(array $input)
     {
         $encryptedOptions = $this->getEncryptedOptions();
@@ -45,7 +55,11 @@ trait EncryptCredentialsTrait
         return $input;
     }
 
-    protected function decryptCredentials()
+    /**
+     * @param array $options
+     * @return array
+     */
+    protected function decryptCredentials(array $options = [])
     {
         $options = $this->profile->options;
         $encryptedOptions = $this->getEncryptedOptions();

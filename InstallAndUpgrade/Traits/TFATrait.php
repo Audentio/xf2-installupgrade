@@ -6,6 +6,9 @@ trait TFATrait
 {
     protected $tfaCode;
 
+    /**
+     * @param $key
+     */
     public function setTfaCode($key)
     {
         $this->tfaCode = $key;

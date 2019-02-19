@@ -19,6 +19,11 @@ class Extractor extends AbstractService
      */
     protected $_zip;
 
+    /**
+     * Extractor constructor.
+     * @param App $app
+     * @param $fileName
+     */
     public function __construct(App $app, $fileName)
     {
         parent::__construct($app);
@@ -26,6 +31,9 @@ class Extractor extends AbstractService
         $this->fileName = $fileName;
     }
 
+    /**
+     * @return bool
+     */
     public function open()
     {
         if (!$this->_zip) {
@@ -41,12 +49,18 @@ class Extractor extends AbstractService
         return true;
     }
 
+    /**
+     * @return null|\ZipArchive
+     */
     protected function zip()
     {
         $this->open();
         return $this->_zip;
     }
 
+    /**
+     * @return array
+     */
     public function getXMLFiles()
     {
         $zip = $this->zip();
@@ -63,6 +77,11 @@ class Extractor extends AbstractService
         return $xmls;
     }
 
+    /**
+     * @param array|null $changeset
+     * @param array $failures
+     * @return bool
+     */
     public function checkWritable(array $changeset = null, &$failures = [])
     {
         $zip = $this->zip();
@@ -88,6 +107,12 @@ class Extractor extends AbstractService
         return $failures ? false : true;
     }
 
+    /**
+     * @param array|null $changeset
+     * @param int $start
+     * @param \XF\Timer|null $timer
+     * @return array
+     */
     public function copyFiles(array $changeset = null, $start = 0, \XF\Timer $timer = null)
     {
         $zip = $this->zip();
@@ -127,12 +152,20 @@ class Extractor extends AbstractService
         ];
     }
 
+    /**
+     * @param $path
+     * @return resource
+     */
     public function getFile($path)
     {
         $zip = $this->zip();
         return $zip->getStream($path);
     }
 
+    /**
+     * @param $fileName
+     * @return null|string|string[]
+     */
     protected function getFsFileNameFromZipName($fileName)
     {
         if (substr($fileName, -1) === '/') {
@@ -148,6 +181,10 @@ class Extractor extends AbstractService
         return preg_replace("#^((?:.*?\/)?uploads?/)#", '', $fileName); // remove "upload/"
     }
 
+    /**
+     * @param $fileName
+     * @return string
+     */
     protected function getFinalFsFileName($fileName)
     {
         return \XF::getRootDirectory() . \XF::$DS . $fileName;

@@ -3,7 +3,6 @@
 namespace ThemeHouse\InstallAndUpgrade\Service\StyleArchive;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
-use ThemeHouse\InstallAndUpgrade\Repository\Log;
 use XF\App;
 use XF\Entity\Style;
 use XF\Service\AbstractService;
@@ -26,6 +25,13 @@ class Installer extends AbstractService
      */
     protected $parentStyle;
 
+    /**
+     * Installer constructor.
+     * @param App $app
+     * @param $file
+     * @param Product $product
+     * @param Style|null $parentStyle
+     */
     public function __construct(App $app, $file, Product $product, Style $parentStyle = null)
     {
         parent::__construct($app);
@@ -47,7 +53,7 @@ class Installer extends AbstractService
         foreach ($xmls as $xml) {
             $response = $this->installStyle($xml, $parent, $childXmls);
 
-            if($response['status'] == 'error') {
+            if ($response['status'] == 'error') {
                 return $response;
             }
         }
@@ -73,15 +79,14 @@ class Installer extends AbstractService
             /** @var Extractor $extractor */
             $extractor = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Extractor', $this->file);
             $xmlContent = simplexml_load_string(stream_get_contents($extractor->getFile($xml)));
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return [
                 'status' => 'error',
                 'message' => $e->getMessage()
             ];
         }
 
-        if(!$styleImporter->isValidXml($xmlContent)) {
+        if (!$styleImporter->isValidXml($xmlContent)) {
             return [
                 'status' => 'error',
                 'message' => \XF::phrase('th_installupgrade_invalid_xml')
@@ -107,7 +112,7 @@ class Installer extends AbstractService
         ]);
         $child->save();
 
-        foreach($childXmls as $childXml) {
+        foreach ($childXmls as $childXml) {
             $this->installStyle($childXml, $child);
         }
 

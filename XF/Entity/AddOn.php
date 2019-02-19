@@ -53,6 +53,10 @@ class AddOn extends XFCP_AddOn
         parent::_postSave();
     }
 
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure = parent::getStructure($structure);

@@ -6,6 +6,7 @@
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller
 {
 	class XFCP_AddOn extends \XF\Admin\Controller\AddOn {}
+	class XFCP_Index extends \XF\Admin\Controller\Index {}
 	class XFCP_Language extends \XF\Admin\Controller\Language {}
 	class XFCP_Style extends \XF\Admin\Controller\Style {}
 }

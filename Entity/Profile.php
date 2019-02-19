@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -22,35 +23,6 @@ class Profile extends Entity
     protected $secret;
     protected $credentials;
 
-//    /**
-//     * @return mixed
-//     */
-//    public function getProductsFromProvider()
-//    {
-//        $provider = $this->Provider;
-//
-//        if (!$provider) {
-//            return null;
-//        }
-//
-//        $handler = $provider->handler;
-//
-//        if (!$handler) {
-//            return null;
-//        }
-//
-//        if ($this->secret) {
-//            $handler->setEncryptionSecret($this->secret);
-//        }
-//        return $handler->getProductsFromProvider($this);
-//    }
-//
-//    protected function _postDelete()
-//    {
-//        \XF::app()->db()->delete('xf_th_installupgrade_product', 'profile_id = ?', [$this->profile_id]);
-//        parent::_postDelete();
-//    }
-
     /**
      * @return null|\ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler
      * @throws \Exception
@@ -70,6 +42,7 @@ class Profile extends Entity
     public function getCredentials()
     {
         if (!$this->credentials) {
+            /** @var EncryptCredentials $handler */
             $handler = $this->getHandler();
             $handler->setEncryptionSecret($this->secret);
             $this->credentials = $handler->decryptCredentials($this->options);
@@ -78,25 +51,34 @@ class Profile extends Entity
         return $this->credentials;
     }
 
+    /**
+     * @param $secret
+     */
     public function setEncryptionSecret($secret)
     {
         $this->secret = $secret;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function _postSave()
     {
         if (($this->isInsert() || $this->isChanged('options')) && $this->active) {
             $handler = $this->getHandler();
-    
+
             if ($handler->getCapability('productList')) {
                 $this->app()
                     ->jobManager()
-                    ->enqueue('ThemeHouse\InstallAndUpgrade:GetProducts', [], true)
-                ;
+                    ->enqueue('ThemeHouse\InstallAndUpgrade:GetProducts', [], true);
             }
         }
     }
-    
+
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_th_installupgrade_profile';

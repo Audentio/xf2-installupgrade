@@ -6,7 +6,6 @@ use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\LanguageHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
-use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\LanguageHandlerTrait;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
 
@@ -102,17 +101,26 @@ class UpdateCheck extends AbstractJob
         return $this->resume();
     }
 
+    /**
+     * @return string
+     */
     public function getStatusMessage()
     {
         $actionPhrase = \XF::phrase('th_installupgrade_checking_for_updates');
         return sprintf('%s... (%s)', $actionPhrase, $this->data['steps']);
     }
 
+    /**
+     * @return bool
+     */
     public function canCancel()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function canTriggerByChoice()
     {
         return false;

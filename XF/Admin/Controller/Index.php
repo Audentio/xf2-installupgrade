@@ -6,12 +6,16 @@ use XF\Mvc\Reply\View;
 
 class Index extends XFCP_Index
 {
+    /**
+     * @return View
+     */
     public function actionIndex()
     {
         $response = parent::actionIndex();
 
-        if($response instanceof View) {
-            $response->setParam('th_iau_upgrades', $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade')->getIndexUpdateInfo());
+        if ($response instanceof View) {
+            $response->setParam('th_iau_upgrades',
+                $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade')->getIndexUpdateInfo());
         }
 
         return $response;

@@ -84,14 +84,13 @@ trait StyleHandlerTrait
             foreach ($xmls as $xml) {
                 if (strpos($xml, 'child_xml') === 0) {
                     $childXmls[] = $xml;
-                }
-                else {
+                } else {
                     $parentXmls[] = $xml;
                 }
             }
 
-            if(empty($parentXmls)) {
-                if(empty($childXmls)) {
+            if (empty($parentXmls)) {
+                if (empty($childXmls)) {
                     return $this->error(\XF::phrase('th_installupgrade_no_xml_selected'));
                 }
 
@@ -106,7 +105,7 @@ trait StyleHandlerTrait
             $service = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Installer', $file, $product);
             $result = $service->install($parentXmls, $parentStyle, $childXmls);
 
-            if($result['status'] == 'error') {
+            if ($result['status'] == 'error') {
                 return $this->error($result['message']);
             }
         }
@@ -119,7 +118,6 @@ trait StyleHandlerTrait
 
     /**
      * @param Product $style
-     * @throws \XF\PrintableException
      */
     public function checkStyleProductForUpdates(Product $style)
     {
@@ -129,6 +127,11 @@ trait StyleHandlerTrait
         $this->log($style, 'update_check');
     }
 
+
+    /**
+     * @param Product $style
+     * @return mixed
+     */
     public function downloadStyleProduct(Product $style)
     {
         $this->log($style, 'download', [
@@ -138,6 +141,11 @@ trait StyleHandlerTrait
         return $this->downloadProduct($style);
     }
 
+    /**
+     * @param $archive
+     * @param bool $parentOnly
+     * @return array
+     */
     protected function getStyleXMLs($archive, $parentOnly = false)
     {
         /** @var Extractor $extractor */
@@ -146,7 +154,7 @@ trait StyleHandlerTrait
         $files = $extractor->getXMLFiles();
         $xmls = array_values(preg_grep('/^(?!child_xmls)(?:.*?\/)?(?:xmls?\/)?style-[^.]*.xml$/', $files));
 
-        if(!$parentOnly) {
+        if (!$parentOnly) {
             $children = array_values(preg_grep('/^child_xmls?\/[^.]*.xml$/', $files));
             $xmls = array_merge($xmls, $children);
         }

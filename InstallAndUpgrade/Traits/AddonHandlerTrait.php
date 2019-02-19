@@ -5,10 +5,13 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use XF\Http\Upload;
-use XF\Mvc\Entity\ArrayCollection;
 
 trait AddonHandlerTrait
 {
+    /**
+     * @param Product $addOn
+     * @return mixed
+     */
     public function installAddOnProduct(Product $addOn)
     {
         /** @var ProductBatch $batch */
@@ -17,6 +20,10 @@ trait AddonHandlerTrait
         return $this->installAddOnProducts($batch);
     }
 
+    /**
+     * @param ProductBatch $productBatch
+     * @return mixed
+     */
     public function installAddOnProducts(ProductBatch $productBatch)
     {
         /** @var \ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive\InstallBatchCreator $creator */
@@ -37,18 +44,18 @@ trait AddonHandlerTrait
         /** @var \XF\Entity\AddOnInstallBatch $addOnBatch */
         $addOnBatch = $creator->save();
 
-        foreach($productBatch->getProducts() as $product) {
+        foreach ($productBatch->getProducts() as $product) {
             $this->log($product, 'install', [
                 'version' => $product->latest_version
             ]);
         }
 
-        return $this->redirect($this->buildLink('add-ons/install-from-archive-confirm', null, ['batch_id' => $addOnBatch->batch_id]));
+        return $this->redirect($this->buildLink('add-ons/install-from-archive-confirm', null,
+            ['batch_id' => $addOnBatch->batch_id]));
     }
 
     /**
      * @param Product $addOn
-     * @throws \XF\PrintableException
      */
     public function checkAddOnProductForUpdates(Product $addOn)
     {
@@ -59,6 +66,10 @@ trait AddonHandlerTrait
         $this->log($addOn, 'update_check');
     }
 
+    /**
+     * @param Product $addOn
+     * @return mixed
+     */
     public function downloadAddOnProduct(Product $addOn)
     {
         $this->log($addOn, 'download', [

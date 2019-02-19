@@ -101,10 +101,10 @@ class Setup extends AbstractSetup
 
     /** 1.0.0 Beta 10 */
     use Patch1000040;
-    
+
     /** 1.1.0 */
     use Patch1010030;
-    
+
     /** 1.1.1 */
     use Patch1010130;
 

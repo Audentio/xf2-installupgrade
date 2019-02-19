@@ -2,7 +2,6 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Job;
 
-use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
@@ -62,16 +61,25 @@ class ExtractStyle extends AbstractJob
         return $this->resume();
     }
 
+    /**
+     * @return \XF\Phrase
+     */
     public function getStatusMessage()
     {
         return \XF::phrase('copying_files...');
     }
 
+    /**
+     * @return bool
+     */
     public function canCancel()
     {
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public function canTriggerByChoice()
     {
         return false;

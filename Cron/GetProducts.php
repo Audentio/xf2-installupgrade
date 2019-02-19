@@ -8,7 +8,6 @@ class GetProducts
     {
         \XF::app()
             ->jobManager()
-            ->enqueue('ThemeHouse\InstallAndUpgrade:GetProducts')
-        ;
+            ->enqueue('ThemeHouse\InstallAndUpgrade:GetProducts');
     }
 }

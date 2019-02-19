@@ -4,10 +4,11 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
 use Tuna\CloudflareMiddleware;
 
-trait HttpClientTrait {
+trait HttpClientTrait
+{
     /**
      * @var Client
      */
@@ -18,8 +19,12 @@ trait HttpClientTrait {
      */
     protected $cookieJar;
 
-    protected function httpClient() {
-        if(!$this->httpClient) {
+    /**
+     * @return Client
+     */
+    protected function httpClient()
+    {
+        if (!$this->httpClient) {
             $this->httpClient = \XF::app()->http()->client();
             $this->httpClient->getConfig('handler')->push(CloudflareMiddleware::create());
         }
@@ -27,16 +32,29 @@ trait HttpClientTrait {
         return $this->httpClient;
     }
 
-    protected function cookieJar() {
-        if(!$this->cookieJar) {
+    /**
+     * @return CookieJar
+     */
+    protected function cookieJar()
+    {
+        if (!$this->cookieJar) {
             $this->cookieJar = new CookieJar();
         }
 
         return $this->cookieJar;
     }
 
-    protected function httpRequest($url, $options = [], $method = 'get', $cookies = true, $throwErrors = true) {
-        if($cookies) {
+    /**
+     * @param $url
+     * @param array $options
+     * @param string $method
+     * @param bool $cookies
+     * @param bool $throwErrors
+     * @return mixed
+     */
+    protected function httpRequest($url, $options = [], $method = 'get', $cookies = true, $throwErrors = true)
+    {
+        if ($cookies) {
             $options['cookies'] = $this->cookieJar();
         }
 
@@ -47,10 +65,10 @@ trait HttpClientTrait {
             'Accept-Charset' => 'utf-8',
         ]);
 
-        /** @var ResponseInterface $response */
+        /** @var Response $response */
         $response = $this->httpClient()->{$method}($url, $options);
 
-        if($throwErrors && $response->getStatusCode() != 200) {
+        if ($throwErrors && $response->getStatusCode() != 200) {
             /** @noinspection PhpUndefinedMethodInspection */
             $this->exception(\XF::phrase('th_iau_response_error', [
                 'statusCode' => $response->getStatusCode(),

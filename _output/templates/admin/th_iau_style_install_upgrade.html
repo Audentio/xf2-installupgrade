@@ -19,7 +19,7 @@
 					</a>
 				</xf:if>
 				<a href="#url"
-				   class="tabs-tab {{ $products.count() ? '' : 'is-active' }}"
+				   class="tabs-tab {{ $products && count($products) ? '' : 'is-active' }}"
 				   role="tab"
 				   aria-controls="url">
 					{{ phrase('th_installupgrade_install_from_url') }}

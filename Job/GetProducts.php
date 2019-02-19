@@ -52,7 +52,7 @@ class GetProducts extends AbstractJob
             $profile = $em->find('ThemeHouse\InstallAndUpgrade:Profile', $profileId);
             $handler = $profile->getHandler();
 
-            if(!$handler || !$handler->getCapability('productList')) {
+            if (!$handler || !$handler->getCapability('productList')) {
                 continue;
             }
 
@@ -63,6 +63,9 @@ class GetProducts extends AbstractJob
         return $this->resume();
     }
 
+    /**
+     * @return string
+     */
     public function getStatusMessage()
     {
         $actionPhrase = \XF::phrase('th_installupgrade_fetching_products');
@@ -71,11 +74,17 @@ class GetProducts extends AbstractJob
         );
     }
 
+    /**
+     * @return bool
+     */
     public function canCancel()
     {
         return true;
     }
 
+    /**
+     * @return bool
+     */
     public function canTriggerByChoice()
     {
         return true;

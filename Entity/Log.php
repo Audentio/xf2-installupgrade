@@ -28,6 +28,9 @@ use XF\Mvc\Entity\Structure;
  */
 class Log extends Entity
 {
+    /**
+     * @return null|Entity
+     */
     public function getContent()
     {
         $types = [
@@ -43,7 +46,11 @@ class Log extends Entity
         return null;
     }
 
-    public function getActionPhrase() {
+    /**
+     * @return \XF\Phrase
+     */
+    public function getActionPhrase()
+    {
         $args = array_merge(
             $this->Product->toArray(),
             $this->extra,
@@ -52,6 +59,10 @@ class Log extends Entity
         return \XF::phrase('th_iau_log_action_' . $this->content_type . '_' . $this->action, $args);
     }
 
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
     public static function getStructure(Structure $structure)
     {
         $structure->table = 'xf_th_installupgrade_log';

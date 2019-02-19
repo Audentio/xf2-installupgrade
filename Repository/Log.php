@@ -12,6 +12,7 @@ class Log extends Repository
     /**
      * @param Product $product
      * @param $action
+     * @param array $extra
      * @param User|null $user
      * @throws \XF\PrintableException
      */
