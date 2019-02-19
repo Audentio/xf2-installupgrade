@@ -19,7 +19,7 @@
 					</a>
 				</xf:if>
 				<a href="#url"
-				   class="tabs-tab {{ $products && count($products) ? '' : 'is-active' }}"
+				   class="tabs-tab {{ $products is not empty ? '' : 'is-active' }}"
 				   role="tab"
 				   aria-controls="url">
 					{{ phrase('th_installupgrade_install_from_url') }}
@@ -39,7 +39,7 @@
 						<div class="block-body">
 							<xf:datalist>
 								<xf:foreach loop="$profiles" key="{$profileId}" value="$profile">
-									<xf:if is="$profile.getHandler().getCapability('productList') && count({$products.{$profileId}})">
+									<xf:if is="{$products.{$profileId}} is not empty">
 										<tbody class="dataList-rowGroup">
 											<xf:datarow rowtype="subsection">
 												<xf:cell colspan="4" overlay="true">
@@ -63,7 +63,7 @@
 					</xf:form>
 				</li>
 			</xf:if>
-			<li role="tabpanel" id="url" class="{{ $products.count() ? '' : 'is-active' }}">
+			<li role="tabpanel" id="url" class="{{ $products is not empty ? '' : 'is-active' }}">
 				<xf:form action="{{ link('styles/th-install-upgrade-url') }}">
 					<div class="block-body">
 						<xf:textboxrow name="url"

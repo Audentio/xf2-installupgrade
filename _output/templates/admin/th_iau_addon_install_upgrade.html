@@ -39,7 +39,7 @@
 						<div class="block-body">
 							<xf:datalist>
 								<xf:foreach loop="$profiles" key="{$profileId}" value="$profile">
-									<xf:if is="$profile.getHandler().getCapability('productList') && count({$products.{$profileId}})">
+									<xf:if is="{$products.{$profileId}} is not empty">
 										<tbody class="dataList-rowGroup">
 											<xf:datarow rowtype="subsection">
 												<xf:cell>
