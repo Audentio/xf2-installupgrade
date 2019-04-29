@@ -62,6 +62,16 @@ class Setup extends AbstractSetup
     /** 1.1.1 */
     use Patch1010130;
 
+    public function postUpgrade($previousVersion, array &$stateChanges)
+    {
+        if ($previousVersion <= 1000040)
+        {
+            $jobManager = \XF::app()->jobManager();
+            $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
+        }
+    }
+
+
     /** ---- UNINSTALL ---- */
 
     public function uninstallStep4()
