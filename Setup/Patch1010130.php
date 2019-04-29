@@ -9,9 +9,7 @@ trait Patch1010130
 {
     public function upgrade1010130Step1()
     {
-        $this->schemaManager()->alterTable('xf_th_installupgrade_profile', function (Alter $table) {
-            $table->addColumn('last_error_messages', 'blob');
-        });
+        $this->installStep1();
     }
 
     public function upgrade1010130Step2()
