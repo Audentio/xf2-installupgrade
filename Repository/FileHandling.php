@@ -14,12 +14,11 @@ class FileHandling extends Repository
 {
     /**
      * @param string $zipFilename
+     * @param string $prefix
      * @return string
      */
-    public function mountZip($zipFilename)
+    public function mountZip($zipFilename, $prefix)
     {
-        $prefix = 'addon-zip';
-
         $fs = \XF::fs();
 
         if (substr($zipFilename, 0, 7) == 'file://')

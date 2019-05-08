@@ -52,7 +52,7 @@ class ExtractZip extends Command
             {
                 $output->writeln("Extracting $zipFilename");
             }
-            $zipRoot = $repo->mountZip($zipFilename);
+            $zipRoot = $repo->mountZip($zipFilename, 'addon-zip');
             try
             {
                 $repo->copyFiles($zipRoot . '://', \XF::getRootDirectory(), function ($file) use ($output) {
