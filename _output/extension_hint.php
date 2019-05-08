@@ -39,6 +39,16 @@ namespace ThemeHouse\InstallAndUpgrade\XF\Entity
 	class XFCP_Style extends \XF\Entity\Style {}
 }
 
+namespace ThemeHouse\InstallAndUpgrade\XF\Job
+{
+	class XFCP_PermissionRebuild extends \XF\Job\PermissionRebuild {}
+}
+
+namespace ThemeHouse\InstallAndUpgrade\XF\Repository
+{
+	class XFCP_Style extends \XF\Repository\Style {}
+}
+
 namespace ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive
 {
 	class XFCP_InstallBatchCreator extends \XF\Service\AddOnArchive\InstallBatchCreator {}
