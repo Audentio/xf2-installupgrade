@@ -195,8 +195,9 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
             return $i && isset($i['product_id']);
         }));
 
-        // Remove XPress from available products to download.
-        $installed[] = 234;
+        // Remove XF2.0 Products from list
+        $installed[] = 211; // Bookmarks
+        $installed[] = 212; // Reactions
 
         if (isset($addOns['payload']['products']) && !empty($addOns['payload']['products'])) {
             foreach ($addOns['payload']['products'] as $addOn) {
@@ -236,7 +237,7 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
             'product_id' => $payload['id'],
             'product_type' => $productType,
             'title' => '[TH] ' . $payload['product_name'],
-            'description' => $payload['product_tagline'],
+            'description' => $payload['product_tagline'] ?: '',
             'latest_version' => $payload['latest_version'],
             'extra' => [
                 'thumbnail' => $payload['thumbnail']['thumb']['url'],
