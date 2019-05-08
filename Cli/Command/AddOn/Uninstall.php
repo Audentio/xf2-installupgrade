@@ -20,8 +20,9 @@ class Uninstall extends Command
     protected function configure()
     {
         $this
-            ->setName('addon:uninstall')
-            ->setDescription('Uninstalls the specified add-on')
+            ->setName('iau:addon-uninstall')
+            ->setAliases(['iau-addon:uninstall'])
+            ->setDescription('Uninstalls the specified add-on.')
             ->addArgument(
                 'id',
                 InputArgument::REQUIRED,

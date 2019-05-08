@@ -12,9 +12,9 @@ class RunJobs extends Command
     protected function configure()
     {
         $this
-            ->setName('xf:run-jobs')
-            ->setAliases(['addon:run-jobs'])
-            ->setDescription('Run pending non-manual jobs in the job queue')
+            ->setName('iau:run-jobs')
+            ->setAliases(['iau-addon:run-jobs'])
+            ->setDescription('Run pending non-manual jobs in the job queue.')
             ->addOption(
                 'time',
                 null,

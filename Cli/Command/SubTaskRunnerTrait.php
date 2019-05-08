@@ -21,7 +21,7 @@ trait SubTaskRunnerTrait
 
         \XF::app()->container()->decache('job.manager');
         $this->runSubTask($output, [
-            'addon:run-jobs',
+            'iau-addon:run-jobs',
             '--manual-jobs',
             '--time='.$time,
         ]);

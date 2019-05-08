@@ -15,9 +15,9 @@ class RunJob extends Command
     protected function configure()
     {
         $this
-            ->setName('xf:run-job')
-            ->setAliases(['addon:run-job'])
-            ->setDescription('Run a manual job until it is done')
+            ->setName('iau:run-job')
+            ->setAliases(['iau-addon:run-job'])
+            ->setDescription('Run a manual job until it is done.')
             ->addArgument(
                 'id',
                 InputArgument::REQUIRED,

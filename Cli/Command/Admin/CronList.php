@@ -12,8 +12,9 @@ class CronList extends Command
     protected function configure()
     {
         $this
-            ->setName('admin-cron:list')
-            ->setDescription('lists all cron tasks')
+            ->setName('iau:cron-list')
+            ->setAliases(['iau-admin:cron-list', 'iau-cron:list'])
+            ->setDescription('Lists all cron tasks.')
             ->addOption(
                 'active',
                 null,

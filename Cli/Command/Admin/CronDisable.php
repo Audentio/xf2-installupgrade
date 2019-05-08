@@ -13,8 +13,9 @@ class CronDisable extends Command
     protected function configure()
     {
         $this
-            ->setName('admin-cron:disable')
-            ->setDescription('Disables a cron task (or all)')
+            ->setName('iau:cron-disable')
+            ->setAliases(['iau-admin:cron-disable', 'iau-cron:disable'])
+            ->setDescription('Disables a cron task (or all).')
             ->addArgument(
                 'id',
                 InputArgument::OPTIONAL,

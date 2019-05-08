@@ -15,8 +15,9 @@ class ExtractZip extends Command
     protected function configure()
     {
         $this
-            ->setName('addon:extract-zip')
-            ->setDescription('Extracts a zip(s) to the add-on directory (seperate filenames with a space)')
+            ->setName('iau:addon-extract-zip')
+            ->setAliases(['iau-addon:extract-zip'])
+            ->setDescription('Extracts a zip(s) to the add-on directory (seperate filenames with a space).')
             ->addArgument(
                 'zip-filenames',
                 InputArgument::REQUIRED | InputArgument::IS_ARRAY,

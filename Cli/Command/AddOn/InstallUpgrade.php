@@ -20,8 +20,8 @@ class InstallUpgrade extends Command
     protected function configure()
     {
         $this
-            ->setName('addon:install')
-            ->setAliases(['addon:upgrade'])
+            ->setName('iau:addon-install')
+            ->setAliases(['iau-addon:upgrade', 'iau-addon:install', 'iau:addon-upgrade'])
             ->setDescription('Installs or upgrades an add-on.')
             ->addArgument(
                 'id',

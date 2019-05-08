@@ -17,9 +17,9 @@ class EnableDisable extends Command
     protected function configure()
     {
         $this
-            ->setName('xf-style:enable')
-            ->setAliases(['xf-style:disable'])
-            ->setDescription('enables/disables a style')
+            ->setName('iau:style-enable')
+            ->setAliases(['iau:style-disable', 'iau-style:enable', 'iau-style:disable', 'iau-style:toggle', 'iau:style-toggle'])
+            ->setDescription('Enables/disables a style.')
             ->addArgument(
                 'style',
                 InputArgument::REQUIRED,

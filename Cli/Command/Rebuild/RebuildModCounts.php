@@ -11,8 +11,9 @@ class RebuildModCounts extends Command
     protected function configure()
     {
         $this
-            ->setName('xf-rebuild:sv-mod-counts')
-            ->setDescription('rebuild various moderator count caches');
+            ->setName('iau:rebuild-sv-mod-counts')
+            ->setAliases(['iau-rebuild:sv-mod-counts'])
+            ->setDescription('Rebuilds various moderator count caches.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

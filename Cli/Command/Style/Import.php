@@ -17,7 +17,8 @@ class Import extends Command
     protected function configure()
     {
         $this
-            ->setName('xf-style:import')
+            ->setName('iau:style-import')
+            ->setAliases(['iau-style:import'])
             ->setDescription('Imports a style XML file as a new style or over an existing one.')
             ->addArgument(
                 'file',

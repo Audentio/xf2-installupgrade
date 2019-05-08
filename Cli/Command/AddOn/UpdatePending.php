@@ -18,9 +18,9 @@ class UpdatePending extends Command
     protected function configure()
     {
         $this
-            ->setName('addon:update-pending')
-            ->setAliases(['addon:upgrade-pending'])
-            ->setDescription('Updates pending add-ons')
+            ->setName('iau:addon-update-pending')
+            ->setAliases(['iau-addon:upgrade-pending', 'iau-addon:update-pending', 'iau:addon-upgrade-pending'])
+            ->setDescription('Updates pending add-ons.')
             ->addArgument(
                 'exclude-addon',
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,

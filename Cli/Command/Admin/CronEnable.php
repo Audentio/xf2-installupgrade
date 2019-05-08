@@ -13,8 +13,9 @@ class CronEnable extends Command
     protected function configure()
     {
         $this
-            ->setName('admin-cron:enable')
-            ->setDescription('Enable a cron task (or all)')
+            ->setName('iau:cron-enable')
+            ->setAliases(['iau-admin:cron-enable', 'iau-cron:enable'])
+            ->setDescription('Enable a cron task (or all).')
             ->addArgument(
                 'id',
                 InputArgument::OPTIONAL,

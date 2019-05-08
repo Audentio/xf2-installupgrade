@@ -15,9 +15,9 @@ class BulkFinish extends Command
     protected function configure()
     {
         $this
-            ->setName('addon:bulk-finish')
-            ->setAliases(['addon:finish-bulk'])
-            ->setDescription('Finishes a bulk install/upgrade/uninstall job');
+            ->setName('iau:addon-bulk-finish')
+            ->setAliases(['iau:addon-finish-bulk', 'iau-addon:finish-bulk', 'iau-addon:bulk-finish'])
+            ->setDescription('Finishes a bulk install/upgrade/uninstall job.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
