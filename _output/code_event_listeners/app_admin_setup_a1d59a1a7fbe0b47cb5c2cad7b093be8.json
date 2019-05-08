@@ -1,0 +1,9 @@
+{
+    "event_id": "app_admin_setup",
+    "execute_order": 10,
+    "callback_class": "ThemeHouse\\InstallAndUpgrade\\Listener\\AppAdminSetup",
+    "callback_method": "appAdminSetup",
+    "active": true,
+    "hint": "",
+    "description": "Remove keys from session"
+}
