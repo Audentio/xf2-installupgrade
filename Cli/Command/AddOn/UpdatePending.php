@@ -81,7 +81,9 @@ class UpdatePending extends Command
             return 0;
         }
 
-        $upgradeableAddOns = $this->sortByDependencies($input, $output, $upgradeableAddOns);
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade $repo */
+        $repo = \XF::repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
+        $upgradeableAddOns = $repo->sortByDependencies($upgradeableAddOns);
         if (!$upgradeableAddOns)
         {
             return 1;
@@ -118,105 +120,5 @@ class UpdatePending extends Command
         ]);
 
         return 0;
-    }
-
-    /**
-     * @param InputInterface    $input
-     * @param OutputInterface   $output
-     * @param \XF\AddOn\AddOn[] $upgradeableAddOns
-     * @return array
-     */
-    protected function sortByDependencies(/** @noinspection PhpUnusedParameterInspection */
-        InputInterface $input, OutputInterface $output, array $upgradeableAddOns)
-    {
-        $installList = [];
-        /** @var \XF\AddOn\AddOn[] $complex */
-        $complex = [];
-        // init the list
-        foreach ($upgradeableAddOns as $addOn)
-        {
-            $json = $addOn->getJson();
-            unset($json['require']['php']);
-            unset($json['require']['XF']);
-            $installList[$addOn->getAddOnId()] = ['addon' => $addOn, 'dependancies' => []];
-            if (!empty($json['require']) || !empty($json['require-soft']))
-            {
-                $complex[$addOn->getAddOnId()] = $addOn;
-            }
-        }
-        // build the graph
-        foreach ($complex as $addOnId => $addOn)
-        {
-            $json = $addOn->getJson();
-            foreach ((array)$json['require'] as $productKey => $requirement)
-            {
-                if (empty($installList[$productKey]))
-                {
-                    continue;
-                }
-                if (empty($installList[$addOnId]['dependancies'][$productKey]))
-                {
-                    $installList[$addOnId]['dependancies'][$productKey] = &$installList[$productKey];
-                }
-            }
-            // custom install hints
-            if (isset($json['require-soft']))
-            {
-                foreach ((array)$json['require-soft'] as $productKey => $requirement)
-                {
-                    if (empty($installList[$productKey]))
-                    {
-                        continue;
-                    }
-                    if (empty($installList[$addOnId]['dependancies'][$productKey]))
-                    {
-                        $installList[$addOnId]['dependancies'][$productKey] = &$installList[$productKey];
-                    }
-                }
-            }
-        }
-
-        // actually resolve into a list
-        $finalList = [];
-        $loopDetection = [];
-        foreach ($installList as $addOnId => $addOn)
-        {
-            if ($addOn['dependancies'])
-            {
-                $finalList = $finalList + $this->resolveDependencies($installList, $addOnId, $loopDetection);
-            }
-
-            $finalList[$addOnId] = $addOn['addon'];
-        }
-
-        return $finalList;
-    }
-
-    /**
-     * @param array  $installList
-     * @param string $addOnId
-     * @param array  $loopDetection
-     * @return array
-     */
-    protected function resolveDependencies(array $installList, $addOnId, array &$loopDetection)
-    {
-        $loopDetection[$addOnId] = true;
-        $finalList = [];
-        foreach ($installList[$addOnId]['dependancies'] as $childAddOnId => $addOn)
-        {
-            if (isset($loopDetection[$childAddOnId]))
-            {
-                continue;
-            }
-
-            if ($addOn['dependancies'])
-            {
-                $finalList = $finalList + $this->resolveDependencies($installList, $childAddOnId, $loopDetection);
-            }
-
-            $finalList[$childAddOnId] = $addOn['addon'];
-        }
-
-        return $finalList;
     }
 }
