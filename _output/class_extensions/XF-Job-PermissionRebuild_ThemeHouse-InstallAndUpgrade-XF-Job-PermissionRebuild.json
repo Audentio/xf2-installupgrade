@@ -1,0 +1,6 @@
+{
+    "from_class": "XF\\Job\\PermissionRebuild",
+    "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Job\\PermissionRebuild",
+    "execute_order": 10,
+    "active": true
+}
