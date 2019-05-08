@@ -2,14 +2,16 @@
     "legacy_addon_id": "",
     "title": "Install & Upgrade",
     "description": "Installation and upgrades made easy.",
-    "version_id": 1010192,
-    "version_string": "1.1.1 Patch Level 2",
+    "version_id": 1010270,
+    "version_string": "1.1.2",
     "dev": "ThemeHouse",
     "dev_url": "https://www.themehouse.com",
     "faq_url": "",
     "support_url": "https://www.themehouse.com/help",
     "extra_urls": {
-        "XFRM": ["https://xenforo.com/community/resources/install-and-upgrade.6753/"]
+        "XFRM": [
+            "https://xenforo.com/community/resources/install-and-upgrade.6753/"
+        ]
     },
     "require": {
         "XF": [
