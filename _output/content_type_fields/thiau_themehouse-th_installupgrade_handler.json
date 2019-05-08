@@ -1,5 +1,0 @@
-{
-    "content_type": "thiau_themehouse",
-    "field_name": "th_installupgrade_handler",
-    "field_value": "ThemeHouse\\InstallAndUpgrade\\InstallAndUpgrade\\ThemeHouse"
-}

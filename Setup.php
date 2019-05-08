@@ -74,7 +74,7 @@ class Setup extends AbstractSetup
 
     /** ---- UNINSTALL ---- */
 
-    public function uninstallStep4()
+    public function uninstallStep1()
     {
         $sm = $this->schemaManager();
 
@@ -87,7 +87,7 @@ class Setup extends AbstractSetup
     /**
      * Reverts database schema changes - table alters
      */
-    public function uninstallStep5()
+    public function uninstallStep2()
     {
         $sm = $this->schemaManager();
 
