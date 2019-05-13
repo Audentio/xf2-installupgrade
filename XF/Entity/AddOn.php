@@ -71,6 +71,8 @@ class AddOn extends XFCP_AddOn
             'defaultWith' => ['Profile']
         ];
 
+        $structure->defaultWith[] = 'THIAUProduct';
+
         return $structure;
     }
 }
