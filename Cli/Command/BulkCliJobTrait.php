@@ -87,7 +87,7 @@ trait BulkCliJobTrait
         if ($registry->get('svBulkJob') || $registry->get('svBulkJob.permRebuild') || $registry->get('svBulkJob.styleRebuild'))
         {
             \XF::app()->container()->decache('job.manager');
-            $output->writeln("Has a pending bulk job, to finish run;\n\tphp cmd.php addon:finish-bulk");
+            $output->writeln("Has a pending bulk job, to finish run;\n\tphp cmd.php iau-addon:finish-bulk");
 
             return true;
         }

@@ -109,14 +109,14 @@ class UpdatePending extends Command
         foreach ($upgradeableAddOns as $addOn)
         {
             $this->runSubTask($output, [
-                'addon:upgrade',
+                'iau-addon:upgrade',
                 $addOn->getAddOnId(),
                 '--bulk',
             ]);
         }
 
         $this->runSubTask($output, [
-            'addon:bulk-finish'
+            'iau-addon:bulk-finish'
         ]);
 
         return 0;
