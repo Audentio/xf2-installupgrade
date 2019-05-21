@@ -156,7 +156,7 @@ class InstallAndUpgrade extends Repository
             $json = $addOn->getJson();
             unset($json['require']['php']);
             unset($json['require']['XF']);
-            $installList[$addOn->getAddOnId()] = ['addon' => $addOn, 'dependancies' => []];
+            $installList[$addOn->getAddOnId()] = ['addon' => $addOn, 'dependencies' => []];
             if (!empty($json['require']) || !empty($json['require-soft']))
             {
                 $complex[$addOn->getAddOnId()] = $addOn;
