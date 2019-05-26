@@ -34,11 +34,17 @@ trait AddonHandlerTrait
             $zipFile = $this->downloadAddOnProduct($addOn);
 
             /** @var Product $addOn */
-            $upload = new Upload($zipFile, 'temp-' . $addOn->product_id . '.zip');
+            $upload = new Upload($zipFile, $addOn->title . '-' . $addOn->latest_version . '.zip');
             $upload->setAllowedExtensions(['zip']);
 
             $creator->addUpload($upload);
-            $addOn->fastUpdate('content_id', $creator->thLastAddedAddOnId());
+            if ($creator->thLastAddedAddOnId()) {
+                $addOn->fastUpdate('content_id', $creator->thLastAddedAddOnId());
+            }
+        }
+
+        if (!$creator->validate($errors)) {
+            throw new \XF\Mvc\Reply\Exception(new \XF\Mvc\Reply\Error($errors, 400));
         }
 
         /** @var \XF\Entity\AddOnInstallBatch $addOnBatch */
