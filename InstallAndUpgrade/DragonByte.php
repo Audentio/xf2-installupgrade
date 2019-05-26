@@ -7,6 +7,7 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\AddonHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\VersioningTrait;
+use XF\Db\DuplicateKeyException;
 use XF\Mvc\Entity\Finder;
 use XF\PrintableException;
 use XF\Util\File;
@@ -78,14 +79,13 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     }
 
     /**
+     * @param Product                                $product
      * @param \XFApi\Dto\DBTech\eCommerce\ProductDto $addOn
      * @param bool                                   $withThumbnail
      * @return Product
      */
-    protected function createProductFromProductDto(\XFApi\Dto\DBTech\eCommerce\ProductDto $addOn, $withThumbnail = true)
+    protected function createProductFromProductDto(Product $product, \XFApi\Dto\DBTech\eCommerce\ProductDto $addOn, $withThumbnail = true)
     {
-        /** @var \ThemeHouse\InstallAndUpgrade\Entity\Product $product */
-        $product = $this->em->create('ThemeHouse\InstallAndUpgrade:Product');
         $product->bulkSet([
             'profile_id' => $this->profile->profile_id,
             'product_id' => $addOn->product_id,
@@ -108,15 +108,10 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
      */
     public function getProducts()
     {
-        $installed = $this->getFilteredProducts($this->finder('ThemeHouse\InstallAndUpgrade:Product'))
-                          ->fetch()
-                          ->pluckNamed('extra');
-
-        $installed = array_map(function ($i) {
-            return $i['product_id'];
-        }, array_filter($installed, function ($i) {
-            return $i && isset($i['product_id']);
-        }));
+        $installed = $this->finder('ThemeHouse\InstallAndUpgrade:Product')
+                          ->where('profile_id','=', $this->profile->profile_id)
+                          ->keyedBy('product_id')
+                          ->fetch();
 
         $client = $this->getApiClient();
 
@@ -143,14 +138,22 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
 
         /** @var \XFApi\Dto\DBTech\eCommerce\ProductDto $addOn */
         foreach ($addOns as $addOn) {
-            if (in_array($addOn->product_id, $installed)) {
-                continue;
-            }
+            /** @var Product $product */
+            $product = isset($installed[$addOn->product_id])
+                ? $installed[$addOn->product_id] :
+                $product = $this->em->create('ThemeHouse\InstallAndUpgrade:Product');
 
-            $product = $this->createProductFromProductDto($addOn);
+            $product = $this->createProductFromProductDto($product, $addOn);
 
             if ($product && $product->preSave()) {
-                $product->save();
+                try
+                {
+                    $product->saveIfChanged();
+                }
+                /** @noinspection PhpRedundantCatchClauseInspection */
+                catch(DuplicateKeyException $e) {
+                    // race, just ignore
+                }
             }
         }
     }
