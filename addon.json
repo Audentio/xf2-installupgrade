@@ -9,9 +9,7 @@
     "faq_url": "",
     "support_url": "https://www.themehouse.com/help",
     "extra_urls": {
-        "XFRM": [
-            "https://xenforo.com/community/resources/install-and-upgrade.6753/"
-        ]
+        "XFRM": "https://xenforo.com/community/resources/install-and-upgrade.6753/"
     },
     "require": {
         "XF": [

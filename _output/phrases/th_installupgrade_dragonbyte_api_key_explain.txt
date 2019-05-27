@@ -1,1 +1,1 @@
-Your DragonByte API key. You can find your API key <a href="https://www.dragonbyte-tech.com/store/account/api-key" target="_blank">here</a>.
+Your API key. You can find your API key <a href="{apiKeyUrl}" target="_blank">here</a>.

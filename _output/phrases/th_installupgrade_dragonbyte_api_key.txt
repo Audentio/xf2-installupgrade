@@ -1,1 +1,1 @@
-DragonByte API Key
+API Key

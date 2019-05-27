@@ -2,7 +2,7 @@
 			   name="options[api_key]"
 			   value="{$profile.options.api_key}"
 			   required="required"
-			   explain="{{ phrase('th_installupgrade_dragonbyte_api_key_explain') }}" />
+			   explain="{{ phrase('th_installupgrade_dragonbyte_api_key_explain', {'apiKeyUrl': $handler->apiKeyUrl }) }}" />
 
-<xf:hiddenval name="page_title" value="DragonByte" />
-<xf:hiddenval name="base_url" value="https://www.dragonbyte-tech.com/api" />
+<xf:hiddenval name="page_title" value="{$handler->title}" />
+<xf:hiddenval name="base_url" value="{$handler->apiUrl}" />
