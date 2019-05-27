@@ -45,13 +45,14 @@ class Installer extends AbstractService
      * @param array $xmls
      * @param Style|null $parent
      * @param array $childXmls
+     * @param bool $force
      * @return array
      * @throws \XF\PrintableException
      */
-    public function install(array $xmls, Style $parent = null, array $childXmls = [])
+    public function install(array $xmls, Style $parent = null, array $childXmls = [], $force = false)
     {
         foreach ($xmls as $xml) {
-            $response = $this->installStyle($xml, $parent, $childXmls);
+            $response = $this->installStyle($xml, $parent, $childXmls, $force);
 
             if ($response['status'] == 'error') {
                 return $response;
@@ -65,10 +66,11 @@ class Installer extends AbstractService
      * @param $xml
      * @param Style|null $parent
      * @param array $childXmls
+     * @param bool $force
      * @return array
      * @throws \XF\PrintableException
      */
-    protected function installStyle($xml, Style $parent = null, $childXmls = [])
+    protected function installStyle($xml, Style $parent = null, $childXmls = [], $force = false)
     {
         /** @var \XF\Service\Style\Import $styleImporter */
         $styleImporter = $this->service('XF:Style\Import');
@@ -86,10 +88,20 @@ class Installer extends AbstractService
             ];
         }
 
-        if (!$styleImporter->isValidXml($xmlContent)) {
+        if (!$styleImporter->isValidXml($xmlContent,$error)) {
             return [
                 'status' => 'error',
-                'message' => \XF::phrase('th_installupgrade_invalid_xml')
+                'message' => $error
+            ];
+        }
+
+        if (!$force && !$styleImporter->isValidConfiguration($xmlContent, $errors)) {
+            return [
+                'status' => 'error',
+                'message' => \XF::phrase('import_verification_errors_x_select_skip_checks', [
+                    'errors' => implode(' ', $errors
+                    )
+                ])
             ];
         }
 

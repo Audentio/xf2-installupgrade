@@ -28,6 +28,8 @@ trait StyleHandlerTrait
         $overwrite = $request->filter('overwrite_style_id', 'uint');
         $parent = $request->filter('parent_style_id', 'uint');
 
+        $force = $request->filter('force', 'bool');
+
         if (!$xmls) {
             $xmls = $this->getStyleXMLs($file);
 
@@ -43,7 +45,8 @@ trait StyleHandlerTrait
                 'parent' => $parent,
                 'overwrite' => $overwrite,
                 'target' => $target,
-                'selectedXml' => $target == 'overwrite' ? \XF::em()->find('XF:Style', $overwrite)->th_iau_xml : ''
+                'selectedXml' => $target == 'overwrite' ? \XF::em()->find('XF:Style', $overwrite)->th_iau_xml : '',
+                'force' => $force
             ]);
         }
 
@@ -68,7 +71,20 @@ trait StyleHandlerTrait
             $extractor = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Extractor', $file);
             $path = array_pop($xmls);
             $content = stream_get_contents($extractor->getFile($path));
-            $style = $styleImporter->importFromXml(Xml::open($content));
+            $document = Xml::open($content);
+
+            if (!$styleImporter->isValidXml($document, $error)) {
+                return $this->error($error);
+            }
+
+            if (!$force && !$styleImporter->isValidConfiguration($document, $errors)) {
+                return $this->error(\XF::phrase('import_verification_errors_x_select_skip_checks', [
+                    'errors' => implode(' ', $errors
+                    )
+                ]));
+            }
+
+            $style = $styleImporter->importFromXml($document);
             $style->bulkSet([
                 'th_iau_product_id' => $product->product_id,
                 'th_iau_profile_id' => $product->profile_id,
@@ -102,7 +118,7 @@ trait StyleHandlerTrait
             $parentStyle = \XF::em()->find('XF:Style', $parent);
 
             /** @var Installer $service */
-            $service = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Installer', $file, $product);
+            $service = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Installer', $file, $product, $force);
             $result = $service->install($parentXmls, $parentStyle, $childXmls);
 
             if ($result['status'] == 'error') {

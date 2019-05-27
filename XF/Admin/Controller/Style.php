@@ -105,7 +105,8 @@ class Style extends XFCP_Style
         }, [
             'target' => $this->filter('target', 'str'),
             'overwrite_style_id' => $this->filter('overwrite_style_id', 'uint'),
-            'parent_style_id' => $this->filter('parent_style_id', 'uint')
+            'parent_style_id' => $this->filter('parent_style_id', 'uint'),
+            'force' => $this->filter('force', 'bool')
         ]);
     }
 
@@ -154,7 +155,8 @@ class Style extends XFCP_Style
             'target' => $this->filter('target', 'str'),
             'overwrite_style_id' => $this->filter('overwrite_style_id', 'uint'),
             'parent_style_id' => $this->filter('parent_style_id', 'uint'),
-            'url' => $this->filter('url', 'str')
+            'url' => $this->filter('url', 'str'),
+            'force' => $this->filter('force', 'bool')
         ]);
     }
 

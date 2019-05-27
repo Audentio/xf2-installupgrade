@@ -12,7 +12,7 @@ class InstallUpgrade extends AbstractController
 {
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect
+     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
      * @throws \XF\Mvc\Reply\Exception
      * @throws \Exception
      */
@@ -45,7 +45,7 @@ class InstallUpgrade extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect
+     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
      * @throws \XF\Mvc\Reply\Exception
      * @throws \Exception
      */

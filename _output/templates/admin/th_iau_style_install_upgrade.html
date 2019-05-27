@@ -58,6 +58,7 @@
 								</xf:foreach>
 							</xf:datalist>
 							<xf:macro name="target" arg-styleTree="{$styleTree}" />
+							<xf:macro name="skip_checks" />
 						</div>
 						<xf:submitrow icon="download" submit="{{ phrase('th_installupgrade_install') }}" />
 					</xf:form>
@@ -71,6 +72,7 @@
 									   label="{{ phrase('url') }}" />
 						<hr class="formRowSep" />
 						<xf:macro name="target" arg-styleTree="{$styleTree}" />
+						<xf:macro name="skip_checks" />
 					</div>
 					<xf:submitrow icon="download" submit="{{ phrase('download') }}" />
 				</xf:form>
@@ -81,6 +83,7 @@
 						<xf:uploadrow name="upload" accept=".xml"
 									  label="{{ phrase('import_from_uploaded_xml_file') }}"/>
 						<xf:macro name="target" arg-styleTree="{$styleTree}" />
+						<xf:macro name="skip_checks" />
 					</div>
 					<xf:submitrow icon="import" />
 				</xf:form>
@@ -88,6 +91,15 @@
 		</ul>
 	</div>
 </div>
+
+<xf:macro name="skip_checks">
+	<xf:checkboxrow>
+		<xf:option name="force">
+			<xf:label>{{ phrase('skip_import_checks') }}</xf:label>
+			<xf:hint>{{ phrase('selecting_bypass_checks_made_by_import_prevent_accidents') }}</xf:hint>
+		</xf:option>
+	</xf:checkboxrow>
+</xf:macro>
 
 <xf:macro name="target" arg-styleTree="!">
 
