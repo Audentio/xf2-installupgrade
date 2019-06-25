@@ -1,0 +1,9 @@
+{
+    "template": "addon_list_macros",
+    "description": "Add I&U status icon",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "{$addOn.title} <span",
+    "replace": "<xf:if is=\"$addOn.THIAUProduct\">\n\t<xf:fa icon=\"fa-download\" data-xf-init=\"tooltip\"\n\t\t   title=\"{{ phrase('th_iau_connected_to_iau') }}\" />\n</xf:if> $0"
+}
