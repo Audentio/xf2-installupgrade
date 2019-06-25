@@ -17,8 +17,15 @@ use XF\Mvc\Reply\Exception;
 use XF\Mvc\Reply\Redirect;
 use XF\Mvc\Reply\View;
 
+/**
+ * Class AbstractHandler
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade
+ */
 abstract class AbstractHandler implements \ArrayAccess
 {
+    /**
+     * @var
+     */
     protected $values;
 
     /**
@@ -56,6 +63,224 @@ abstract class AbstractHandler implements \ArrayAccess
     }
 
     /**
+     * @param $class
+     * @return mixed
+     */
+    public function service($class)
+    {
+        return call_user_func_array([$this->app, 'service'], func_get_args());
+    }
+
+    /**
+     * @param string $viewClass
+     * @param string $templateName
+     * @param array $params
+     * @return View
+     */
+    public function view($viewClass = '', $templateName = '', array $params = [])
+    {
+        return new View($viewClass, $templateName, $params);
+    }
+
+    /**
+     * @param $url
+     * @param null $message
+     * @param string $type
+     * @return Redirect
+     */
+    public function redirect($url, $message = null, $type = 'temporary')
+    {
+        if ($message === null) {
+            $message = \XF::phrase('your_changes_have_been_saved');
+        }
+        return new Redirect($url, $type, $message);
+    }
+
+    /**
+     * @param $error
+     * @param int $code
+     * @return Error
+     */
+    public function error($error, $code = 200)
+    {
+        return new Error($error, $code);
+    }
+
+    /**
+     * @param string $link
+     * @param mixed $data
+     * @param array $parameters
+     *
+     * @return string
+     */
+    public function buildLink($link, $data = null, array $parameters = [])
+    {
+        return $this->app->router()->buildLink($link, $data, $parameters);
+    }
+
+    /**
+     * @param mixed $key
+     * @return bool
+     */
+    public function offsetExists($key)
+    {
+        return $this->__isset($key);
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function __isset($key)
+    {
+        $key = $this->convertKey($key);
+
+        if (method_exists($this, "get{$key}")) {
+            return true;
+        }
+
+        return isset($this->values[$key]);
+    }
+
+    /**
+     * @param $key
+     * @return array|string
+     */
+    protected function convertKey($key)
+    {
+        $key = explode('_', $key);
+        $key = array_map("ucfirst", $key);
+        $key = join('', $key);
+        return $key;
+    }
+
+    /**
+     * @param mixed $key
+     * @return mixed|null
+     */
+    public function offsetGet($key)
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * @param $key
+     * @return null
+     */
+    protected function get($key)
+    {
+        $key = $this->convertKey($key);
+        if (method_exists($this, "get{$key}")) {
+            return $this->{"get{$key}"}();
+        }
+
+        if (isset($this->values[$key])) {
+            return $this->values[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     */
+    public function offsetSet($key, $value)
+    {
+        $this->set($key, $value);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    protected function set($key, $value)
+    {
+        $this->values[$this->convertKey($key)] = $value;
+    }
+
+    /**
+     * @param mixed $offset
+     */
+    public function offsetUnset($offset)
+    {
+        throw new \LogicException('Handler offsets may not be unset');
+    }
+
+    /**
+     * @param $key
+     * @return null
+     */
+    public function __get($key)
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function __set($key, $value)
+    {
+        $this->set($key, $value);
+    }
+
+    /**
+     * @param $capability
+     * @return bool|mixed
+     */
+    public function getCapability($capability)
+    {
+        $capabilities = $this->getCapabilities();
+        return isset($capabilities[$capability]) ? $capabilities[$capability] : false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCapabilities()
+    {
+        return [
+            'style' => $this instanceof StyleHandler,
+            'language' => $this instanceof LanguageHandler,
+            'addOn' => $this instanceof AddOnHandler,
+            'tfa' => $this instanceof TFA,
+            'productList' => $this instanceof ProductList,
+            'encryptCredentials' => $this instanceof EncryptCredentials,
+            'multiple' => $this instanceof MultiProfile
+        ];
+    }
+
+    /**
+     * @param $currentVersion
+     * @param $latestVersion
+     * @param string $operator
+     * @return mixed
+     */
+    abstract public function compareVersions($currentVersion, $latestVersion, $operator = '<');
+
+    /**
+     * @return mixed
+     */
+    abstract public function getTitle();
+
+    /**
+     * @return mixed
+     */
+    abstract public function getProfileOptionsTemplate();
+
+    /**
+     * @return mixed
+     */
+    abstract public function getProfileDefaultOptions();
+
+    /**
+     * @param array $options
+     * @return mixed
+     */
+    abstract public function verifyOptions(array $options);
+
+    /**
      * @param $shortName
      * @return \XF\Mvc\Entity\Repository
      */
@@ -71,15 +296,6 @@ abstract class AbstractHandler implements \ArrayAccess
     protected function finder($shortName)
     {
         return $this->em->getFinder($shortName);
-    }
-
-    /**
-     * @param $class
-     * @return mixed
-     */
-    public function service($class)
-    {
-        return call_user_func_array([$this->app, 'service'], func_get_args());
     }
 
     /**
@@ -121,161 +337,6 @@ abstract class AbstractHandler implements \ArrayAccess
     }
 
     /**
-     * @param string $viewClass
-     * @param string $templateName
-     * @param array $params
-     * @return View
-     */
-    public function view($viewClass = '', $templateName = '', array $params = [])
-    {
-        return new View($viewClass, $templateName, $params);
-    }
-
-    /**
-     * @param $url
-     * @param null $message
-     * @param string $type
-     * @return Redirect
-     */
-    public function redirect($url, $message = null, $type = 'temporary')
-    {
-        if ($message === null) {
-            $message = \XF::phrase('your_changes_have_been_saved');
-        }
-        return new Redirect($url, $type, $message);
-    }
-
-    /**
-     * @param $error
-     * @param int $code
-     * @return Error
-     */
-    public function error($error, $code = 200)
-    {
-        return new Error($error, $code);
-    }
-
-
-    /**
-     * @param string $link
-     * @param mixed $data
-     * @param array $parameters
-     *
-     * @return string
-     */
-    public function buildLink($link, $data = null, array $parameters = [])
-    {
-        return $this->app->router()->buildLink($link, $data, $parameters);
-    }
-
-    /**
-     * @param mixed $key
-     * @return bool
-     */
-    public function offsetExists($key)
-    {
-        return $this->__isset($key);
-    }
-
-    /**
-     * @param mixed $key
-     * @return mixed|null
-     */
-    public function offsetGet($key)
-    {
-        return $this->get($key);
-    }
-
-    /**
-     * @param mixed $key
-     * @param mixed $value
-     */
-    public function offsetSet($key, $value)
-    {
-        $this->set($key, $value);
-    }
-
-    /**
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset)
-    {
-        throw new \LogicException('Handler offsets may not be unset');
-    }
-
-    /**
-     * @param $key
-     * @return array|string
-     */
-    protected function convertKey($key)
-    {
-        $key = explode('_', $key);
-        $key = array_map("ucfirst", $key);
-        $key = join('', $key);
-        return $key;
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     */
-    protected function set($key, $value)
-    {
-        $this->values[$this->convertKey($key)] = $value;
-    }
-
-    /**
-     * @param $key
-     * @return null
-     */
-    protected function get($key)
-    {
-        $key = $this->convertKey($key);
-        if (method_exists($this, "get{$key}")) {
-            return $this->{"get{$key}"}();
-        }
-
-        if (isset($this->values[$key])) {
-            return $this->values[$key];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     */
-    public function __isset($key)
-    {
-        $key = $this->convertKey($key);
-
-        if (method_exists($this, "get{$key}")) {
-            return true;
-        }
-
-        return isset($this->values[$key]);
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     */
-    public function __set($key, $value)
-    {
-        $this->set($key, $value);
-    }
-
-    /**
-     * @param $key
-     * @return null
-     */
-    public function __get($key)
-    {
-        return $this->get($key);
-    }
-
-    /**
      * @param $message
      * @throws Exception
      */
@@ -303,40 +364,4 @@ abstract class AbstractHandler implements \ArrayAccess
         $existingErrors[$type][] = $error;
         $this->profile->fastUpdate('last_error_messages', $existingErrors);
     }
-
-    /**
-     * @return array
-     */
-    public function getCapabilities()
-    {
-        return [
-            'style' => $this instanceof StyleHandler,
-            'language' => $this instanceof LanguageHandler,
-            'addOn' => $this instanceof AddOnHandler,
-            'tfa' => $this instanceof TFA,
-            'productList' => $this instanceof ProductList,
-            'encryptCredentials' => $this instanceof EncryptCredentials,
-            'multiple' => $this instanceof MultiProfile
-        ];
-    }
-
-    /**
-     * @param $capability
-     * @return bool|mixed
-     */
-    public function getCapability($capability)
-    {
-        $capabilities = $this->getCapabilities();
-        return isset($capabilities[$capability]) ? $capabilities[$capability] : false;
-    }
-
-    abstract public function compareVersions($currentVersion, $latestVersion, $operator = '<');
-
-    abstract public function getTitle();
-
-    abstract public function getProfileOptionsTemplate();
-
-    abstract public function getProfileDefaultOptions();
-
-    abstract public function verifyOptions(array $options);
 }

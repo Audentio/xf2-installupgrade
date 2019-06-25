@@ -2,8 +2,15 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive;
 
+/**
+ * Class InstallBatchCreator
+ * @package ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive
+ */
 class InstallBatchCreator extends XFCP_InstallBatchCreator
 {
+    /**
+     * @var
+     */
     protected $thLastAddedAddOnId;
 
     /**

@@ -3,14 +3,30 @@
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
-use XF\Mvc\Entity\Finder;
+use XFApi\Dto\DBTech\eCommerce\ProductDto;
 
+/**
+ * Class AtelierAphelion
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade
+ */
 class AtelierAphelion extends DragonByte
 {
+    /**
+     * @var string
+     */
     public $apiUrl = 'https://atelieraphelion.com/api';
+    /**
+     * @var string
+     */
     public $apiKeyUrl = 'https://atelieraphelion.com/dbtech-ecommerce/account/api-key';
+    /**
+     * @var string
+     */
     protected $licencesUrl = 'https://atelieraphelion.com/dbtech-ecommerce/licenses/';
 
+    /**
+     * @var string
+     */
     protected $exceptionPrefix = '[Atelier Aphelion Install & Upgrade]';
 
     /**
@@ -22,16 +38,22 @@ class AtelierAphelion extends DragonByte
     }
 
     /**
-     * @param Product                                $product
-     * @param \XFApi\Dto\DBTech\eCommerce\ProductDto $addOn
-     * @param bool                                   $withThumbnail
+     * @param Product $product
+     * @param ProductDto $addOn
+     * @param bool $withThumbnail
      * @return Product
      */
-    protected function createProductFromProductDto(Product $product, \XFApi\Dto\DBTech\eCommerce\ProductDto $addOn, $withThumbnail = true)
-    {
+    protected function createProductFromProductDto(
+        Product $product,
+        ProductDto $addOn,
+        $withThumbnail = true
+    ) {
         return parent::createProductFromProductDto($product, $addOn, false);
     }
 
+    /**
+     * @return array
+     */
     protected function getContext()
     {
         // Rather than a bunch of if statements, we'll just construct the product filter this way

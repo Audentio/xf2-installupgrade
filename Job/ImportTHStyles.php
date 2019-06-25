@@ -5,6 +5,10 @@ namespace ThemeHouse\InstallAndUpgrade\Job;
 use ThemeHouse\InstallAndUpgrade\XF\Entity\Style;
 use XF\Job\AbstractJob;
 
+/**
+ * Class ImportTHStyles
+ * @package ThemeHouse\InstallAndUpgrade\Job
+ */
 class ImportTHStyles extends AbstractJob
 {
 

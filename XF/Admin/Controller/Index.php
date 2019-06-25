@@ -2,20 +2,29 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
+use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use XF\Mvc\Reply\View;
 
+/**
+ * Class Index
+ * @package ThemeHouse\InstallAndUpgrade\XF\Admin\Controller
+ */
 class Index extends XFCP_Index
 {
     /**
      * @return View
+     * @throws \XF\PrintableException
      */
     public function actionIndex()
     {
         $response = parent::actionIndex();
 
         if ($response instanceof View) {
+            /** @var InstallAndUpgrade $iauRepo */
+            $iauRepo = $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
+
             $response->setParam('th_iau_upgrades',
-                $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade')->getIndexUpdateInfo());
+                $iauRepo->getIndexUpdateInfo());
         }
 
         return $response;

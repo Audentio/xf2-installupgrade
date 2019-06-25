@@ -3,15 +3,19 @@
 namespace ThemeHouse\InstallAndUpgrade\XF\Job;
 
 /**
- * Extends \XF\Job\PermissionRebuild
+ * Class PermissionRebuild
+ * @package ThemeHouse\InstallAndUpgrade\XF\Job
  */
 class PermissionRebuild extends XFCP_PermissionRebuild
 {
+    /**
+     * @param $maxRunTime
+     * @return \XF\Job\JobResult
+     */
     public function run($maxRunTime)
     {
         $registry = \XF::app()->registry();
-        if ($registry->get('svBulkJob'))
-        {
+        if ($registry->get('svBulkJob')) {
             $registry->set('svBulkJob.permRebuild', 1);
             return $this->complete();
         }

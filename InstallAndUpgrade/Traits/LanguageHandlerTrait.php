@@ -8,6 +8,10 @@ use ThemeHouse\InstallAndUpgrade\Service\LanguageArchive\Extractor;
 use XF\Entity\Language;
 use XF\Util\Xml;
 
+/**
+ * Trait LanguageHandlerTrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait LanguageHandlerTrait
 {
     /**
@@ -122,6 +126,10 @@ trait LanguageHandlerTrait
         $this->log($language, 'update_check');
     }
 
+    /**
+     * @param Product $language
+     * @return mixed
+     */
     public function downloadLanguageProduct(Product $language)
     {
         $this->log($language, 'download', [

@@ -9,6 +9,10 @@ use ThemeHouse\InstallAndUpgrade\Service\StyleArchive\Installer;
 use XF\Entity\Style;
 use XF\Util\Xml;
 
+/**
+ * Trait StyleHandlerTrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait StyleHandlerTrait
 {
     /**
@@ -37,6 +41,12 @@ trait StyleHandlerTrait
                 return $this->error(\XF::phrase('th_iau_no_style_xmls_found_in_package'));
             }
 
+            $overWriteStyle = null;
+            if($overwrite) {
+                /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\Style $overWriteStyle */
+                $overWriteStyle = \XF::em()->find('XF:Style', $overwrite);
+            }
+
             return $this->view('ThemeHouse\InstallAndUpgrade:Style\XMLSelect', 'th_iau_style_xml_select', [
                 'xmls' => $xmls,
                 'productBatch' => $productBatch,
@@ -45,7 +55,7 @@ trait StyleHandlerTrait
                 'parent' => $parent,
                 'overwrite' => $overwrite,
                 'target' => $target,
-                'selectedXml' => $target == 'overwrite' ? \XF::em()->find('XF:Style', $overwrite)->th_iau_xml : '',
+                'selectedXml' => $target == 'overwrite' ? $overWriteStyle->th_iau_xml : '',
                 'force' => $force
             ]);
         }
@@ -133,31 +143,6 @@ trait StyleHandlerTrait
     }
 
     /**
-     * @param Product $style
-     */
-    public function checkStyleProductForUpdates(Product $style)
-    {
-        $latestVersion = $this->getLatestVersion($style);
-        $style->latest_version = $latestVersion;
-        $style->saveIfChanged();
-        $this->log($style, 'update_check');
-    }
-
-
-    /**
-     * @param Product $style
-     * @return mixed
-     */
-    public function downloadStyleProduct(Product $style)
-    {
-        $this->log($style, 'download', [
-            'version' => $style->latest_version
-        ]);
-        /** @noinspection PhpUnhandledExceptionInspection */
-        return $this->downloadProduct($style);
-    }
-
-    /**
      * @param $archive
      * @param bool $parentOnly
      * @return array
@@ -191,5 +176,29 @@ trait StyleHandlerTrait
         }, $xmls);
 
         return $xmls;
+    }
+
+    /**
+     * @param Product $style
+     */
+    public function checkStyleProductForUpdates(Product $style)
+    {
+        $latestVersion = $this->getLatestVersion($style);
+        $style->latest_version = $latestVersion;
+        $style->saveIfChanged();
+        $this->log($style, 'update_check');
+    }
+
+    /**
+     * @param Product $style
+     * @return mixed
+     */
+    public function downloadStyleProduct(Product $style)
+    {
+        $this->log($style, 'download', [
+            'version' => $style->latest_version
+        ]);
+        /** @noinspection PhpUnhandledExceptionInspection */
+        return $this->downloadProduct($style);
     }
 }

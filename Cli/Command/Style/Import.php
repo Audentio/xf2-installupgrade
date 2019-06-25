@@ -2,18 +2,26 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\Style;
 
-use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
-use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
+use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
+use XF\Util\Xml;
 
+/**
+ * Class Import
+ * @package ThemeHouse\InstallAndUpgrade\Cli\Command\Style
+ */
 class Import extends Command
 {
     use BulkCliJobTrait, SubTaskRunnerTrait;
 
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -36,31 +44,31 @@ class Import extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'The parent for a new style'
-            )
-        ;
+            );
 
         $this->configureBulk();
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // be verbose, otherwise we don't get stack trace errors...
-        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL)
-        {
+        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL) {
             $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         }
 
         $filename = $input->getArgument('file');
-        try
-        {
-            $xml = \XF\Util\Xml::openFile($filename, true);
-        }
-        catch (\Exception $e)
-        {
+        try {
+            $xml = Xml::openFile($filename, true);
+        } catch (\Exception $e) {
             $xml = null;
         }
-        if (!$xml)
-        {
+        if (!$xml) {
             $output->writeln("<error>" . "Could not load style XML file; {$filename}" . "</error>");
 
             return 1;
@@ -69,39 +77,32 @@ class Import extends Command
         /** @var \XF\Service\Style\Import $service */
         $service = \XF::service('XF:Style\Import');
 
-        if (!$service->isValidXml($xml))
-        {
+        if (!$service->isValidXml($xml)) {
             $output->writeln("<error>" . "Invalid XML file; {$filename}" . "</error>");
 
             return 1;
         }
 
         $overwriteId = (int)$input->getOption('overwrite-style-id');
-        if ($overwriteId)
-        {
+        if ($overwriteId) {
             /** @var \XF\Entity\Style $style */
             $style = \XF::finder('XF:Style')
-                        ->where('style_id', '=', $overwriteId)
-                        ->fetchOne();
-            if (!$style)
-            {
+                ->where('style_id', '=', $overwriteId)
+                ->fetchOne();
+            if (!$style) {
                 $output->writeln("<error>" . "Invalid style to override; {$overwriteId}." . "</error>");
 
                 return 1;
             }
             $service->setOverwriteStyle($style);
-        }
-        else
-        {
+        } else {
             $parentId = (int)$input->getOption('new-style-parent-id');
-            if ($parentId)
-            {
+            if ($parentId) {
                 /** @var \XF\Entity\Style $style */
                 $style = \XF::finder('XF:Style')
-                            ->where('style_id', '=', $parentId)
-                            ->fetchOne();
-                if (!$style)
-                {
+                    ->where('style_id', '=', $parentId)
+                    ->fetchOne();
+                if (!$style) {
                     $output->writeln("<error>" . "Invalid parent style; {$parentId}." . "</error>");
 
                     return 1;
@@ -119,8 +120,7 @@ class Import extends Command
         $filename = \basename($filename);
         $output->writeln("Imported {$filename} in {$seconds} seconds");
 
-        if (!$this->hasPendingBulkJob($input, $output))
-        {
+        if (!$this->hasPendingBulkJob($input, $output)) {
             $this->runPendingManualJobsInTask($output, -1);
         }
 

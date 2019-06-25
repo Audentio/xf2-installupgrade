@@ -9,9 +9,16 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
 
+/**
+ * Class UpdateCheck
+ * @package ThemeHouse\InstallAndUpgrade\Job
+ */
 class UpdateCheck extends AbstractJob
 {
 
+    /**
+     * @var array
+     */
     protected $defaultData = [
         'profileId' => 0,
         'productId' => 0,

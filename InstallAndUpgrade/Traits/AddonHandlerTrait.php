@@ -5,12 +5,19 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use XF\Http\Upload;
+use XF\Mvc\Reply\Error;
+use XF\Mvc\Reply\Exception;
 
+/**
+ * Trait AddonHandlerTrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait AddonHandlerTrait
 {
     /**
      * @param Product $addOn
      * @return mixed
+     * @throws Exception
      */
     public function installAddOnProduct(Product $addOn)
     {
@@ -23,6 +30,7 @@ trait AddonHandlerTrait
     /**
      * @param ProductBatch $productBatch
      * @return mixed
+     * @throws Exception
      */
     public function installAddOnProducts(ProductBatch $productBatch)
     {
@@ -44,7 +52,7 @@ trait AddonHandlerTrait
         }
 
         if (!$creator->validate($errors)) {
-            throw new \XF\Mvc\Reply\Exception(new \XF\Mvc\Reply\Error($errors, 400));
+            throw new Exception(new Error($errors, 400));
         }
 
         /** @var \XF\Entity\AddOnInstallBatch $addOnBatch */
@@ -62,18 +70,6 @@ trait AddonHandlerTrait
 
     /**
      * @param Product $addOn
-     */
-    public function checkAddOnProductForUpdates(Product $addOn)
-    {
-        $latestVersion = $this->getLatestVersion($addOn);
-        $addOn->latest_version = $latestVersion;
-        $addOn->update_available = $this->compareVersions($addOn->current_version, $latestVersion);
-        $addOn->saveIfChanged();
-        $this->log($addOn, 'update_check');
-    }
-
-    /**
-     * @param Product $addOn
      * @return mixed
      */
     public function downloadAddOnProduct(Product $addOn)
@@ -82,5 +78,17 @@ trait AddonHandlerTrait
             'version' => $addOn->latest_version
         ]);
         return $this->downloadProduct($addOn);
+    }
+
+    /**
+     * @param Product $addOn
+     */
+    public function checkAddOnProductForUpdates(Product $addOn)
+    {
+        $latestVersion = $this->getLatestVersion($addOn);
+        $addOn->latest_version = $latestVersion;
+        $addOn->update_available = $this->compareVersions($addOn->current_version, $latestVersion);
+        $addOn->saveIfChanged();
+        $this->log($addOn, 'update_check');
     }
 }

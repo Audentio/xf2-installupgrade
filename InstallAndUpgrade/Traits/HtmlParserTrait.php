@@ -4,6 +4,10 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
 use PHPHtmlParser\Dom;
 
+/**
+ * Trait HtmlParserTrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait HtmlParserTrait
 {
     /**

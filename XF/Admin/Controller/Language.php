@@ -11,6 +11,10 @@ use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\View;
 
+/**
+ * Class Language
+ * @package ThemeHouse\InstallAndUpgrade\XF\Admin\Controller
+ */
 class Language extends XFCP_Language
 {
     /**
@@ -21,7 +25,7 @@ class Language extends XFCP_Language
     public function actionThInstallUpgradeUpdate(ParameterBag $params)
     {
         /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\Language $language */
-        $language = $this->assertLanguageExists($params->language_id);
+        $language = $this->assertLanguageExists($params['language_id']);
         /** @var Product $product */
         $product = $language->THIAUProduct;
 
@@ -66,7 +70,10 @@ class Language extends XFCP_Language
      */
     public function actionThInstallUpgradeDismiss()
     {
-        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+
+        $profiles = $profileRepo
             ->findProfiles()
             ->where('last_error_messages', '!=', '[]')
             ->fetch();
@@ -114,6 +121,15 @@ class Language extends XFCP_Language
             'profiles' => $profiles,
             'languageTree' => $languageTree
         ]);
+    }
+
+    /**
+     * @return InstallAndUpgrade
+     */
+    protected function getInstallUpgradeRepo()
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
     }
 
     /**
@@ -207,14 +223,5 @@ class Language extends XFCP_Language
             'parent_language_id' => $this->filter('parent_language_id', 'uint'),
             'url' => $this->filter('url', 'str')
         ]);
-    }
-
-    /**
-     * @return InstallAndUpgrade
-     */
-    protected function getInstallUpgradeRepo()
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
     }
 }

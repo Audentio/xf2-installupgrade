@@ -5,16 +5,12 @@ namespace ThemeHouse\InstallAndUpgrade\Repository;
 use XF\Mvc\Entity\ArrayCollection;
 use XF\Mvc\Entity\Repository;
 
+/**
+ * Class Product
+ * @package ThemeHouse\InstallAndUpgrade\Repository
+ */
 class Product extends Repository
 {
-    /**
-     * @return \XF\Mvc\Entity\Finder
-     */
-    public function findProducts()
-    {
-        return $this->finder('ThemeHouse\InstallAndUpgrade:Product');
-    }
-
     /**
      * @param $profiles
      * @param string $type
@@ -28,5 +24,13 @@ class Product extends Repository
             ->order(['installed', 'title'], 'ASC');
 
         return $products;
+    }
+
+    /**
+     * @return \XF\Mvc\Entity\Finder
+     */
+    public function findProducts()
+    {
+        return $this->finder('ThemeHouse\InstallAndUpgrade:Product');
     }
 }

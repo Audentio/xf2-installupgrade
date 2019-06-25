@@ -2,6 +2,10 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
+/**
+ * Trait VersioningTrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait VersioningTrait
 {
     /**

@@ -9,8 +9,15 @@ use XF\Service\AbstractService;
 // Much of this code is similar to the XFUpgraderExtractor class in src/XF/Install/_upgrader/core.php.
 // Changes should be mirrored when appropriate.
 
+/**
+ * Class Extractor
+ * @package ThemeHouse\InstallAndUpgrade\Service\LanguageArchive
+ */
 class Extractor extends AbstractService
 {
+    /**
+     * @var
+     */
     protected $fileName;
 
     /**
@@ -31,33 +38,6 @@ class Extractor extends AbstractService
     }
 
     /**
-     * @return bool
-     */
-    public function open()
-    {
-        if (!$this->_zip) {
-            $zip = new \ZipArchive();
-            $openResult = $zip->open($this->fileName);
-            if ($openResult !== true) {
-                throw new \LogicException("File could not be opened as a zip ($openResult)");
-            }
-
-            $this->_zip = $zip;
-        }
-
-        return true;
-    }
-
-    /**
-     * @return null|\ZipArchive
-     */
-    protected function zip()
-    {
-        $this->open();
-        return $this->_zip;
-    }
-
-    /**
      * @return array
      */
     public function getXMLFiles()
@@ -74,6 +54,33 @@ class Extractor extends AbstractService
         }
 
         return $xmls;
+    }
+
+    /**
+     * @return null|\ZipArchive
+     */
+    protected function zip()
+    {
+        $this->open();
+        return $this->_zip;
+    }
+
+    /**
+     * @return bool
+     */
+    public function open()
+    {
+        if (!$this->_zip) {
+            $zip = new \ZipArchive();
+            $openResult = $zip->open($this->fileName);
+            if ($openResult !== true) {
+                throw new \LogicException("File could not be opened as a zip ($openResult)");
+            }
+
+            $this->_zip = $zip;
+        }
+
+        return true;
     }
 
     /**

@@ -20,60 +20,14 @@ use XF\Mvc\Entity\Structure;
  */
 class Profile extends Entity
 {
+    /**
+     * @var
+     */
     protected $secret;
+    /**
+     * @var
+     */
     protected $credentials;
-
-    /**
-     * @return null|\ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler
-     * @throws \Exception
-     */
-    public function getHandler()
-    {
-        $repo = $this->getProfileRepository();
-        $handler = $repo->getHandler($this->provider_id);
-        $handler->setProfile($this);
-        return $handler;
-    }
-
-    /**
-     * @return array
-     * @throws \Exception
-     */
-    public function getCredentials()
-    {
-        if (!$this->credentials) {
-            /** @var EncryptCredentials $handler */
-            $handler = $this->getHandler();
-            $handler->setEncryptionSecret($this->secret);
-            $this->credentials = $handler->decryptCredentials($this->options);
-        }
-
-        return $this->credentials;
-    }
-
-    /**
-     * @param $secret
-     */
-    public function setEncryptionSecret($secret)
-    {
-        $this->secret = $secret;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    protected function _postSave()
-    {
-        if (($this->isInsert() || $this->isChanged('options')) && $this->active) {
-            $handler = $this->getHandler();
-
-            if ($handler->getCapability('productList')) {
-                $this->app()
-                    ->jobManager()
-                    ->enqueue('ThemeHouse\InstallAndUpgrade:GetProducts', [], true);
-            }
-        }
-    }
 
     /**
      * @param Structure $structure
@@ -105,11 +59,63 @@ class Profile extends Entity
     }
 
     /**
+     * @return array
+     * @throws \Exception
+     */
+    public function getCredentials()
+    {
+        if (!$this->credentials) {
+            /** @var EncryptCredentials $handler */
+            $handler = $this->getHandler();
+            $handler->setEncryptionSecret($this->secret);
+            $this->credentials = $handler->decryptCredentials($this->options);
+        }
+
+        return $this->credentials;
+    }
+
+    /**
+     * @return null|\ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler
+     * @throws \Exception
+     */
+    public function getHandler()
+    {
+        $repo = $this->getProfileRepository();
+        $handler = $repo->getHandler($this->provider_id);
+        $handler->setProfile($this);
+        return $handler;
+    }
+
+    /**
      * @return \ThemeHouse\InstallAndUpgrade\Repository\Profile
      */
     protected function getProfileRepository()
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
+    }
+
+    /**
+     * @param $secret
+     */
+    public function setEncryptionSecret($secret)
+    {
+        $this->secret = $secret;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function _postSave()
+    {
+        if (($this->isInsert() || $this->isChanged('options')) && $this->active) {
+            $handler = $this->getHandler();
+
+            if ($handler->getCapability('productList')) {
+                $this->app()
+                    ->jobManager()
+                    ->enqueue('ThemeHouse\InstallAndUpgrade:GetProducts', [], true);
+            }
+        }
     }
 }

@@ -7,8 +7,15 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
 
+/**
+ * Class GetProducts
+ * @package ThemeHouse\InstallAndUpgrade\Job
+ */
 class GetProducts extends AbstractJob
 {
+    /**
+     * @var array
+     */
     protected $defaultData = [
         'steps' => 1,
         'profile_id' => 0

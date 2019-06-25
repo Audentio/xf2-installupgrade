@@ -8,8 +8,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class CronEnable
+ * @package ThemeHouse\InstallAndUpgrade\Cli\Command\Admin
+ */
 class CronEnable extends Command
 {
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -26,24 +33,25 @@ class CronEnable extends Command
                 null,
                 InputOption::VALUE_NONE,
                 "Enable all cron tasks"
-            )
-        ;
+            );
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // be verbose, otherwise we don't get stack trace errors...
-        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL)
-        {
+        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL) {
             $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         }
 
         $id = $input->getArgument('id');
-        if (!$id)
-        {
+        if (!$id) {
             $all = $input->getOption('all');
-            if (!$all)
-            {
+            if (!$all) {
                 $output->writeln("<error>" . "No cron entry with ID '$id' could be found, or --all not used." . "</error>");
 
                 return 1;
@@ -51,18 +59,14 @@ class CronEnable extends Command
 
             /** @var \XF\Entity\CronEntry $cron */
             $cronEntries = \XF::finder('XF:CronEntry')->fetch();
-            foreach($cronEntries as $cron)
-            {
+            foreach ($cronEntries as $cron) {
                 $cron->active = 1;
                 $cron->saveIfChanged();
             }
-        }
-        else
-        {
+        } else {
             /** @var \XF\Entity\CronEntry $cron */
             $cron = \XF::app()->find('XF:CronEntry', $id);
-            if (!$cron)
-            {
+            if (!$cron) {
                 $output->writeln("<error>" . "No cron entry with ID '$id' could be found." . "</error>");
 
                 return 1;

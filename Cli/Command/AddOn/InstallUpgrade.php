@@ -2,9 +2,6 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn;
 
-use ThemeHouse\InstallAndUpgrade\Cli\Command\AddOnActionTraitFix;
-use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
-use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,11 +9,24 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use ThemeHouse\InstallAndUpgrade\Cli\Command\AddOnActionTraitFix;
+use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
+use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
+use XF\AddOn\AddOn;
+use XF\Util\File;
+use XF\Util\Php;
 
+/**
+ * Class InstallUpgrade
+ * @package ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn
+ */
 class InstallUpgrade extends Command
 {
     use AddOnActionTraitFix, BulkCliJobTrait, SubTaskRunnerTrait;
 
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -33,66 +43,62 @@ class InstallUpgrade extends Command
                 'f',
                 InputOption::VALUE_NONE,
                 'Skip verifying that the add-on is installable'
-            )
-        ;
+            );
         $this->configureBulk();
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // be verbose, otherwise we don't get stack trace errors...
-        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL)
-        {
+        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL) {
             $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         }
 
         // big hammer to avoid caching issues
-        \XF\Util\Php::resetOpcache();
+        Php::resetOpcache();
 
         $id = $input->getArgument('id');
 
         $addOnManager = \XF::app()->addOnManager();
         $addOn = $addOnManager->getById($id);
 
-        if (!$addOn)
-        {
+        if (!$addOn) {
             $output->writeln("<error>" . "No add-on with ID '$id' could be found." . "</error>");
 
             return 1;
         }
 
         $isInstall = true;
-        if (!$addOn->canInstall())
-        {
-            if ($addOn)
-            {
+        if (!$addOn->canInstall()) {
+            if ($addOn) {
                 $addOn = $this->checkInstalledAddOn($id, $error);
-                if (!$addOn)
-                {
+                if (!$addOn) {
                     $output->writeln('<error>' . $error . '</error>');
 
                     return 1;
                 }
 
-                if (!$addOn->canUpgrade() && !$input->getOption('force'))
-                {
+                if (!$addOn->canUpgrade() && !$input->getOption('force')) {
                     $output->writeln("<error>" . \XF::phrase('this_add_on_cannot_be_upgraded') . "</error>");
 
                     return 1;
                 }
 
                 $isInstall = false;
-            }
-            else
-            {
+            } else {
                 $output->writeln("<error>" . \XF::phrase('this_add_on_cannot_be_installed') . "</error>");
 
                 return 1;
             }
         }
 
-        if (!$this->verifyAddOnAction($input, $output, $addOn))
-        {
+        if (!$this->verifyAddOnAction($input, $output, $addOn)) {
             $output->writeln("\tFor {$addOn->title}");
             return 1;
         }
@@ -100,13 +106,11 @@ class InstallUpgrade extends Command
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
-        if ($isInstall)
-        {
+        if ($isInstall) {
             $question = new ConfirmationQuestion("<question>" . \XF::phrase('please_confirm_that_you_want_to_install_following_add_on') . ': (' . $addOn->title . ' ' . $addOn->version_string . ") (y/n)</question>");
 
             $response = $helper->ask($input, $output, $question);
-            if (!$response)
-            {
+            if (!$response) {
                 return 1;
             }
 
@@ -123,24 +127,21 @@ class InstallUpgrade extends Command
 
             $hasOutputFolder = $addOn->isDevOutputAvailable();
             $this->runSubAction($output, $addOn, 'install');
-            if (!$hasOutputFolder && $addOn->isDevOutputAvailable() && $this->isAddOnDataAvailable($addOn))
-            {
+            if (!$hasOutputFolder && $addOn->isDevOutputAvailable() && $this->isAddOnDataAvailable($addOn)) {
                 // _output actions generated in installer, this can cause silent data truncation!!
-                $outputPath = $addOn->getAddOnDirectory(). DIRECTORY_SEPARATOR . '_output';
-                \XF\Util\File::deleteDirectory($outputPath);
+                $outputPath = $addOn->getAddOnDirectory() . DIRECTORY_SEPARATOR . '_output';
+                File::deleteDirectory($outputPath);
             }
             $this->runSubAction($output, $addOn, 'import');
             $this->runSubAction($output, $addOn, 'post-install');
-        }
-        else
-        {
+        } else {
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
 
             $phrase = \XF::phrase('upgrading_x_from_y_to_z', [
                 'title' => $addOn->title,
-                'old'   => $addOn->version_string,
-                'new'   => $addOn->json_version_string
+                'old' => $addOn->version_string,
+                'new' => $addOn->json_version_string
             ]);
 
             $output->writeln($phrase->render() . '...');
@@ -150,8 +151,7 @@ class InstallUpgrade extends Command
             );
 
             $response = $helper->ask($input, $output, $question);
-            if (!$response)
-            {
+            if (!$response) {
                 return 1;
             }
 
@@ -168,18 +168,16 @@ class InstallUpgrade extends Command
 
             $hasOutputFolder = $addOn->isDevOutputAvailable();
             $this->runSubAction($output, $addOn, 'upgrade');
-            if (!$hasOutputFolder && $addOn->isDevOutputAvailable() && $this->isAddOnDataAvailable($addOn))
-            {
+            if (!$hasOutputFolder && $addOn->isDevOutputAvailable() && $this->isAddOnDataAvailable($addOn)) {
                 // _output actions generated in installer, this can cause silent data truncation!!
-                $outputPath = $addOn->getAddOnDirectory(). DIRECTORY_SEPARATOR . '_output';
-                \XF\Util\File::deleteDirectory($outputPath);
+                $outputPath = $addOn->getAddOnDirectory() . DIRECTORY_SEPARATOR . '_output';
+                File::deleteDirectory($outputPath);
             }
             $this->runSubAction($output, $addOn, 'import');
             $this->runSubAction($output, $addOn, 'post-upgrade');
         }
 
-        if (!$this->hasPendingBulkJob($input, $output))
-        {
+        if (!$this->hasPendingBulkJob($input, $output)) {
             $this->runPendingManualJobsInTask($output, -1);
         }
 
@@ -187,15 +185,14 @@ class InstallUpgrade extends Command
     }
 
     /**
-     * @param \XF\AddOn\AddOn $addOn
+     * @param AddOn $addOn
      * @return bool
      */
-    public function isAddOnDataAvailable(\XF\AddOn\AddOn $addOn)
+    public function isAddOnDataAvailable(AddOn $addOn)
     {
         $addOnIdDir = $addOn->getDataDirectory();
 
-        if (!file_exists($addOnIdDir))
-        {
+        if (!file_exists($addOnIdDir)) {
             return false;
         }
 

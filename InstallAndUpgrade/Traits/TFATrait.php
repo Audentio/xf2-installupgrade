@@ -2,17 +2,16 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
+/**
+ * Trait TFATrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait TFATrait
 {
-    protected $tfaCode;
-
     /**
-     * @param $key
+     * @var
      */
-    public function setTfaCode($key)
-    {
-        $this->tfaCode = $key;
-    }
+    protected $tfaCode;
 
     /**
      * @return mixed
@@ -20,5 +19,13 @@ trait TFATrait
     public function getTfaCode()
     {
         return $this->tfaCode;
+    }
+
+    /**
+     * @param $key
+     */
+    public function setTfaCode($key)
+    {
+        $this->tfaCode = $key;
     }
 }

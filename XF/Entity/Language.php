@@ -2,8 +2,15 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Entity;
 
+use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use XF\Mvc\Entity\Structure;
 
+/**
+ * Class Language
+ * @package ThemeHouse\InstallAndUpgrade\XF\Entity
+ *
+ * @property Product THIAUProduct
+ */
 class Language extends XFCP_Language
 {
     /**
