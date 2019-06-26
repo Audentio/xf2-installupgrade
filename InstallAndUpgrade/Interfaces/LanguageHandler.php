@@ -31,9 +31,10 @@ interface LanguageHandler
 
     /**
      * @param $url
+     * @param null $error
      * @return mixed
      */
-    public function createLanguageProductFromUrl($url);
+    public function createLanguageProductFromUrl($url, &$error = null);
 
     /**
      * @param $url

@@ -208,7 +208,11 @@ class Language extends XFCP_Language
             /** @var ProductBatch $productBatch */
             $productBatch = $this->em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
             /** @var LanguageHandler $handler */
-            $product = $handler->createLanguageProductFromUrl($url);
+            $product = $handler->createLanguageProductFromUrl($url, $error);
+            if($error) {
+                return $this->error($error);
+            }
+
             $productBatch->addProduct($product, $handler->downloadLanguageProduct($product));
             $productBatch->save();
 

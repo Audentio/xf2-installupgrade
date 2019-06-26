@@ -31,9 +31,10 @@ interface StyleHandler
 
     /**
      * @param $url
+     * @param null $error
      * @return mixed
      */
-    public function createStyleProductFromUrl($url);
+    public function createStyleProductFromUrl($url, &$error = null);
 
     /**
      * @param $url

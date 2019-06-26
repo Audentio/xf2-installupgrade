@@ -209,9 +209,10 @@ class DragonByte extends AbstractHandler implements ProductList, AddOnHandler
     /**
      * @param $url
      *
+     * @param null $error
      * @throws \Exception
      */
-    public function createAddOnProductFromUrl($url)
+    public function createAddOnProductFromUrl($url, &$error = null)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');

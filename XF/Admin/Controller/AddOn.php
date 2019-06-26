@@ -4,6 +4,7 @@ namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use ThemeHouse\InstallAndUpgrade\Repository\Product;
@@ -193,20 +194,33 @@ class AddOn extends XFCP_AddOn
             return $this->error($error);
         }
 
+        /** @var AddOnHandler|AbstractHandler $handler */
         $handler = $lastProfile->getHandler();
 
         if (!$handler->getCapability('addOn')) {
             return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_addons'));
         }
+
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
         $controllerPlugin = $this->plugin('ThemeHouse\InstallAndUpgrade:Profile');
 
         return $controllerPlugin->handleReply($handler, $lastProfile, function () use ($handler, $urls) {
+            foreach ($urls as $url) {
+                if (!$handler->isValidAddOnUrl($url, $error)) {
+                    return $this->error($error);
+                }
+            }
+
             /** @var ProductBatch $productBatch */
             $productBatch = $this->em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
             foreach ($urls as $url) {
                 /** @var AddOnHandler $handler */
-                $product = $handler->createAddOnProductFromUrl($url);
+                $product = $handler->createAddOnProductFromUrl($url, $error);
+
+                if ($error) {
+                    return $this->error($error);
+                }
+
                 $productBatch->addProduct($product);
             }
             $productBatch->save();

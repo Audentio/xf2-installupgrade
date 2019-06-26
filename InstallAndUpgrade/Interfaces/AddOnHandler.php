@@ -37,9 +37,10 @@ interface AddOnHandler
 
     /**
      * @param $url
+     * @param null $error
      * @return mixed
      */
-    public function createAddOnProductFromUrl($url);
+    public function createAddOnProductFromUrl($url, &$error = null);
 
     /**
      * @param $url

@@ -27,9 +27,10 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
 
     /**
      * @param $url
+     * @param null $error
      * @throws \Exception
      */
-    public function createAddOnProductFromUrl($url)
+    public function createAddOnProductFromUrl($url, &$error = null)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');
@@ -47,9 +48,10 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
 
     /**
      * @param $url
+     * @param null $error
      * @throws \Exception
      */
-    public function createStyleProductFromUrl($url)
+    public function createStyleProductFromUrl($url, &$error = null)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');
