@@ -88,20 +88,24 @@ class UpdateCheck extends AbstractJob
                 continue;
             }
 
-            switch ($product->product_type) {
-                case 'addOn':
-                    /** @var AddOnHandler $handler */
-                    $handler->checkAddOnProductForUpdates($product);
-                    break;
+            try {
+                switch ($product->product_type) {
+                    case 'addOn':
+                        /** @var AddOnHandler $handler */
+                        $handler->checkAddOnProductForUpdates($product);
+                        break;
 
-                case 'style':
-                    /** @var StyleHandler $handler */
-                    $handler->checkStyleProductForUpdates($product);
-                    break;
+                    case 'style':
+                        /** @var StyleHandler $handler */
+                        $handler->checkStyleProductForUpdates($product);
+                        break;
 
-                case 'language':
-                    /** @var LanguageHandler $handler */
-                    $handler->checkLanguageProductForUpdates($product);
+                    case 'language':
+                        /** @var LanguageHandler $handler */
+                        $handler->checkLanguageProductForUpdates($product);
+                }
+            } catch (\Exception $e) {
+                \XF::logException($e);
             }
         }
 
