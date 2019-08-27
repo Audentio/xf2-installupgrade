@@ -2,8 +2,15 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Util;
 
+/**
+ * Class Encryption
+ * @package ThemeHouse\InstallAndUpgrade\Util
+ */
 class Encryption
 {
+    /**
+     *
+     */
     const ENCTYPE = 'aes-256-cbc';
 
     /**

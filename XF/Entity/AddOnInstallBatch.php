@@ -2,8 +2,15 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Entity;
 
+/**
+ * Class AddOnInstallBatch
+ * @package ThemeHouse\InstallAndUpgrade\XF\Entity
+ */
 class AddOnInstallBatch extends XFCP_AddOnInstallBatch
 {
+    /**
+     * @var
+     */
     protected $thLastAddedAddOnId;
 
     /**

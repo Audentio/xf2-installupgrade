@@ -2,16 +2,30 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\View\AddOn;
 
+use ThemeHouse\InstallAndUpgrade\Repository\Profile;
+
+/**
+ * Class Listing
+ * @package ThemeHouse\InstallAndUpgrade\XF\Admin\View\AddOn
+ *
+ * @property array $params
+ */
 class Listing extends XFCP_Listing
 {
+    /**
+     *
+     */
     public function renderHtml()
     {
         if (is_callable('parent::renderHtml')) {
             parent::renderHtml();
         }
 
+        /** @var Profile $profileRepo */
+        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+
         $errors = [];
-        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+        $profiles = $profileRepo
             ->findProfiles()
             ->where('last_error_messages', '!=', '[]')
             ->fetch();

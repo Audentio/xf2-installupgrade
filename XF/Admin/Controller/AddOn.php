@@ -4,12 +4,17 @@ namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use ThemeHouse\InstallAndUpgrade\Repository\Product;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\Redirect;
 
+/**
+ * Class AddOn
+ * @package ThemeHouse\InstallAndUpgrade\XF\Admin\Controller
+ */
 class AddOn extends XFCP_AddOn
 {
     /**
@@ -40,11 +45,23 @@ class AddOn extends XFCP_AddOn
     }
 
     /**
+     * @return InstallAndUpgrade
+     */
+    protected function getInstallUpgradeRepo()
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
+    }
+
+    /**
      * @return Redirect
      */
     public function actionThInstallUpgradeDismiss()
     {
-        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+
+        $profiles = $profileRepo
             ->findProfiles()
             ->where('last_error_messages', '!=', '[]')
             ->fetch();
@@ -72,7 +89,7 @@ class AddOn extends XFCP_AddOn
     public function actionThInstallUpgradeUpgrade(ParameterBag $params)
     {
         /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\AddOn $addOn */
-        $addOn = $this->assertAddOnAvailable($params->addon_id_url);
+        $addOn = $this->assertAddOnAvailable($params['addon_id_url']);
         $product = $addOn->THIAUProduct;
 
         if (empty($product->Profile->getHandler())) {
@@ -177,34 +194,38 @@ class AddOn extends XFCP_AddOn
             return $this->error($error);
         }
 
+        /** @var AddOnHandler|AbstractHandler $handler */
         $handler = $lastProfile->getHandler();
 
         if (!$handler->getCapability('addOn')) {
             return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_addons'));
         }
+
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
         $controllerPlugin = $this->plugin('ThemeHouse\InstallAndUpgrade:Profile');
 
         return $controllerPlugin->handleReply($handler, $lastProfile, function () use ($handler, $urls) {
+            foreach ($urls as $url) {
+                if (!$handler->isValidAddOnUrl($url, $error)) {
+                    return $this->error($error);
+                }
+            }
+
             /** @var ProductBatch $productBatch */
             $productBatch = $this->em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
             foreach ($urls as $url) {
                 /** @var AddOnHandler $handler */
-                $product = $handler->createAddOnProductFromUrl($url);
+                $product = $handler->createAddOnProductFromUrl($url, $error);
+
+                if ($error) {
+                    return $this->error($error);
+                }
+
                 $productBatch->addProduct($product);
             }
             $productBatch->save();
 
             return $this->redirect($this->buildLink('th-install-upgrade/install-products', $productBatch));
         }, ['urls' => $urls]);
-    }
-
-    /**
-     * @return InstallAndUpgrade
-     */
-    protected function getInstallUpgradeRepo()
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
     }
 }

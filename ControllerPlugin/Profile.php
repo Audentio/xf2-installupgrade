@@ -2,47 +2,18 @@
 
 namespace ThemeHouse\InstallAndUpgrade\ControllerPlugin;
 
+use ThemeHouse\InstallAndUpgrade\Entity\Profile as ProfileEntity;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\TFA;
-use \ThemeHouse\InstallAndUpgrade\Entity\Profile as ProfileEntity;
 use XF\ControllerPlugin\AbstractPlugin;
 
+/**
+ * Class Profile
+ * @package ThemeHouse\InstallAndUpgrade\ControllerPlugin
+ */
 class Profile extends AbstractPlugin
 {
-    /**
-     * @param ProfileEntity $profile
-     * @param array $extra
-     * @return \XF\Mvc\Reply\View
-     */
-    public function credentialsForm(ProfileEntity $profile, array $extra)
-    {
-        $viewParams = [
-            'profile' => $profile,
-            'redirectUrl' => $this->app->request()->getFullRequestUri(),
-            'extra' => $extra
-        ];
-
-        return $this->view('ThemeHouse\InstallAndUpgrade:Profile\CredentialsForm', 'th_iau_credentials_form',
-            $viewParams);
-    }
-
-    /**
-     * @param ProfileEntity $profile
-     * @param array $extra
-     * @return \XF\Mvc\Reply\View
-     */
-    public function tfaForm(ProfileEntity $profile, array $extra)
-    {
-        $viewParams = [
-            'profile' => $profile,
-            'redirectUrl' => $this->app->request()->getFullRequestUri(),
-            'extra' => $extra
-        ];
-
-        return $this->view('ThemeHouse\InstallAndUpgrade:Profile\CredentialsForm', 'th_iau_tfa_form', $viewParams);
-    }
-
     /**
      * @param AbstractHandler $handler
      * @param ProfileEntity $profile
@@ -50,7 +21,12 @@ class Profile extends AbstractPlugin
      * @param array $params
      * @return \XF\Mvc\Reply\View
      */
-    public function handleReply(AbstractHandler $handler, ProfileEntity $profile, callable $successFunction, array $params = []) {
+    public function handleReply(
+        AbstractHandler $handler,
+        ProfileEntity $profile,
+        callable $successFunction,
+        array $params = []
+    ) {
         $session = $this->app->session();
 
         if ($handler->getCapability('encryptCredentials')) {
@@ -86,5 +62,38 @@ class Profile extends AbstractPlugin
         }
 
         return $successFunction();
+    }
+
+    /**
+     * @param ProfileEntity $profile
+     * @param array $extra
+     * @return \XF\Mvc\Reply\View
+     */
+    public function credentialsForm(ProfileEntity $profile, array $extra)
+    {
+        $viewParams = [
+            'profile' => $profile,
+            'redirectUrl' => $this->app->request()->getFullRequestUri(),
+            'extra' => $extra
+        ];
+
+        return $this->view('ThemeHouse\InstallAndUpgrade:Profile\CredentialsForm', 'th_iau_credentials_form',
+            $viewParams);
+    }
+
+    /**
+     * @param ProfileEntity $profile
+     * @param array $extra
+     * @return \XF\Mvc\Reply\View
+     */
+    public function tfaForm(ProfileEntity $profile, array $extra)
+    {
+        $viewParams = [
+            'profile' => $profile,
+            'redirectUrl' => $this->app->request()->getFullRequestUri(),
+            'extra' => $extra
+        ];
+
+        return $this->view('ThemeHouse\InstallAndUpgrade:Profile\CredentialsForm', 'th_iau_tfa_form', $viewParams);
     }
 }

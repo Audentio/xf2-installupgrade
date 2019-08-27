@@ -2,21 +2,24 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
+use XF\DB\AbstractAdapter;
+
 /**
- * This class is used to reset the query log which XF doesn't provide a sane way to zap
- *
+ * Class DbLogQuery
  * @package ThemeHouse\InstallAndUpgrade\Repository
+ *
+ * This class is used to reset the query log which XF doesn't provide a sane way to zap
  */
-abstract class DbLogQuery extends \XF\DB\AbstractAdapter
+abstract class DbLogQuery extends AbstractAdapter
 {
-    public static function resetQueryLog(\XF\DB\AbstractAdapter $db)
+    /**
+     * @param AbstractAdapter $db
+     */
+    public static function resetQueryLog(AbstractAdapter $db)
     {
-        try
-        {
+        try {
             $db->queryLog = [];
-        }
-        catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
 
         }
     }

@@ -9,9 +9,16 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
 
+/**
+ * Class UpdateCheck
+ * @package ThemeHouse\InstallAndUpgrade\Job
+ */
 class UpdateCheck extends AbstractJob
 {
 
+    /**
+     * @var array
+     */
     protected $defaultData = [
         'profileId' => 0,
         'productId' => 0,
@@ -81,20 +88,24 @@ class UpdateCheck extends AbstractJob
                 continue;
             }
 
-            switch ($product->product_type) {
-                case 'addOn':
-                    /** @var AddOnHandler $handler */
-                    $handler->checkAddOnProductForUpdates($product);
-                    break;
+            try {
+                switch ($product->product_type) {
+                    case 'addOn':
+                        /** @var AddOnHandler $handler */
+                        $handler->checkAddOnProductForUpdates($product);
+                        break;
 
-                case 'style':
-                    /** @var StyleHandler $handler */
-                    $handler->checkStyleProductForUpdates($product);
-                    break;
+                    case 'style':
+                        /** @var StyleHandler $handler */
+                        $handler->checkStyleProductForUpdates($product);
+                        break;
 
-                case 'language':
-                    /** @var LanguageHandler $handler */
-                    $handler->checkLanguageProductForUpdates($product);
+                    case 'language':
+                        /** @var LanguageHandler $handler */
+                        $handler->checkLanguageProductForUpdates($product);
+                }
+            } catch (\Exception $e) {
+                \XF::logException($e);
             }
         }
 

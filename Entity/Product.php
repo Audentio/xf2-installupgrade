@@ -30,34 +30,6 @@ use XF\Mvc\Entity\Structure;
 class Product extends Entity
 {
     /**
-     * @return null|string
-     */
-    public function getContentType()
-    {
-        switch ($this->product_type) {
-            case 'addOn':
-                return 'XF:AddOn';
-
-            case 'language':
-                return 'XF:Language';
-
-            case 'style':
-                return 'XF:Style';
-
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * @return null|Entity
-     */
-    public function getContent()
-    {
-        return $this->em()->find($this->content_type, $this->content_id);
-    }
-
-    /**
      * @param Structure $structure
      * @return Structure
      */
@@ -98,5 +70,33 @@ class Product extends Entity
         $structure->defaultWith = 'Profile';
 
         return $structure;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getContentType()
+    {
+        switch ($this->product_type) {
+            case 'addOn':
+                return 'XF:AddOn';
+
+            case 'language':
+                return 'XF:Language';
+
+            case 'style':
+                return 'XF:Style';
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * @return null|Entity
+     */
+    public function getContent()
+    {
+        return $this->em()->find($this->content_type, $this->content_id);
     }
 }

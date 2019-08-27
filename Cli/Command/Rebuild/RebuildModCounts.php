@@ -6,8 +6,15 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class RebuildModCounts
+ * @package ThemeHouse\InstallAndUpgrade\Cli\Command\Rebuild
+ */
 class RebuildModCounts extends Command
 {
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -16,6 +23,11 @@ class RebuildModCounts extends Command
             ->setDescription('Rebuilds various moderator count caches.');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var \XF\Repository\UserUpgrade $userUpgradeRepo */

@@ -7,18 +7,12 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials
 use XF\Admin\Controller\AbstractController;
 use XF\Mvc\ParameterBag;
 
+/**
+ * Class Profile
+ * @package ThemeHouse\InstallAndUpgrade\Admin\Controller
+ */
 class Profile extends AbstractController
 {
-    /**
-     * @param $action
-     * @param ParameterBag $params
-     * @throws \XF\Mvc\Reply\Exception
-     */
-    protected function preDispatchController($action, ParameterBag $params)
-    {
-        $this->assertAdminPermission('thaiu_manageProviders');
-    }
-
     /**
      * @return \XF\Mvc\Reply\View
      * @throws \Exception
@@ -38,6 +32,15 @@ class Profile extends AbstractController
         ];
 
         return $this->view('ThemeHouse\InstallAndUpgrade:Profile\List', 'th_iau_profiles_list', $viewParams);
+    }
+
+    /**
+     * @return \ThemeHouse\InstallAndUpgrade\Repository\Profile
+     */
+    protected function getProfileRepository()
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
     }
 
     /**
@@ -84,18 +87,6 @@ class Profile extends AbstractController
     }
 
     /**
-     * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \Exception
-     */
-    public function actionEdit(ParameterBag $params)
-    {
-        $profile = $this->assertProfileExists($params->profile_id);
-        return $this->profileAddEdit($profile);
-    }
-
-    /**
      * @param \ThemeHouse\InstallAndUpgrade\Entity\Profile $profile
      * @return \XF\Mvc\Reply\View
      * @throws \Exception
@@ -112,6 +103,31 @@ class Profile extends AbstractController
 
     /**
      * @param ParameterBag $params
+     * @return \XF\Mvc\Reply\View
+     * @throws \XF\Mvc\Reply\Exception
+     * @throws \Exception
+     */
+    public function actionEdit(ParameterBag $params)
+    {
+        $profile = $this->assertProfileExists($params['profile_id']);
+        return $this->profileAddEdit($profile);
+    }
+
+    /**
+     * @param $id
+     * @param null $with
+     * @param null $phraseKey
+     * @return \ThemeHouse\InstallAndUpgrade\Entity\Profile
+     * @throws \XF\Mvc\Reply\Exception
+     */
+    protected function assertProfileExists($id, $with = null, $phraseKey = null)
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Profile', $id, $with, $phraseKey);
+    }
+
+    /**
+     * @param ParameterBag $params
      * @return \XF\Mvc\Reply\Redirect
      * @throws \XF\Mvc\Reply\Exception
      * @throws \XF\PrintableException
@@ -119,8 +135,8 @@ class Profile extends AbstractController
      */
     public function actionSave(ParameterBag $params)
     {
-        if ($params->profile_id) {
-            $profile = $this->assertProfileExists($params->profile_id);
+        if ($params['profile_id']) {
+            $profile = $this->assertProfileExists($params['profile_id']);
         } else {
             /** @var \ThemeHouse\InstallAndUpgrade\Entity\Profile $profile */
             $profile = $this->em()->create('ThemeHouse\InstallAndUpgrade:Profile');
@@ -129,31 +145,6 @@ class Profile extends AbstractController
         $this->profileSaveProcess($profile)->run();
 
         return $this->redirect($this->buildLink('th-install-upgrade-profiles'));
-    }
-
-    /**
-     * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
-     */
-    public function actionDelete(ParameterBag $params)
-    {
-        $profile = $this->assertProfileExists($params->profile_id);
-
-        if ($this->isPost()) {
-            $profile->delete();
-
-            return $this->redirect($this->buildLink('th-install-upgrade-profiles'));
-        } else {
-
-            $viewParams = [
-                'profile' => $profile
-            ];
-
-            return $this->view('ThemeHouse\InstallAndUpgrade:Profile\Delete', 'th_iau_profiles_delete',
-                $viewParams);
-        }
     }
 
     /**
@@ -204,6 +195,31 @@ class Profile extends AbstractController
     }
 
     /**
+     * @param ParameterBag $params
+     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     * @throws \XF\Mvc\Reply\Exception
+     * @throws \XF\PrintableException
+     */
+    public function actionDelete(ParameterBag $params)
+    {
+        $profile = $this->assertProfileExists($params['profile_id']);
+
+        if ($this->isPost()) {
+            $profile->delete();
+
+            return $this->redirect($this->buildLink('th-install-upgrade-profiles'));
+        } else {
+
+            $viewParams = [
+                'profile' => $profile
+            ];
+
+            return $this->view('ThemeHouse\InstallAndUpgrade:Profile\Delete', 'th_iau_profiles_delete',
+                $viewParams);
+        }
+    }
+
+    /**
      * @return \XF\Mvc\Reply\Message
      */
     public function actionToggle()
@@ -214,24 +230,12 @@ class Profile extends AbstractController
     }
 
     /**
-     * @param $id
-     * @param null $with
-     * @param null $phraseKey
-     * @return \ThemeHouse\InstallAndUpgrade\Entity\Profile
+     * @param $action
+     * @param ParameterBag $params
      * @throws \XF\Mvc\Reply\Exception
      */
-    protected function assertProfileExists($id, $with = null, $phraseKey = null)
+    protected function preDispatchController($action, ParameterBag $params)
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Profile', $id, $with, $phraseKey);
-    }
-
-    /**
-     * @return \ThemeHouse\InstallAndUpgrade\Repository\Profile
-     */
-    protected function getProfileRepository()
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $this->assertAdminPermission('thaiu_manageProviders');
     }
 }

@@ -9,8 +9,8 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\LanguageHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\MultiProfile;
-use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\TFA;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\TFA;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\AddonHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\EncryptCredentialsTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\HtmlParserTrait;
@@ -21,6 +21,10 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\TFATrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\VersioningTrait;
 use XF\Util\File;
 
+/**
+ * Class XF2RM
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade
+ */
 class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, AddOnHandler, TFA, MultiProfile, EncryptCredentials
 {
     use TFATrait, VersioningTrait, AddonHandlerTrait, HttpClientTrait, EncryptCredentialsTrait, HtmlParserTrait, StyleHandlerTrait, LanguageHandlerTrait;
@@ -30,169 +34,25 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
     protected $authenticated = false;
 
     /**
-     * @return bool
-     */
-    protected function authenticate()
-    {
-        if ($this->authenticated) {
-            return true;
-        }
-
-        $credentials = $this->getCredentials();
-
-        $baseUrl = $this->profile->base_url;
-
-        /* Session Cookie */
-        $this->httpRequest("{$baseUrl}/login/login");
-
-        /* Login */
-        $response = $this->httpRequest("{$baseUrl}/login/login", [
-            'form_params' => [
-                'login' => $credentials['user'],
-                'password' => $credentials['password']
-            ]
-        ], 'post');
-
-        if ($this->profile->has_tfa) {
-            $parser = $this->htmlParser();
-            $parser->load($response->getBody()->getContents());
-
-            $xfToken = $parser->find('input[name="_xfToken"]')->offsetGet(0)->getAttribute('value');
-            $provider = $parser->find('input[name="provider"]')->offsetGet(0)->getAttribute('value');
-
-            $response = $this->httpRequest("{$baseUrl}/login/two-step", [
-                'form_params' => [
-                    'code' => $this->getTfaCode(),
-                    'confirm' => 1,
-                    'remember' => 1,
-                    'provider' => $provider,
-                    '_xfRedirect' => $baseUrl,
-                    '_xfToken' => $xfToken
-                ]
-            ], 'post');
-        }
-
-        $this->authenticated = true;
-        return true;
-    }
-
-    /**
      * @param $url
+     * @param null $error
      * @return Product
      * @throws \XF\PrintableException
      */
-    public function createAddOnProductFromUrl($url)
+    public function createAddOnProductFromUrl($url, &$error = null)
     {
-        return $this->createProductFromUrl($url, 'addOn');
-    }
-
-    /**
-     * @param $url
-     * @param $error
-     * @return bool
-     */
-    public function isValidAddOnUrl($url, &$error)
-    {
-        return $this->isValidXFRMUrl($url, $error);
-    }
-
-    /**
-     * @param $url
-     * @return Product
-     * @throws \XF\PrintableException
-     */
-    public function createLanguageProductFromUrl($url)
-    {
-        return $this->createProductFromUrl($url, 'language');
-    }
-
-    /**
-     * @param $url
-     * @param $error
-     * @return bool
-     */
-    public function isValidLanguageUrl($url, &$error)
-    {
-        return $this->isValidXFRMUrl($url, $error);
-    }
-
-    /**
-     * @param $url
-     * @return Product
-     * @throws \XF\PrintableException
-     */
-    public function createStyleProductFromUrl($url)
-    {
-        return $this->createProductFromUrl($url, 'style');
-    }
-
-    /**
-     * @param $url
-     * @param $error
-     * @return bool
-     */
-    public function isValidStyleUrl($url, &$error)
-    {
-        return $this->isValidXFRMUrl($url, $error);
-    }
-
-    /**
-     * @param $url
-     * @param $error
-     * @return bool
-     */
-    protected function isValidXFRMUrl($url, &$error)
-    {
-        $this->authenticate();
-
-        $url = explode('/', $url);
-        array_pop($url);
-        $url = implode('/', $url);
-
-        $pageResult = $this->httpRequest($url);
-
-        if ($pageResult->getStatusCode() !== 200) {
-            $error = \XF::phrase('th_installupgrade_connection_failed');
-        }
-
-        $parser = $this->htmlParser();
-
-        $parser->load($pageResult->getBody()->getContents());
-
-        /** @noinspection PhpUndefinedMethodInspection */
-        /** @var HtmlNode $htmlNode */
-        $htmlNode = $parser->find('html')->offsetGet(0);
-        $template = $htmlNode->getAttribute('data-template');
-
-        if ($template !== 'xfrm_resource_view') {
-            return false;
-        }
-
-        /** @var Collection $pageActions */
-        $pageActions = $parser->find('.p-title-pageAction > a');
-
-        $validUrl = false;
-        foreach ($pageActions as $pageAction) {
-            /** @var HtmlNode $pageAction */
-            $url = $pageAction->getAttribute('href');
-
-            if (strpos($url, 'http') === 0 && strpos($url, $this->profile->base_url) !== 0) {
-                $error = \XF::phrase('th_installupgrade_xfrm_external_download_not_supported');
-            } else {
-                $validUrl = true;
-            }
-        }
-
-        return $validUrl;
+        return $this->createProductFromUrl($url, 'addOn', $error);
     }
 
     /**
      * @param $url
      * @param $type
+     * @param $
+     * @param null $error
      * @return Product
      * @throws \XF\PrintableException
      */
-    protected function createProductFromUrl($url, $type)
+    protected function createProductFromUrl($url, $type, &$error = null)
     {
         preg_match('/(\d+)/', strrev($url), $matches);
         while (is_array($matches)) {
@@ -247,6 +107,210 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
     }
 
     /**
+     * @return bool
+     */
+    protected function authenticate()
+    {
+        if ($this->authenticated) {
+            return true;
+        }
+
+        $credentials = $this->getCredentials();
+
+        $baseUrl = $this->profile->base_url;
+
+        /* Session Cookie */
+        $this->httpRequest("{$baseUrl}/login/login");
+
+        /* Login */
+        $response = $this->httpRequest("{$baseUrl}/login/login", [
+            'form_params' => [
+                'login' => $credentials['user'],
+                'password' => $credentials['password']
+            ]
+        ], 'post');
+
+        if ($this->profile->has_tfa) {
+            $parser = $this->htmlParser();
+            $parser->load($response->getBody()->getContents());
+
+            $xfToken = $parser->find('input[name="_xfToken"]')
+                ->offsetGet(0)->getAttribute('value');
+
+            $provider = $parser->find('input[name="provider"]')
+                ->offsetGet(0)->getAttribute('value');
+
+            $this->httpRequest("{$baseUrl}/login/two-step", [
+                'form_params' => [
+                    'code' => $this->getTfaCode(),
+                    'confirm' => 1,
+                    'remember' => 1,
+                    'provider' => $provider,
+                    '_xfRedirect' => $baseUrl,
+                    '_xfToken' => $xfToken
+                ]
+            ], 'post');
+        }
+
+        $this->authenticated = true;
+        return true;
+    }
+
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
+    public function isValidAddOnUrl($url, &$error)
+    {
+        return $this->isValidXFRMUrl($url, $error);
+    }
+
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
+    protected function isValidXFRMUrl($url, &$error)
+    {
+        $this->authenticate();
+
+        $url = explode('/', $url);
+        array_pop($url);
+        $url = implode('/', $url);
+
+        $pageResult = $this->httpRequest($url);
+
+        if ($pageResult->getStatusCode() !== 200) {
+            $error = \XF::phrase('th_installupgrade_connection_failed');
+            return false;
+        }
+
+        $parser = $this->htmlParser();
+
+        $parser->load($pageResult->getBody()->getContents());
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        /** @var HtmlNode $htmlNode */
+        $htmlNode = $parser->find('html')->offsetGet(0);
+        $template = $htmlNode->getAttribute('data-template');
+
+        if ($template !== 'xfrm_resource_view') {
+            $error = \XF::phrase('th_installupgrade_xfrm_url_does_not_appear_to_be_resource_overview_page', ['url' => $url]);
+            return false;
+        }
+
+        /** @var Collection $pageActions */
+        $pageActions = $parser->find('.p-title-pageAction > a');
+
+        foreach ($pageActions as $pageAction) {
+            /** @var HtmlNode $pageAction */
+            $url = $pageAction->getAttribute('href');
+            $classes = $pageAction->getAttribute('class');
+
+            if (strpos($classes, 'button--icon--redirect')) {
+                $error = \XF::phrase('th_installupgrade_xfrm_external_download_not_supported');
+                return false;
+            }
+
+            if (strpos($url, 'http') === 0 && strpos($url, $this->profile->base_url) !== 0) {
+                return false;
+            }
+            
+            if($pageAction->getAttribute('data-xf-click')) {
+                $error = \XF::phrase('th_installupgrade_xfrm_multiple_downloads_not_supported');
+                return false;
+            }
+
+
+            if (strpos($classes, 'button--icon--download')) {
+                return true;
+            }
+        }
+
+        $error = \XF::phrase('th_installupgrade_xfrm_no_download_found', ['url' => $url]);
+        return false;
+    }
+
+    /**
+     * @param $url
+     * @param null $error
+     * @return Product
+     * @throws \XF\PrintableException
+     */
+    public function createLanguageProductFromUrl($url, &$error = null)
+    {
+        return $this->createProductFromUrl($url, 'language', $error);
+    }
+
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
+    public function isValidLanguageUrl($url, &$error)
+    {
+        return $this->isValidXFRMUrl($url, $error);
+    }
+
+    /**
+     * @param $url
+     * @param null $error
+     * @return Product
+     * @throws \XF\PrintableException
+     */
+    public function createStyleProductFromUrl($url, &$error = null)
+    {
+        return $this->createProductFromUrl($url, 'style', $error);
+    }
+
+    /**
+     * @param $url
+     * @param $error
+     * @return bool
+     */
+    public function isValidStyleUrl($url, &$error)
+    {
+        return $this->isValidXFRMUrl($url, $error);
+    }
+
+    /**
+     * @return \XF\Phrase
+     */
+    public function getTitle()
+    {
+        return \XF::phrase('install_upgrade_provider.xf2rm');
+    }
+
+    /**
+     * @return string
+     */
+    public function getProfileOptionsTemplate()
+    {
+        return 'install_upgrade_provider_config_xf2rm';
+    }
+
+    /**
+     * @return array
+     */
+    public function getProfileDefaultOptions()
+    {
+        return [
+            'base_url' => 'https://xenforo.com/community',
+            'page_title' => 'XenForo Community'
+        ];
+    }
+
+    /**
+     * @param array $options
+     * @return bool
+     */
+    public function verifyOptions(array $options)
+    {
+        return true;
+    }
+
+    /**
      * @param Product $product
      * @return string
      * @throws \Exception
@@ -284,41 +348,5 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         /** @var Collection $versionContainer */
         $versionContainer = $parser->find('.p-title-value > span.u-muted');
         return $versionContainer->offsetExists(0) ? $versionContainer->offsetGet(0)->text() : '0.0.0';
-    }
-
-    /**
-     * @return \XF\Phrase
-     */
-    public function getTitle()
-    {
-        return \XF::phrase('install_upgrade_provider.xf2rm');
-    }
-
-    /**
-     * @return string
-     */
-    public function getProfileOptionsTemplate()
-    {
-        return 'install_upgrade_provider_config_xf2rm';
-    }
-
-    /**
-     * @return array
-     */
-    public function getProfileDefaultOptions()
-    {
-        return [
-            'base_url' => 'https://xenforo.com/community',
-            'page_title' => 'XenForo Community'
-        ];
-    }
-
-    /**
-     * @param array $options
-     * @return bool
-     */
-    public function verifyOptions(array $options)
-    {
-        return true;
     }
 }

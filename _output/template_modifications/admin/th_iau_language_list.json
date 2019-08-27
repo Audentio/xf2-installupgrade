@@ -1,0 +1,9 @@
+{
+    "template": "language_list",
+    "description": "Add I&U status icon",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/(\\s*<xf:datarow.*?){\\$language\\.title}/sU",
+    "replace": "<xf:set var=\"$languageTitle\">\n\t<xf:if is=\"$language.THIAUProduct\">\n\t\t<xf:fa icon=\"fa-download\" data-xf-init=\"tooltip\"\n\t\t\t   title=\"{{ phrase('th_iau_connected_to_iau') }}\" />\n\t</xf:if>\n\t{$language.title}\n</xf:set>\n${1}{$languageTitle|raw}"
+}

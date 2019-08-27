@@ -10,6 +10,10 @@ use XF\FsMounts;
 use XF\Mvc\Entity\Repository;
 use XF\Util\File;
 
+/**
+ * Class FileHandling
+ * @package ThemeHouse\InstallAndUpgrade\Repository
+ */
 class FileHandling extends Repository
 {
     /**
@@ -21,8 +25,7 @@ class FileHandling extends Repository
     {
         $fs = \XF::fs();
 
-        if (substr($zipFilename, 0, 7) == 'file://')
-        {
+        if (substr($zipFilename, 0, 7) == 'file://') {
             $zipFilename = substr($zipFilename, 7);
         }
 
@@ -38,58 +41,54 @@ class FileHandling extends Repository
         return $prefix;
     }
 
+    /**
+     * @param $prefix
+     */
     public function unmountZip($prefix)
     {
         $fs = \XF::fs();
 
         $filesystem = $fs->getFilesystem($prefix);
-        if ($filesystem instanceof  Filesystem)
-        {
+        if ($filesystem instanceof Filesystem) {
             $adapter = $filesystem->getAdapter();
-            if ($adapter instanceof ZipArchiveAdapter)
-            {
+            if ($adapter instanceof ZipArchiveAdapter) {
                 $adapter->getArchive()->close();
             }
         }
     }
 
     /**
-     * @param string   $abstractSrc
-     * @param string   $realDest
+     * @param string $abstractSrc
+     * @param string $realDest
      * @param callable $closure
+     * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FileNotFoundException
      */
     public function copyFiles($abstractSrc, $realDest, callable $closure)
     {
         $dest = File::canonicalizePath($realDest);
-        if (!$dest)
-        {
+        if (!$dest) {
             throw new \LogicException('Require a path for realDest');
         }
         $dest = rtrim($dest, '/') . '/';
 
         $fs = $this->app()->fs();
         $contents = $fs->listContents($abstractSrc . '/upload', true);
-        foreach ($contents as $fileNode)
-        {
+        foreach ($contents as $fileNode) {
             $destFile = \preg_replace('#^upload\/#i', '', $fileNode['path'], 1);
             $destPath = $dest . $destFile;
-            if ($fileNode['type'] == 'dir')
-            {
+            if ($fileNode['type'] == 'dir') {
                 File::createDirectory($destPath);
                 continue;
             }
 
             $stream = $fs->readStream('addon-zip://' . $fileNode['path']);
-            try
-            {
+            try {
                 File::writeFile($destPath, $stream);
-            }
-            finally
-            {
+            } finally {
                 fclose($stream);
             }
-            if ($closure)
-            {
+            if ($closure) {
                 $closure($destFile);
             }
         }

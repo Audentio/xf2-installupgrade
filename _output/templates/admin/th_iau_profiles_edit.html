@@ -22,6 +22,7 @@
 
 			<xf:if is="$handler.capabilities.encryptCredentials">
 				<xf:passwordboxrow name="encryption_secret"
+								   required="true"
 								   label="{{ phrase('th_installupgrade_encryption_secret') }}"
 								   explain="{{ phrase('th_installupgrade_encryption_secret_explain') }}" />
 			</xf:if>

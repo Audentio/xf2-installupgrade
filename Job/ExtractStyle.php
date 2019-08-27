@@ -7,8 +7,15 @@ use XF\Job\AbstractJob;
 use XF\Job\JobResult;
 use XF\Timer;
 
+/**
+ * Class ExtractStyle
+ * @package ThemeHouse\InstallAndUpgrade\Job
+ */
 class ExtractStyle extends AbstractJob
 {
+    /**
+     * @var array
+     */
     protected $defaultData = [
         'batchId' => 0,
         'productId' => 0,

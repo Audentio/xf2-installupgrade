@@ -7,6 +7,10 @@ use XF\Entity\User;
 use XF\Mvc\Entity\Finder;
 use XF\Mvc\Entity\Repository;
 
+/**
+ * Class Log
+ * @package ThemeHouse\InstallAndUpgrade\Repository
+ */
 class Log extends Repository
 {
     /**

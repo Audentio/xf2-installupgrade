@@ -5,26 +5,16 @@ namespace ThemeHouse\InstallAndUpgrade\Repository;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use XF\Mvc\Entity\Repository;
 
+/**
+ * Class Profile
+ * @package ThemeHouse\InstallAndUpgrade\Repository
+ */
 class Profile extends Repository
 {
-    protected $handlers;
-
     /**
-     * @throws \Exception
+     * @var
      */
-    public function getHandlers()
-    {
-        $contentTypes = $this->app()->getContentTypeField('th_installupgrade_handler');
-
-        foreach ($contentTypes as $contentType => $class) {
-            if (!isset($this->handlers[$contentType])) {
-                $classString = $this->app()->extendClass($class);
-                $this->handlers[$contentType] = new $classString();
-            }
-        }
-
-        return $this->handlers;
-    }
+    protected $handlers;
 
     /**
      * @param $key
@@ -41,11 +31,20 @@ class Profile extends Repository
     }
 
     /**
-     * @return \XF\Mvc\Entity\Finder
+     * @throws \Exception
      */
-    public function findProfiles()
+    public function getHandlers()
     {
-        return $this->finder('ThemeHouse\InstallAndUpgrade:Profile');
+        $contentTypes = $this->app()->getContentTypeField('th_installupgrade_handler');
+
+        foreach ($contentTypes as $contentType => $class) {
+            if (!isset($this->handlers[$contentType])) {
+                $classString = $this->app()->extendClass($class);
+                $this->handlers[$contentType] = new $classString();
+            }
+        }
+
+        return $this->handlers;
     }
 
     /**
@@ -71,5 +70,13 @@ class Profile extends Repository
         }
 
         return $profiles;
+    }
+
+    /**
+     * @return \XF\Mvc\Entity\Finder
+     */
+    public function findProfiles()
+    {
+        return $this->finder('ThemeHouse\InstallAndUpgrade:Profile');
     }
 }

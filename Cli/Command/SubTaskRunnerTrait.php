@@ -3,16 +3,23 @@
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command;
 
 use Symfony\Component\Console\Helper\ProcessHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
+/**
+ * Trait SubTaskRunnerTrait
+ * @package ThemeHouse\InstallAndUpgrade\Cli\Command
+ */
 trait SubTaskRunnerTrait
 {
+    /**
+     * @param OutputInterface $output
+     * @param int $time
+     * @throws \Exception
+     */
     public function runPendingManualJobsInTask(OutputInterface $output, $time = 30)
     {
         \XF::triggerRunOnce();
@@ -23,13 +30,13 @@ trait SubTaskRunnerTrait
         $this->runSubTask($output, [
             'iau-addon:run-jobs',
             '--manual-jobs',
-            '--time='.$time,
+            '--time=' . $time,
         ]);
     }
 
     /**
      * @param OutputInterface $output
-     * @param array           $args
+     * @param array $args
      */
     public function runSubTask(OutputInterface $output, array $args)
     {
@@ -43,8 +50,7 @@ trait SubTaskRunnerTrait
         $builderOptions = array_merge($builderOptions, $args);
 
         $verbosity = $output->getVerbosity();
-        switch ($verbosity)
-        {
+        switch ($verbosity) {
             case OutputInterface::VERBOSITY_QUIET:
                 $verbosityOption = '-q';
                 break;
@@ -66,8 +72,7 @@ trait SubTaskRunnerTrait
                 break;
         }
 
-        if ($verbosityOption)
-        {
+        if ($verbosityOption) {
             $builderOptions[] = $verbosityOption;
         }
 
@@ -78,23 +83,17 @@ trait SubTaskRunnerTrait
         /** @var ProcessHelper $processHelper */
         $processHelper = $this->getHelper('process');
 
-        try
-        {
-            $processHelper->mustRun($output, $process, null, function($type, $data) use ($output)
-            {
-                if ($type == Process::OUT)
-                {
+        try {
+            $processHelper->mustRun($output, $process, null, function ($type, $data) use ($output) {
+                if ($type == Process::OUT) {
                     $output->write($data);
                 }
                 // Note that progress bar output is in Process::ERR/stderr, but they get streamed to this callback
                 // interleaved, so displaying both is difficult. Thus, we need to only display stuff sent stdout.
             });
-        }
-        catch (ProcessFailedException $e)
-        {
+        } catch (ProcessFailedException $e) {
             $process = $e->getProcess();
-            if ($process->getExitCode() === 222)
-            {
+            if ($process->getExitCode() === 222) {
                 // This indicates that the sub-process threw an exception. It will have been printed and logged
                 // so don't trigger the normal exception handling. However, we can't continue so exit.
                 exit(1);

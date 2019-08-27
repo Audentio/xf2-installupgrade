@@ -13,6 +13,10 @@ use XF\Db\Schema\Alter;
 use XF\Db\Schema\Column;
 use XF\Db\Schema\Create;
 
+/**
+ * Class Setup
+ * @package ThemeHouse\InstallAndUpgrade
+ */
 class Setup extends AbstractSetup
 {
     use StepRunnerInstallTrait;
@@ -25,30 +29,99 @@ class Setup extends AbstractSetup
     {
         $sm = $this->schemaManager();
 
-        foreach ($this->getTables() as $tableName => $callback)
-        {
+        foreach ($this->getTables() as $tableName => $callback) {
             $sm->createTable($tableName, $callback);
             $sm->alterTable($tableName, $callback);
         }
     }
 
-    public function installStep2()
+    /**
+     * @return array
+     */
+    protected function getTables()
     {
-        $sm = $this->schemaManager();
+        $tables = [];
 
-        foreach ($this->getAlterTables() as $tableName => $callback)
-        {
-            if ($sm->tableExists($tableName))
-            {
-                $sm->alterTable($tableName, $callback);
-            }
-        }
+        $tables['xf_th_installupgrade_profile'] = function ($table) {
+            /** @var Create|Alter $table */
+            $this->addOrChangeColumn($table, 'profile_id', 'int')->autoIncrement();
+            $this->addOrChangeColumn($table, 'provider_id', 'varchar', 25);
+            $this->addOrChangeColumn($table, 'page_title', 'varchar', 100);
+            $this->addOrChangeColumn($table, 'base_url', 'varchar', 100)->setDefault('');
+            $this->addOrChangeColumn($table, 'has_tfa', 'bool')->setDefault(0);
+            $this->addOrChangeColumn($table, 'options', 'blob');
+            $this->addOrChangeColumn($table, 'active', 'bool')->setDefault(1);
+            $this->addOrChangeColumn($table, 'requires_decryption', 'bool')->setDefault(0);
+            $this->addOrChangeColumn($table, 'last_error_messages', 'blob');
+        };
+
+        $tables['xf_th_installupgrade_product'] = function ($table) {
+            /** @var Create|Alter $table */
+            $this->addOrChangeColumn($table, 'profile_id', 'int');
+            $this->addOrChangeColumn($table, 'product_id', 'varchar', 60);
+            $this->addOrChangeColumn($table, 'product_type', 'enum')->values(['addOn', 'style', 'language']);
+            $this->addOrChangeColumn($table, 'content_id', 'varchar', 60)->setDefault('');
+            $this->addOrChangeColumn($table, 'title', 'varchar', 100);
+            $this->addOrChangeColumn($table, 'description', 'text');
+            $this->addOrChangeColumn($table, 'current_version', 'text');
+            $this->addOrChangeColumn($table, 'latest_version', 'text');
+            $this->addOrChangeColumn($table, 'update_available', 'tinyint')->setDefault(0);
+            $this->addOrChangeColumn($table, 'extra', 'blob');
+            $this->addOrChangeColumn($table, 'installed', 'tinyint')->setDefault(0);
+            $this->addOrChangeColumn($table, 'json_hash', 'varchar', 64)->setDefault('');
+            $table->addPrimaryKey(['profile_id', 'product_id']);
+        };
+
+        $tables['xf_th_installupgrade_product_batch'] = function ($table) {
+            /** @var Create|Alter $table */
+            $this->addOrChangeColumn($table, 'batch_id', 'int')->nullable()->autoIncrement();
+            $this->addOrChangeColumn($table, 'start_date', 'int')->setDefault(0);
+            $this->addOrChangeColumn($table, 'complete_date', 'int')->setDefault(0);
+            $this->addOrChangeColumn($table, 'product_ids', 'blob');
+            $this->addOrChangeColumn($table, 'results', 'blob');
+        };
+
+        $tables['xf_th_installupgrade_log'] = function ($table) {
+            /** @var Create|Alter $table */
+            $this->addOrChangeColumn($table, 'log_id', 'int')->autoIncrement();
+            $this->addOrChangeColumn($table, 'profile_id', 'int');
+            $this->addOrChangeColumn($table, 'product_id', 'varchar', 200)->setDefault('');
+            $this->addOrChangeColumn($table, 'user_id', 'int')->setDefault(0);
+            $this->addOrChangeColumn($table, 'log_date', 'int')->setDefault(0);
+            $this->addOrChangeColumn($table, 'action', 'text');
+            $this->addOrChangeColumn($table, 'content_type', 'varchar', 100)->setDefault('');
+            $this->addOrChangeColumn($table, 'content_id', 'varchar', 200)->setDefault('');
+            $this->addOrChangeColumn($table, 'extra', 'blob')->nullable();
+        };
+
+        return $tables;
     }
 
-    public function postInstall(array &$stateChanges)
+    /**
+     * @param Create|Alter $table
+     * @param string $name
+     * @param string|null $type
+     * @param string|null $length
+     * @return Column
+     * @throws \LogicException If table is unknown schema object
+     */
+    protected function addOrChangeColumn($table, $name, $type = null, $length = null)
     {
-        $jobManager = \XF::app()->jobManager();
-        $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
+        if ($table instanceof Create) {
+            $table->checkExists(true);
+
+            return $table->addColumn($name, $type, $length);
+        } else {
+            if ($table instanceof Alter) {
+                if ($table->getColumnDefinition($name)) {
+                    return $table->changeColumn($name, $type, $length);
+                }
+
+                return $table->addColumn($name, $type, $length);
+            } else {
+                throw new \LogicException('Unknown schema DDL type ' . \get_class($table));
+            }
+        }
     }
 
     /** ---- UPGRADE ---- */
@@ -62,101 +135,18 @@ class Setup extends AbstractSetup
     /** 1.1.1 */
     use Patch1010130;
 
-    public function postUpgrade($previousVersion, array &$stateChanges)
-    {
-        if ($previousVersion <= 1000040)
-        {
-            $jobManager = \XF::app()->jobManager();
-            $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
-        }
-    }
-
-
-    /** ---- UNINSTALL ---- */
-
-    public function uninstallStep1()
-    {
-        $sm = $this->schemaManager();
-
-        foreach ($this->getTables() as $tableName => $callback)
-        {
-            $sm->dropTable($tableName);
-        }
-    }
-
     /**
-     * Reverts database schema changes - table alters
+     *
      */
-    public function uninstallStep2()
+    public function installStep2()
     {
         $sm = $this->schemaManager();
 
-        foreach ($this->getRemoveAlterTables() as $tableName => $callback)
-        {
-            if ($sm->tableExists($tableName))
-            {
+        foreach ($this->getAlterTables() as $tableName => $callback) {
+            if ($sm->tableExists($tableName)) {
                 $sm->alterTable($tableName, $callback);
             }
         }
-    }
-
-    protected function getTables()
-    {
-        $tables = [];
-
-        $tables['xf_th_installupgrade_profile'] = function ($table) {
-            /** @var Create|Alter $table */
-            $this->addOrChangeColumn($table,'profile_id', 'int')->autoIncrement();
-            $this->addOrChangeColumn($table,'provider_id', 'varchar', 25);
-            $this->addOrChangeColumn($table,'page_title', 'varchar', 100);
-            $this->addOrChangeColumn($table,'base_url', 'varchar', 100)->setDefault('');
-            $this->addOrChangeColumn($table,'has_tfa', 'bool')->setDefault(0);
-            $this->addOrChangeColumn($table,'options', 'blob');
-            $this->addOrChangeColumn($table,'active', 'bool')->setDefault(1);
-            $this->addOrChangeColumn($table,'requires_decryption', 'bool')->setDefault(0);
-            $this->addOrChangeColumn($table,'last_error_messages', 'blob');
-        };
-
-        $tables['xf_th_installupgrade_product'] = function ($table) {
-            /** @var Create|Alter $table */
-            $this->addOrChangeColumn($table,'profile_id', 'int');
-            $this->addOrChangeColumn($table,'product_id', 'varchar', 60);
-            $this->addOrChangeColumn($table,'product_type', 'enum')->values(['addOn', 'style', 'language']);
-            $this->addOrChangeColumn($table,'content_id', 'varchar', 60)->setDefault('');
-            $this->addOrChangeColumn($table,'title', 'varchar', 100);
-            $this->addOrChangeColumn($table,'description', 'text');
-            $this->addOrChangeColumn($table,'current_version', 'text');
-            $this->addOrChangeColumn($table,'latest_version', 'text');
-            $this->addOrChangeColumn($table,'update_available', 'tinyint')->setDefault(0);
-            $this->addOrChangeColumn($table,'extra', 'blob');
-            $this->addOrChangeColumn($table,'installed', 'tinyint')->setDefault(0);
-            $this->addOrChangeColumn($table,'json_hash', 'varchar', 64)->setDefault('');
-            $table->addPrimaryKey(['profile_id', 'product_id']);
-        };
-
-        $tables['xf_th_installupgrade_product_batch'] = function ($table) {
-            /** @var Create|Alter $table */
-            $this->addOrChangeColumn($table,'batch_id', 'int')->nullable()->autoIncrement();
-            $this->addOrChangeColumn($table,'start_date', 'int')->setDefault(0);
-            $this->addOrChangeColumn($table,'complete_date', 'int')->setDefault(0);
-            $this->addOrChangeColumn($table,'product_ids', 'blob');
-            $this->addOrChangeColumn($table,'results', 'blob');
-        };
-
-        $tables['xf_th_installupgrade_log'] = function ($table) {
-            /** @var Create|Alter $table */
-            $this->addOrChangeColumn($table,'log_id', 'int')->autoIncrement();
-            $this->addOrChangeColumn($table,'profile_id', 'int');
-            $this->addOrChangeColumn($table,'product_id', 'varchar', 200)->setDefault('');
-            $this->addOrChangeColumn($table,'user_id', 'int')->setDefault(0);
-            $this->addOrChangeColumn($table,'log_date', 'int')->setDefault(0);
-            $this->addOrChangeColumn($table,'action', 'text');
-            $this->addOrChangeColumn($table,'content_type', 'varchar', 100)->setDefault('');
-            $this->addOrChangeColumn($table,'content_id', 'varchar', 200)->setDefault('');
-            $this->addOrChangeColumn($table,'extra', 'blob')->nullable();
-        };
-
-        return $tables;
     }
 
     /**
@@ -177,6 +167,52 @@ class Setup extends AbstractSetup
     }
 
     /**
+     * @param array $stateChanges
+     */
+    public function postInstall(array &$stateChanges)
+    {
+        $jobManager = \XF::app()->jobManager();
+        $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
+    }
+
+    /**
+     * @param $previousVersion
+     * @param array $stateChanges
+     */
+    public function postUpgrade($previousVersion, array &$stateChanges)
+    {
+        if ($previousVersion <= 1000040) {
+            $jobManager = \XF::app()->jobManager();
+            $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
+        }
+    }
+
+    /** ---- UNINSTALL ---- */
+
+    public function uninstallStep1()
+    {
+        $sm = $this->schemaManager();
+
+        foreach ($this->getTables() as $tableName => $callback) {
+            $sm->dropTable($tableName);
+        }
+    }
+
+    /**
+     * Reverts database schema changes - table alters
+     */
+    public function uninstallStep2()
+    {
+        $sm = $this->schemaManager();
+
+        foreach ($this->getRemoveAlterTables() as $tableName => $callback) {
+            if ($sm->tableExists($tableName)) {
+                $sm->alterTable($tableName, $callback);
+            }
+        }
+    }
+
+    /**
      * @return array
      */
     protected function getRemoveAlterTables()
@@ -188,36 +224,5 @@ class Setup extends AbstractSetup
         };
 
         return $tables;
-    }
-
-    /**
-     * @param Create|Alter $table
-     * @param string       $name
-     * @param string|null  $type
-     * @param string|null  $length
-     * @return Column
-     * @throws \LogicException If table is unknown schema object
-     */
-    protected function addOrChangeColumn($table, $name, $type = null, $length = null)
-    {
-        if ($table instanceof Create)
-        {
-            $table->checkExists(true);
-
-            return $table->addColumn($name, $type, $length);
-        }
-        else if ($table instanceof Alter)
-        {
-            if ($table->getColumnDefinition($name))
-            {
-                return $table->changeColumn($name, $type, $length);
-            }
-
-            return $table->addColumn($name, $type, $length);
-        }
-        else
-        {
-            throw new \LogicException('Unknown schema DDL type ' . \get_class($table));
-        }
     }
 }

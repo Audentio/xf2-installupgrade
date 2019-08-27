@@ -4,21 +4,21 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
 use ThemeHouse\InstallAndUpgrade\Util\Encryption;
 
+/**
+ * Trait EncryptCredentialsTrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait EncryptCredentialsTrait
 {
+    /**
+     * @var
+     */
     protected $secret;
 
-    protected $credentials;
-
     /**
-     * @return array
+     * @var
      */
-    public function getEncryptedOptions()
-    {
-        return [
-            'password'
-        ];
-    }
+    protected $credentials;
 
     /**
      * @param $secret
@@ -34,25 +34,6 @@ trait EncryptCredentialsTrait
     public function getCredentials()
     {
         return $this->decryptCredentials();
-    }
-
-    /**
-     * @param array $input
-     * @return array
-     */
-    public function encryptCredentials(array $input)
-    {
-        $encryptedOptions = $this->getEncryptedOptions();
-        if ($this->secret) {
-            foreach ($input as $key => &$value) {
-                if (in_array($key, $encryptedOptions)) {
-                    $value = Encryption::encryptString($value, $this->secret);
-                    $input[$key . '_encrypted'] = true;
-                }
-            }
-        }
-
-        return $input;
     }
 
     /**
@@ -73,5 +54,34 @@ trait EncryptCredentialsTrait
         }
 
         return $options;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEncryptedOptions()
+    {
+        return [
+            'password'
+        ];
+    }
+
+    /**
+     * @param array $input
+     * @return array
+     */
+    public function encryptCredentials(array $input)
+    {
+        $encryptedOptions = $this->getEncryptedOptions();
+        if ($this->secret) {
+            foreach ($input as $key => &$value) {
+                if (in_array($key, $encryptedOptions)) {
+                    $value = Encryption::encryptString($value, $this->secret);
+                    $input[$key . '_encrypted'] = true;
+                }
+            }
+        }
+
+        return $input;
     }
 }

@@ -5,6 +5,10 @@ namespace ThemeHouse\InstallAndUpgrade\Repository;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use XF\Mvc\Entity\Repository;
 
+/**
+ * Class InstallAndUpgrade
+ * @package ThemeHouse\InstallAndUpgrade\Repository
+ */
 class InstallAndUpgrade extends Repository
 {
     /**
@@ -127,7 +131,7 @@ class InstallAndUpgrade extends Repository
 
         $languages = $this->finder('XF:Language')->with('THIAUProduct', true)->fetch();
         foreach ($languages as $language) {
-            $product = $style->THIAUProduct;
+            $product = $language->THIAUProduct;
             if ($product && !empty($product->Profile->getHandler())
                 && $product->Profile->getHandler()->compareVersions($product->current_version,
                     $product->latest_version)) {
@@ -151,43 +155,33 @@ class InstallAndUpgrade extends Repository
         /** @var \XF\AddOn\AddOn[] $complex */
         $complex = [];
         // init the list
-        foreach ($upgradeableAddOns as $addOn)
-        {
+        foreach ($upgradeableAddOns as $addOn) {
             $json = $addOn->getJson();
             unset($json['require']['php']);
             unset($json['require']['XF']);
             $installList[$addOn->getAddOnId()] = ['addon' => $addOn, 'dependencies' => []];
-            if (!empty($json['require']) || !empty($json['require-soft']))
-            {
+            if (!empty($json['require']) || !empty($json['require-soft'])) {
                 $complex[$addOn->getAddOnId()] = $addOn;
             }
         }
         // build the graph
-        foreach ($complex as $addOnId => $addOn)
-        {
+        foreach ($complex as $addOnId => $addOn) {
             $json = $addOn->getJson();
-            foreach ((array)$json['require'] as $productKey => $requirement)
-            {
-                if (empty($installList[$productKey]))
-                {
+            foreach ((array)$json['require'] as $productKey => $requirement) {
+                if (empty($installList[$productKey])) {
                     continue;
                 }
-                if (empty($installList[$addOnId]['dependencies'][$productKey]))
-                {
+                if (empty($installList[$addOnId]['dependencies'][$productKey])) {
                     $installList[$addOnId]['dependencies'][$productKey] = &$installList[$productKey];
                 }
             }
             // custom install hints
-            if (isset($json['require-soft']))
-            {
-                foreach ((array)$json['require-soft'] as $productKey => $requirement)
-                {
-                    if (empty($installList[$productKey]))
-                    {
+            if (isset($json['require-soft'])) {
+                foreach ((array)$json['require-soft'] as $productKey => $requirement) {
+                    if (empty($installList[$productKey])) {
                         continue;
                     }
-                    if (empty($installList[$addOnId]['dependencies'][$productKey]))
-                    {
+                    if (empty($installList[$addOnId]['dependencies'][$productKey])) {
                         $installList[$addOnId]['dependencies'][$productKey] = &$installList[$productKey];
                     }
                 }
@@ -197,10 +191,8 @@ class InstallAndUpgrade extends Repository
         // actually resolve into a list
         $finalList = [];
         $loopDetection = [];
-        foreach ($installList as $addOnId => $addOn)
-        {
-            if ($addOn['dependencies'])
-            {
+        foreach ($installList as $addOnId => $addOn) {
+            if ($addOn['dependencies']) {
                 $finalList = $finalList + $this->resolveDependencies($installList, $addOnId, $loopDetection);
             }
 
@@ -211,24 +203,21 @@ class InstallAndUpgrade extends Repository
     }
 
     /**
-     * @param array  $installList
+     * @param array $installList
      * @param string $addOnId
-     * @param array  $loopDetection
+     * @param array $loopDetection
      * @return array
      */
     protected function resolveDependencies(array $installList, $addOnId, array &$loopDetection)
     {
         $loopDetection[$addOnId] = true;
         $finalList = [];
-        foreach ($installList[$addOnId]['dependencies'] as $childAddOnId => $addOn)
-        {
-            if (isset($loopDetection[$childAddOnId]))
-            {
+        foreach ($installList[$addOnId]['dependencies'] as $childAddOnId => $addOn) {
+            if (isset($loopDetection[$childAddOnId])) {
                 continue;
             }
 
-            if ($addOn['dependencies'])
-            {
+            if ($addOn['dependencies']) {
                 $finalList = $finalList + $this->resolveDependencies($installList, $childAddOnId, $loopDetection);
             }
 

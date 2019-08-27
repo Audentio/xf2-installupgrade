@@ -12,25 +12,25 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\StyleHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\VersioningTrait;
 use XF\Util\File;
 
+/**
+ * Class ThemeHouse
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade
+ */
 class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, ProductList
 {
     use VersioningTrait, AddonHandlerTrait, StyleHandlerTrait;
 
+    /**
+     * @var string
+     */
     protected $apiUrl = 'products/{product_id}/download/{version_id}';
 
     /**
-     * @return null
-     */
-    protected function getApiKey()
-    {
-        return isset($this->profile->options['api_key']) ? $this->profile->options['api_key'] : null;
-    }
-
-    /**
      * @param $url
+     * @param null $error
      * @throws \Exception
      */
-    public function createAddOnProductFromUrl($url)
+    public function createAddOnProductFromUrl($url, &$error = null)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');
@@ -48,86 +48,13 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
 
     /**
      * @param $url
+     * @param null $error
      * @throws \Exception
      */
-    public function createStyleProductFromUrl($url)
+    public function createStyleProductFromUrl($url, &$error = null)
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         throw new \Exception('This provider does not support installation from URL');
-    }
-
-    /**
-     * @param $productId
-     * @param $versionId
-     * @return array|mixed|object|\Psr\Http\Message\ResponseInterface
-     */
-    protected function getVersion($productId, $versionId)
-    {
-        /** @var \ThemeHouse\Core\Service\ApiRequest $apiService */
-        $apiService = $this->service('ThemeHouse\Core:ApiRequest');
-        $apiService->setApiKey($this->getApiKey());
-
-        $url = str_replace('{product_id}', $productId, str_replace('{version_id}', $versionId, $this->apiUrl));
-        return $apiService->get($url);
-    }
-
-    /**
-     * @param $product
-     * @param bool $getVersionId
-     * @return string
-     */
-    protected function getLatestVersion($product, $getVersionId = false)
-    {
-        /** @var ApiRequest $apiRequest */
-        $apiRequest = $this->service('ThemeHouse\Core:ApiRequest');
-
-        if (!$this->getApiKey()) {
-            return '';
-        }
-
-        $apiRequest->setApiKey($this->getApiKey());
-
-        $apiResponse = $apiRequest->get('products/' . $product->product_id);
-        if ($apiResponse['status'] === 'error') {
-            return '';
-        } else {
-            $versions = $apiResponse['payload']['versions'];
-            $latestVersion = end($versions);
-
-            return $getVersionId ? $latestVersion['id'] : $latestVersion['version'];
-        }
-    }
-
-    /**
-     * @param Product $product
-     * @return bool|null|string
-     */
-    protected function downloadProduct(Product $product)
-    {
-        $productId = $product->extra['product_id'];
-        $versionId = $this->getLatestVersion($product, true);
-
-        $tempFile = File::getTempFile();
-
-        /** @var ApiRequest $apiRequest */
-        $apiRequest = $this->service('ThemeHouse\Core:ApiRequest');
-        $apiRequest->setApiKey($this->getApiKey());
-
-        $downloadResponse = $this->getVersion($productId, $versionId);
-        if ($downloadResponse['status'] === 'error') {
-            $this->app->logException(new \Exception('Unable to download zip from ThemeHouse.'));
-            return false;
-        }
-
-        $version = $downloadResponse['payload']['version'];
-        $downloadResponse = $apiRequest->download($version['download_url'], $tempFile);
-
-        if ($downloadResponse['status'] === 'error') {
-            $this->app->logException(new \Exception('Unable to download zip from ThemeHouse.'));
-            return null;
-        }
-
-        return $tempFile;
     }
 
     /**
@@ -247,5 +174,87 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
         ]);
 
         return $product;
+    }
+
+    /**
+     * @param Product $product
+     * @return bool|null|string
+     */
+    protected function downloadProduct(Product $product)
+    {
+        $productId = $product->extra['product_id'];
+        $versionId = $this->getLatestVersion($product, true);
+
+        $tempFile = File::getTempFile();
+
+        /** @var ApiRequest $apiRequest */
+        $apiRequest = $this->service('ThemeHouse\Core:ApiRequest');
+        $apiRequest->setApiKey($this->getApiKey());
+
+        $downloadResponse = $this->getVersion($productId, $versionId);
+        if ($downloadResponse['status'] === 'error') {
+            $this->app->logException(new \Exception('Unable to download zip from ThemeHouse.'));
+            return false;
+        }
+
+        $version = $downloadResponse['payload']['version'];
+        $downloadResponse = $apiRequest->download($version['download_url'], $tempFile);
+
+        if ($downloadResponse['status'] === 'error') {
+            $this->app->logException(new \Exception('Unable to download zip from ThemeHouse.'));
+            return null;
+        }
+
+        return $tempFile;
+    }
+
+    /**
+     * @param $product
+     * @param bool $getVersionId
+     * @return string
+     */
+    protected function getLatestVersion($product, $getVersionId = false)
+    {
+        /** @var ApiRequest $apiRequest */
+        $apiRequest = $this->service('ThemeHouse\Core:ApiRequest');
+
+        if (!$this->getApiKey()) {
+            return '';
+        }
+
+        $apiRequest->setApiKey($this->getApiKey());
+
+        $apiResponse = $apiRequest->get('products/' . $product->product_id);
+        if ($apiResponse['status'] === 'error') {
+            return '';
+        } else {
+            $versions = $apiResponse['payload']['versions'];
+            $latestVersion = end($versions);
+
+            return $getVersionId ? $latestVersion['id'] : $latestVersion['version'];
+        }
+    }
+
+    /**
+     * @return null
+     */
+    protected function getApiKey()
+    {
+        return isset($this->profile->options['api_key']) ? $this->profile->options['api_key'] : null;
+    }
+
+    /**
+     * @param $productId
+     * @param $versionId
+     * @return array|mixed|object|\Psr\Http\Message\ResponseInterface
+     */
+    protected function getVersion($productId, $versionId)
+    {
+        /** @var \ThemeHouse\Core\Service\ApiRequest $apiService */
+        $apiService = $this->service('ThemeHouse\Core:ApiRequest');
+        $apiService->setApiKey($this->getApiKey());
+
+        $url = str_replace('{product_id}', $productId, str_replace('{version_id}', $versionId, $this->apiUrl));
+        return $apiService->get($url);
     }
 }

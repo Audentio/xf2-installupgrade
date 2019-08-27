@@ -13,6 +13,32 @@ use XF\Mvc\Entity\Structure;
  */
 class AddOn extends XFCP_AddOn
 {
+    /**
+     * @param Structure $structure
+     * @return Structure
+     */
+    public static function getStructure(Structure $structure)
+    {
+        $structure = parent::getStructure($structure);
+
+        $structure->relations['THIAUProduct'] = [
+            'entity' => 'ThemeHouse\InstallAndUpgrade:Product',
+            'type' => self::TO_ONE,
+            'conditions' => [
+                ['product_type', '=', 'addOn'],
+                ['content_id', '=', '$addon_id']
+            ],
+            'defaultWith' => ['Profile']
+        ];
+
+        $structure->defaultWith[] = 'THIAUProduct';
+
+        return $structure;
+    }
+
+    /**
+     *
+     */
     protected function _postDelete()
     {
         $product = $this->THIAUProduct;
@@ -23,6 +49,9 @@ class AddOn extends XFCP_AddOn
         parent::_postDelete();
     }
 
+    /**
+     *
+     */
     protected function _postSave()
     {
         $product = $this->THIAUProduct;
@@ -51,28 +80,5 @@ class AddOn extends XFCP_AddOn
         }
 
         parent::_postSave();
-    }
-
-    /**
-     * @param Structure $structure
-     * @return Structure
-     */
-    public static function getStructure(Structure $structure)
-    {
-        $structure = parent::getStructure($structure);
-
-        $structure->relations['THIAUProduct'] = [
-            'entity' => 'ThemeHouse\InstallAndUpgrade:Product',
-            'type' => self::TO_ONE,
-            'conditions' => [
-                ['product_type', '=', 'addOn'],
-                ['content_id', '=', '$addon_id']
-            ],
-            'defaultWith' => ['Profile']
-        ];
-
-        $structure->defaultWith[] = 'THIAUProduct';
-
-        return $structure;
     }
 }

@@ -3,42 +3,55 @@
 namespace ThemeHouse\InstallAndUpgrade\Admin\Controller;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
+
 use XF\Admin\Controller\AbstractController;
 use XF\Mvc\ParameterBag;
 use XF\Repository\AddOn;
 
+/**
+ * Class Product
+ * @package ThemeHouse\InstallAndUpgrade\Admin\Controller
+ */
 class Product extends AbstractController
 {
     /**
      * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
      * @throws \Exception
      */
-    public function actionRefresh() {
-        $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')->where('active', '=', 1)->fetch();
+    public function actionRefresh()
+    {
+        $profiles = $this->finder('ThemeHouse\InstallAndUpgrade:Profile')
+            ->where('active', '=', 1)->fetch();
 
         if ($this->isPost()) {
             $this->app->db()->emptyTable('xf_th_installupgrade_product');
             $secrets = $this->filter('secrets', 'array-str');
 
-            foreach($profiles as $profile) {
-                if(isset($secrets[$profile->profile_id]) || !$profile->requires_decryption) {
+            foreach ($profiles as $profile) {
+                if (isset($secrets[$profile->profile_id]) || !$profile->requires_decryption) {
 
-                    if(isset($secrets[$profile->profile_id])) {
+                    if (isset($secrets[$profile->profile_id])) {
+                        /** @var Profile|ProductList $profile */
                         $profile->setEncryptionSecret($secrets[$profile->profile_id]);
                     }
 
-                    $profile->getProductsFromProvider();
+                    $profile->getProducts();
                 }
             }
 
             return $this->redirect($this->buildLink('install-upgrade-products/available'));
-        }
-        else {
+        } else {
             $viewParams = [
                 'profiles' => $profiles
             ];
 
-            return $this->view('ThemeHouse\InstallAndUpgrade:Product\Refresh', 'th_iau_product_encryption_secrets', $viewParams);
+            return $this->view('ThemeHouse\InstallAndUpgrade:Product\Refresh', 'th_iau_product_encryption_secrets',
+                $viewParams);
         }
     }
 
@@ -183,19 +196,19 @@ class Product extends AbstractController
         return $this->view('ThemeHouse\InstallAndUpgrade:Product\AddOn\List', 'th_iau_products_addon_list',
             $viewParams);
     }
-	
-	/**
-	 * @param ParameterBag $params
-	 *
-	 * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-	 * @throws \XF\PrintableException
-	 * @throws \Exception
-	 */
+
+    /**
+     * @param ParameterBag $params
+     *
+     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     * @throws \Exception
+     */
     public function actionAddOnInstall(ParameterBag $params)
     {
         /** @var Profile $profile */
-        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id);
+        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params['profile_id']);
 
+        /** @var AbstractHandler|EncryptCredentials|AddOnHandler $handler */
         $handler = $profile->getHandler();
         if (!$handler) {
             return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('add_on')]));
@@ -214,8 +227,8 @@ class Product extends AbstractController
                         'profile' => $profile,
                         'extra' => [],
                         'return_url' => $this->buildLink('install-upgrade-products/add-ons/install', [
-                            'profile_id' => $params->profile_id,
-                            'product_id' => $params->product_id
+                            'profile_id' => $params['profile_id'],
+                            'product_id' => $params['product_id']
                         ])
                     ];
 
@@ -224,15 +237,17 @@ class Product extends AbstractController
             }
         }
 
+        /** @var \ThemeHouse\InstallAndUpgrade\Entity\Product $product */
         $product = $this->em()->find('ThemeHouse\InstallAndUpgrade:Product',
-            [$profile->profile_id, $params->product_id]);
-        $addonId = $handler->installAddOn($product, $profile);
+            [$profile->profile_id, $params['product_id']]);
+        $addonId = $handler->installAddOnProduct($product);
 
         if (!$addonId) {
             return $this->error(\XF::phrase('th_iau_addon_id_not_found_in_package'));
         }
 
-        return $this->redirect($this->buildLink('add-ons/install', ['addon_id_url' => str_replace('/', '-', $addonId), 'product' => $product]),
+        return $this->redirect($this->buildLink('add-ons/install',
+            ['addon_id_url' => str_replace('/', '-', $addonId), 'product' => $product]),
             \XF::phrase('th_iau_addon_downloaded_successfully'));
     }
 
@@ -242,13 +257,14 @@ class Product extends AbstractController
      * @throws \XF\Mvc\Reply\Exception
      * @throws \XF\PrintableException
      */
-    public function actionAddOnEdit(ParameterBag $params) {
+    public function actionAddOnEdit(ParameterBag $params)
+    {
         /** @var AddOn $repo */
         $repo = \XF::repository('XF:AddOn');
-        $addOnId = $repo->convertAddOnIdUrlVersionToBase($params->product_id);
+        $addOnId = $repo->convertAddOnIdUrlVersionToBase($params['product_id']);
         $addOn = $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:AddOn', $addOnId, ['AddOn']);
 
-        if($this->isPost()) {
+        if ($this->isPost()) {
             $addOn->bulkSet($this->filter([
                 'download_url' => 'str',
                 'update_check' => 'bool'
@@ -256,13 +272,13 @@ class Product extends AbstractController
             $addOn->save();
 
             return $this->redirect($this->buildLink('install-upgrade-products/installed'));
-        }
-        else {
+        } else {
             $viewParams = [
                 'addOn' => $addOn
             ];
 
-            return $this->view('ThemeHouse\InstallAndUpgrade:Product\AddOn\Edit', 'th_iau_product_addOn_edit', $viewParams);
+            return $this->view('ThemeHouse\InstallAndUpgrade:Product\AddOn\Edit', 'th_iau_product_addOn_edit',
+                $viewParams);
         }
     }
 
@@ -293,14 +309,15 @@ class Product extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect
+     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
      * @throws \Exception
      */
     public function actionStyleInstall(ParameterBag $params)
     {
         /** @var Profile $profile */
-        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id);
+        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params['profile_id']);
 
+        /** @var AbstractHandler|EncryptCredentials|StyleHandler $handler */
         $handler = $profile->getHandler();
         if (!$handler) {
             return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('style')]));
@@ -319,8 +336,8 @@ class Product extends AbstractController
                         'profile' => $profile,
                         'extra' => [],
                         'return_url' => $this->buildLink('install-upgrade-products/styles/install', [
-                            'profile_id' => $params->profile_id,
-                            'product_id' => $params->product_id
+                            'profile_id' => $params['profile_id'],
+                            'product_id' => $params['product_id']
                         ])
                     ];
 
@@ -330,7 +347,7 @@ class Product extends AbstractController
         }
 
         $product = $this->em()->find('ThemeHouse\InstallAndUpgrade:Product',
-            [$profile->profile_id, $params->product_id]);
+            [$profile->profile_id, $params['product_id']]);
         $files = $handler->installStyle($product, $profile);
 
         if (!$files || empty($files)) {
@@ -347,10 +364,11 @@ class Product extends AbstractController
      * @throws \XF\Mvc\Reply\Exception
      * @throws \XF\PrintableException
      */
-    public function actionStyleEdit(ParameterBag $params) {
-        $style = $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Style', $params->profile_id, ['Style']);
+    public function actionStyleEdit(ParameterBag $params)
+    {
+        $style = $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Style', $params['profile_id'], ['Style']);
 
-        if($this->isPost()) {
+        if ($this->isPost()) {
             $style->bulkSet($this->filter([
                 'download_url' => 'str',
                 'update_check' => 'bool'
@@ -358,13 +376,13 @@ class Product extends AbstractController
             $style->save();
 
             return $this->redirect($this->buildLink('install-upgrade-products/installed'));
-        }
-        else {
+        } else {
             $viewParams = [
                 'style' => $style
             ];
 
-            return $this->view('ThemeHouse\InstallAndUpgrade:Product\Style\Edit', 'th_iau_product_style_edit', $viewParams);
+            return $this->view('ThemeHouse\InstallAndUpgrade:Product\Style\Edit', 'th_iau_product_style_edit',
+                $viewParams);
         }
     }
 
@@ -395,14 +413,15 @@ class Product extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect
+     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
      * @throws \Exception
      */
     public function actionLanguageInstall(ParameterBag $params)
     {
         /** @var Profile $profile */
-        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params->profile_id);
+        $profile = $this->em()->find('ThemeHouse\InstallAndUpgrade:Profile', $params['profile_id']);
 
+        /** @var AbstractHandler|EncryptCredentials $handler */
         $handler = $profile->getHandler();
 
         if (!$handler) {
@@ -422,8 +441,8 @@ class Product extends AbstractController
                         'profile' => $profile,
                         'extra' => [],
                         'return_url' => $this->buildLink('install-upgrade-products/languages/install', [
-                            'profile_id' => $params->profile_id,
-                            'product_id' => $params->product_id
+                            'profile_id' => $params['profile_id'],
+                            'product_id' => $params['product_id']
                         ])
                     ];
 
@@ -434,7 +453,7 @@ class Product extends AbstractController
 
 
         $product = $this->em()->find('ThemeHouse\InstallAndUpgrade:Product',
-            [$profile->profile_id, $params->product_id]);
+            [$profile->profile_id, $params['product_id']]);
 
         $files = $handler->installLanguage($product, $profile);
 
@@ -452,10 +471,12 @@ class Product extends AbstractController
      * @throws \XF\Mvc\Reply\Exception
      * @throws \XF\PrintableException
      */
-    public function actionLanguageEdit(ParameterBag $params) {
-        $language = $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Language', $params->profile_id, ['Language']);
+    public function actionLanguageEdit(ParameterBag $params)
+    {
+        $language = $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:Language', $params['profile_id'],
+            ['Language']);
 
-        if($this->isPost()) {
+        if ($this->isPost()) {
             $language->bulkSet($this->filter([
                 'download_url' => 'str',
                 'update_check' => 'bool'
@@ -463,13 +484,13 @@ class Product extends AbstractController
             $language->save();
 
             return $this->redirect($this->buildLink('install-upgrade-products/installed'));
-        }
-        else {
+        } else {
             $viewParams = [
                 'language' => $language
             ];
 
-            return $this->view('ThemeHouse\InstallAndUpgrade:Product\Language\Edit', 'th_iau_product_language_edit', $viewParams);
+            return $this->view('ThemeHouse\InstallAndUpgrade:Product\Language\Edit', 'th_iau_product_language_edit',
+                $viewParams);
         }
     }
 }

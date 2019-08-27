@@ -11,8 +11,15 @@ use XF\Service\AbstractService;
 // Much of this code is similar to the XFUpgraderExtractor class in src/XF/Install/_upgrader/core.php.
 // Changes should be mirrored when appropriate.
 
+/**
+ * Class Installer
+ * @package ThemeHouse\InstallAndUpgrade\Service\StyleArchive
+ */
 class Installer extends AbstractService
 {
+    /**
+     * @var
+     */
     protected $file;
 
     /**
@@ -51,6 +58,8 @@ class Installer extends AbstractService
      */
     public function install(array $xmls, Style $parent = null, array $childXmls = [], $force = false)
     {
+        $response = null;
+
         foreach ($xmls as $xml) {
             $response = $this->installStyle($xml, $parent, $childXmls, $force);
 
@@ -88,7 +97,7 @@ class Installer extends AbstractService
             ];
         }
 
-        if (!$styleImporter->isValidXml($xmlContent,$error)) {
+        if (!$styleImporter->isValidXml($xmlContent, $error)) {
             return [
                 'status' => 'error',
                 'message' => $error

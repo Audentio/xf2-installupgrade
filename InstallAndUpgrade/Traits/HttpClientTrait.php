@@ -7,6 +7,10 @@ use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Psr7\Response;
 use Tuna\CloudflareMiddleware;
 
+/**
+ * Trait HttpClientTrait
+ * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits
+ */
 trait HttpClientTrait
 {
     /**
@@ -18,31 +22,6 @@ trait HttpClientTrait
      * @var CookieJar
      */
     protected $cookieJar;
-
-    /**
-     * @return Client
-     */
-    protected function httpClient()
-    {
-        if (!$this->httpClient) {
-            $this->httpClient = \XF::app()->http()->client();
-            $this->httpClient->getConfig('handler')->push(CloudflareMiddleware::create());
-        }
-
-        return $this->httpClient;
-    }
-
-    /**
-     * @return CookieJar
-     */
-    protected function cookieJar()
-    {
-        if (!$this->cookieJar) {
-            $this->cookieJar = new CookieJar();
-        }
-
-        return $this->cookieJar;
-    }
 
     /**
      * @param $url
@@ -77,5 +56,30 @@ trait HttpClientTrait
         }
 
         return $response;
+    }
+
+    /**
+     * @return CookieJar
+     */
+    protected function cookieJar()
+    {
+        if (!$this->cookieJar) {
+            $this->cookieJar = new CookieJar();
+        }
+
+        return $this->cookieJar;
+    }
+
+    /**
+     * @return Client
+     */
+    protected function httpClient()
+    {
+        if (!$this->httpClient) {
+            $this->httpClient = \XF::app()->http()->client();
+            $this->httpClient->getConfig('handler')->push(CloudflareMiddleware::create());
+        }
+
+        return $this->httpClient;
     }
 }

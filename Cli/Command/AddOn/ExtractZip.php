@@ -2,16 +2,24 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn;
 
-use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
+use XF\Util\Php;
 
+/**
+ * Class ExtractZip
+ * @package ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn
+ */
 class ExtractZip extends Command
 {
     use BulkCliJobTrait;
 
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -22,23 +30,26 @@ class ExtractZip extends Command
                 'zip-filenames',
                 InputArgument::REQUIRED | InputArgument::IS_ARRAY,
                 'Zip filename'
-            )
-            ;
+            );
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
+     * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FileNotFoundException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // be verbose, otherwise we don't get stack trace errors...
-        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL)
-        {
+        if ($output->getVerbosity() === OutputInterface::VERBOSITY_NORMAL) {
             $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         }
 
         $zipFilenames = $input->getArgument('zip-filenames');
-        foreach($zipFilenames as $zipFilename)
-        {
-            if (!\file_exists($zipFilename) || !\is_readable($zipFilename))
-            {
+        foreach ($zipFilenames as $zipFilename) {
+            if (!\file_exists($zipFilename) || !\is_readable($zipFilename)) {
                 $output->writeln("<error>File {$zipFilename} is not readable</error>");
 
                 return 1;
@@ -47,29 +58,23 @@ class ExtractZip extends Command
 
         /** @var \ThemeHouse\InstallAndUpgrade\Repository\FileHandling $repo */
         $repo = \XF::repository('ThemeHouse\InstallAndUpgrade:FileHandling');
-        foreach($zipFilenames as $zipFilename)
-        {
-            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE)
-            {
+        foreach ($zipFilenames as $zipFilename) {
+            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
                 $output->writeln("Extracting $zipFilename");
             }
             $zipRoot = $repo->mountZip($zipFilename, 'addon-zip');
-            try
-            {
+            try {
                 $repo->copyFiles($zipRoot . '://', \XF::getRootDirectory(), function ($file) use ($output) {
-                    if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE)
-                    {
+                    if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
                         $output->writeln($file);
                     }
                 });
-            }
-            finally
-            {
+            } finally {
                 $repo->unmountZip($zipRoot);
             }
         }
 
-        \XF\Util\Php::resetOpcache();
+        Php::resetOpcache();
 
         return 0;
     }

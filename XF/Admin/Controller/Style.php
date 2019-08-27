@@ -11,6 +11,10 @@ use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use XF\Mvc\ParameterBag;
 use XF\Mvc\Reply\View;
 
+/**
+ * Class Style
+ * @package ThemeHouse\InstallAndUpgrade\XF\Admin\Controller
+ */
 class Style extends XFCP_Style
 {
     /**
@@ -34,11 +38,23 @@ class Style extends XFCP_Style
         $products = $productRepo->findProductListProductsForProfiles($profiles, 'style')
             ->fetch()->groupBy('profile_id');
 
+        /** @var \ThemeHouse\InstallAndUpgrade\XF\Repository\Style $styleRepo */
+        $styleRepo = $this->repository('XF:Style');
+
         return $this->view('ThemeHouse\InstallAndUpgrade:Style\InstallUpgrade', 'th_iau_style_install_upgrade', [
             'products' => $products,
             'profiles' => $profiles,
-            'styleTree' => $this->repository('XF:Style')->getStyleTree(false)
+            'styleTree' => $styleRepo->getStyleTree(false)
         ]);
+    }
+
+    /**
+     * @return InstallAndUpgrade
+     */
+    protected function getInstallUpgradeRepo()
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
     }
 
     /**
@@ -46,7 +62,10 @@ class Style extends XFCP_Style
      */
     public function actionThInstallUpgradeDismiss()
     {
-        $profiles = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile')
+        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+
+        $profiles = $profileRepo
             ->findProfiles()
             ->where('last_error_messages', '!=', '[]')
             ->fetch();
@@ -168,7 +187,7 @@ class Style extends XFCP_Style
     public function actionThInstallUpgradeUpdate(ParameterBag $params)
     {
         /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\Style $style */
-        $style = $this->assertStyleExists($params->style_id);
+        $style = $this->assertStyleExists($params['style_id']);
         /** @var Product $product */
         $product = $style->THIAUProduct;
 
@@ -206,14 +225,5 @@ class Style extends XFCP_Style
 
             return $this->view('ThemeHouse\InstallAndUpgrade:Style\Upgrade', 'th_iau_style_upgrade', $viewParams);
         }
-    }
-
-    /**
-     * @return InstallAndUpgrade
-     */
-    protected function getInstallUpgradeRepo()
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
     }
 }

@@ -29,37 +29,6 @@ use XF\Mvc\Entity\Structure;
 class Log extends Entity
 {
     /**
-     * @return null|Entity
-     */
-    public function getContent()
-    {
-        $types = [
-            'addOn' => 'XF:AddOn',
-            'style' => 'XF:Style',
-            'language' => 'XF:Language'
-        ];
-
-        if ($this->content_type && $this->content_id) {
-            return $this->em()->find($types[$this->content_type], $this->content_id);
-        }
-
-        return null;
-    }
-
-    /**
-     * @return \XF\Phrase
-     */
-    public function getActionPhrase()
-    {
-        $args = array_merge(
-            $this->Product->toArray(),
-            $this->extra,
-            $this->Content ? $this->Content->toArray() : []
-        );
-        return \XF::phrase('th_iau_log_action_' . $this->content_type . '_' . $this->action, $args);
-    }
-
-    /**
      * @param Structure $structure
      * @return Structure
      */
@@ -110,5 +79,36 @@ class Log extends Entity
         ];
 
         return $structure;
+    }
+
+    /**
+     * @return null|Entity
+     */
+    public function getContent()
+    {
+        $types = [
+            'addOn' => 'XF:AddOn',
+            'style' => 'XF:Style',
+            'language' => 'XF:Language'
+        ];
+
+        if ($this->content_type && $this->content_id) {
+            return $this->em()->find($types[$this->content_type], $this->content_id);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return \XF\Phrase
+     */
+    public function getActionPhrase()
+    {
+        $args = array_merge(
+            $this->Product->toArray(),
+            $this->extra,
+            $this->Content ? $this->Content->toArray() : []
+        );
+        return \XF::phrase('th_iau_log_action_' . $this->content_type . '_' . $this->action, $args);
     }
 }
