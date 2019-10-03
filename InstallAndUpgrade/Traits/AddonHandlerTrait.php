@@ -86,6 +86,12 @@ trait AddonHandlerTrait
     public function checkAddOnProductForUpdates(Product $addOn)
     {
         $latestVersion = $this->getLatestVersion($addOn);
+
+        // Potentially a temporary failure at catching the latest version, come back later.
+        if (!$latestVersion) {
+            return;
+        }
+
         $addOn->latest_version = $latestVersion;
         $addOn->update_available = $this->compareVersions($addOn->current_version, $latestVersion);
         $addOn->saveIfChanged();
