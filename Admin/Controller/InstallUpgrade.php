@@ -27,10 +27,22 @@ class InstallUpgrade extends AbstractController
         $productBatch = $this->assertBatchExists($params->batch_id);
 
         $products = $productBatch->getProducts();
-        $product = $products->first();
+
+        $profile = null;
+        foreach($products as $product) {
+            if($product->Profile) {
+                /** @var \ThemeHouse\InstallAndUpgrade\Entity\Profile $profile */
+                $profile = $product->Profile;
+                break;
+            }
+        }
+
+        if(!$profile) {
+            return $this->error(\XF::phrase('th_installupgrade_no_installupgrade_profile_found'));
+        }
 
         /** @var AbstractHandler $handler */
-        $handler = $product->Profile->getHandler();
+        $handler = $profile->getHandler();
 
         if (!$handler->getCapability($product->product_type)) {
             return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_' . $product->product_type . 's'));

@@ -128,8 +128,8 @@ trait StyleHandlerTrait
             $parentStyle = \XF::em()->find('XF:Style', $parent);
 
             /** @var Installer $service */
-            $service = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Installer', $file, $product, $force);
-            $result = $service->install($parentXmls, $parentStyle, $childXmls);
+            $service = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Installer', $file, $product);
+            $result = $service->install($parentXmls, $parentStyle, $childXmls, $force);
 
             if ($result['status'] == 'error') {
                 return $this->error($result['message']);

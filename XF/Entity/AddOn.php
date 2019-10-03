@@ -57,7 +57,13 @@ class AddOn extends XFCP_AddOn
         $product = $this->THIAUProduct;
         if ($product) {
             try {
-                $handler = $product->Profile->getHandler();
+                $profile = $product->Profile;
+                if(!$profile) {
+                    $product->delete();
+                    return parent::_postSave();
+                }
+
+                $handler = $profile->getHandler();
 
                 if ($handler) {
                     $updateAvailable = $handler->compareVersions($this->version_string,
