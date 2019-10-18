@@ -120,7 +120,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         $baseUrl = $this->profile->base_url;
 
         /* Session Cookie */
-        $this->httpRequest("{$baseUrl}/login/login");
+        $this->httpRequest("{$baseUrl}/login");
 
         /* Login */
         $response = $this->httpRequest("{$baseUrl}/login/login", [
@@ -196,7 +196,8 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         $template = $htmlNode->getAttribute('data-template');
 
         if ($template !== 'xfrm_resource_view') {
-            $error = \XF::phrase('th_installupgrade_xfrm_url_does_not_appear_to_be_resource_overview_page', ['url' => $url]);
+            $error = \XF::phrase('th_installupgrade_xfrm_url_does_not_appear_to_be_resource_overview_page',
+                ['url' => $url]);
             return false;
         }
 
@@ -216,8 +217,8 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
             if (strpos($url, 'http') === 0 && strpos($url, $this->profile->base_url) !== 0) {
                 return false;
             }
-            
-            if($pageAction->getAttribute('data-xf-click')) {
+
+            if ($pageAction->getAttribute('data-xf-click')) {
                 $error = \XF::phrase('th_installupgrade_xfrm_multiple_downloads_not_supported');
                 return false;
             }
