@@ -1,0 +1,1 @@
+Your WMTech API key. You can find your API key <a href="{apiKeyUrl}" target="_blank">here</a>.
