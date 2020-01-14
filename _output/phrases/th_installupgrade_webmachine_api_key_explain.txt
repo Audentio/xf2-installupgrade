@@ -1,0 +1,1 @@
+Your WMTech API key. Please click <a href="{apiKeyUrl}" target="_blank">HERE, to get your API key at the WMTech online store.</a>.
