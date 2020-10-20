@@ -183,10 +183,12 @@ trait StyleHandlerTrait
      */
     public function checkStyleProductForUpdates(Product $style)
     {
-        $latestVersion = $this->getLatestVersion($style);
-        $style->latest_version = $latestVersion;
-        $style->saveIfChanged();
-        $this->log($style, 'update_check');
+        if ($latestVersion = $this->getLatestVersion($style))
+        {
+            $style->latest_version = $latestVersion;
+            $style->saveIfChanged();
+            $this->log($style, 'update_check');
+        }
     }
 
     /**

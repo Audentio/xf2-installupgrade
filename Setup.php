@@ -5,6 +5,7 @@ namespace ThemeHouse\InstallAndUpgrade;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1000040;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1010030;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1010130;
+use ThemeHouse\InstallAndUpgrade\Setup\Patch1010670;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
@@ -135,6 +136,9 @@ class Setup extends AbstractSetup
     /** 1.1.1 */
     use Patch1010130;
 
+    /** 1.1.6 */
+    use Patch1010670;
+
     /**
      *
      */
@@ -157,10 +161,10 @@ class Setup extends AbstractSetup
         $tables = [];
 
         $tables['xf_style'] = function (Alter $table) {
-            $this->addOrChangeColumn($table, 'th_iau_profile_id', 'int');
-            $this->addOrChangeColumn($table, 'th_iau_product_id', 'varchar', 200);
-            $this->addOrChangeColumn($table, 'th_iau_current_version', 'varchar', 200);
-            $this->addOrChangeColumn($table, 'th_iau_xml', 'varchar', 200);
+            $this->addOrChangeColumn($table, 'th_iau_profile_id', 'int')->setDefault(0);
+            $this->addOrChangeColumn($table, 'th_iau_product_id', 'varchar', 200)->setDefault('');
+            $this->addOrChangeColumn($table, 'th_iau_current_version', 'varchar', 200)->setDefault('');
+            $this->addOrChangeColumn($table, 'th_iau_xml', 'varchar', 200)->setDefault('');
         };
 
         return $tables;
