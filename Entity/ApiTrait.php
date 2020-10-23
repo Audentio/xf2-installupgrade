@@ -14,7 +14,7 @@ trait ApiTrait
         // try to call parent method (if any)
         try
         {
-            // parent::setupApiResultData($result, $verbosity, $options);
+            parent::setupApiResultData($result, $verbosity, $options);
         }
         catch(\LogicException $e) {}
 
