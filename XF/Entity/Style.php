@@ -18,6 +18,8 @@ use XF\Mvc\Entity\Structure;
  */
 class Style extends XFCP_Style
 {
+    use \ThemeHouse\InstallAndUpgrade\Entity\ApiTrait;
+
     /**
      * @param Structure $structure
      * @return Structure
