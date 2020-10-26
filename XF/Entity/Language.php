@@ -13,6 +13,8 @@ use XF\Mvc\Entity\Structure;
  */
 class Language extends XFCP_Language
 {
+    use \ThemeHouse\InstallAndUpgrade\Entity\ApiTrait;
+
     /**
      * @param Structure $structure
      * @return Structure

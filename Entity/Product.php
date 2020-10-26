@@ -30,6 +30,36 @@ use XF\Mvc\Entity\Structure;
 class Product extends Entity
 {
     /**
+     * @param \XF\Api\Result\EntityResult $result
+     * @param int $verbosity
+     * @param array $options
+     */
+    protected function setupApiResultData(
+        \XF\Api\Result\EntityResult $result, $verbosity = self::VERBOSITY_NORMAL, array $options = []
+    )
+    {
+        $result->includeColumn([
+            'profile_id',
+            'product_id',
+            'product_type',
+            'content_id',
+            'title',
+            'description',
+            'current_version',
+            'latest_version',
+            'update_available',
+            'extra',
+            'installed',
+            'json_hash',
+        ]);
+
+        if (!empty($options['withContent']))
+        {
+            $result->Content = $this->Content;
+        }
+    }
+
+    /**
      * @param Structure $structure
      * @return Structure
      */

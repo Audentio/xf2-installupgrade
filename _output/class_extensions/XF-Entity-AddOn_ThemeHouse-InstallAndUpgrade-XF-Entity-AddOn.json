@@ -1,6 +1,6 @@
 {
     "from_class": "XF\\Entity\\AddOn",
     "to_class": "ThemeHouse\\InstallAndUpgrade\\XF\\Entity\\AddOn",
-    "execute_order": 10,
+    "execute_order": 100,
     "active": true
 }

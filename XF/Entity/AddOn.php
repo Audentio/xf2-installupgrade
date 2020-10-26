@@ -13,6 +13,8 @@ use XF\Mvc\Entity\Structure;
  */
 class AddOn extends XFCP_AddOn
 {
+    use \ThemeHouse\InstallAndUpgrade\Entity\ApiTrait;
+
     /**
      * @param Structure $structure
      * @return Structure

@@ -191,7 +191,8 @@ class Style extends XFCP_Style
         /** @var Product $product */
         $product = $style->THIAUProduct;
 
-        if (!$product->update_available) {
+        if (!$product->Profile->getHandler()->compareVersions($style->th_iau_current_version,
+                    $product->latest_version)) {
             return $this->notFound();
         }
 
