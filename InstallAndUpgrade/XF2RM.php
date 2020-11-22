@@ -120,18 +120,26 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         $baseUrl = $this->profile->base_url;
 
         /* Session Cookie */
-        $this->httpRequest("{$baseUrl}/login");
+        $response = $this->httpRequest("{$baseUrl}/login");
+
+        $parser = $this->htmlParser();
+        $contents = $response->getBody()->getContents();
+
+        $parser->load($contents);
+
+        $xfToken = $parser->find('input[name="_xfToken"]')
+                ->offsetGet(0)->getAttribute('value');
 
         /* Login */
         $response = $this->httpRequest("{$baseUrl}/login/login", [
             'form_params' => [
                 'login' => $credentials['user'],
-                'password' => $credentials['password']
+                'password' => $credentials['password'],
+                '_xfToken' => $xfToken,
             ]
         ], 'post');
 
         if ($this->profile->has_tfa) {
-            $parser = $this->htmlParser();
             $parser->load($response->getBody()->getContents());
 
             $xfToken = $parser->find('input[name="_xfToken"]')

@@ -41,6 +41,18 @@ trait AddonHandlerTrait
             /** @var Product $addOn */
             $zipFile = $this->downloadAddOnProduct($addOn);
 
+            // improved error handling for download failure
+            if (
+                empty($zipFile) ||
+                (file_exists($zipFile) && !filesize($zipFile))
+            )
+            {
+                $errors = [
+                    sprintf('Unable to download files for %s (%s). Please make sure your license for this add-on is active.', $addOn->title, $addOn->latest_version),
+                ];
+                throw new Exception(new Error($errors, 400));
+            }
+
             /** @var Product $addOn */
             $upload = new Upload($zipFile, $addOn->title . '-' . $addOn->latest_version . '.zip');
             $upload->setAllowedExtensions(['zip']);

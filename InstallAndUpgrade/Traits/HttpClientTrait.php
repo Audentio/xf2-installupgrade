@@ -44,8 +44,20 @@ trait HttpClientTrait
             'Accept-Charset' => 'utf-8',
         ]);
 
-        /** @var Response $response */
-        $response = $this->httpClient()->{$method}($url, $options);
+        $response = null;
+
+        try
+        {
+            /** @var Response $response */
+            $response = $this->httpClient()->{$method}($url, $options);
+        }
+        catch (\GuzzleHttp\Exception\RequestException $e)
+        {
+            if ($throwErrors)
+            {
+                $this->exception($e->getMessage());
+            }
+        }
 
         if ($throwErrors && $response->getStatusCode() != 200) {
             /** @noinspection PhpUndefinedMethodInspection */

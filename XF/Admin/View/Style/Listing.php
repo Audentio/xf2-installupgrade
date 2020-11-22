@@ -49,7 +49,7 @@ class Listing extends XFCP_Listing
             /** @var Product $product */
             $product = $style['record']->THIAUProduct;
 
-            if ($product && !empty($product->Profile->getHandler())
+            if ($product && $product->Profile && !empty($product->Profile->getHandler())
                 && $product->Profile->getHandler()->compareVersions($style['record']->th_iau_current_version,
                     $product->latest_version)) {
                 $updates[] = $style['record'];
