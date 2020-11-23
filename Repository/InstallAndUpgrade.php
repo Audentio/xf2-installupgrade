@@ -119,7 +119,7 @@ class InstallAndUpgrade extends Repository
         $styles = $this->finder('XF:Style')->with('THIAUProduct', true)->fetch();
         foreach ($styles as $style) {
             $product = $style->THIAUProduct;
-            if ($product && !empty($product->Profile->getHandler())
+            if ($product && $product->Profile && !empty($product->Profile->getHandler())
                 && $product->Profile->getHandler()->compareVersions($style->th_iau_current_version,
                     $product->latest_version)) {
                 $updates['styles'][$style->style_id] = [
@@ -132,7 +132,7 @@ class InstallAndUpgrade extends Repository
         $languages = $this->finder('XF:Language')->with('THIAUProduct', true)->fetch();
         foreach ($languages as $language) {
             $product = $language->THIAUProduct;
-            if ($product && !empty($product->Profile->getHandler())
+            if ($product && $product->Profile && !empty($product->Profile->getHandler())
                 && $product->Profile->getHandler()->compareVersions($product->current_version,
                     $product->latest_version)) {
                 $updates['languages'][$language->language_id] = [
