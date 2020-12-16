@@ -4,6 +4,9 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
+use ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive\InstallBatchCreator;
+use XF;
+use XF\Entity\AddOnInstallBatch;
 use XF\Http\Upload;
 use XF\Mvc\Reply\Error;
 use XF\Mvc\Reply\Exception;
@@ -22,7 +25,7 @@ trait AddonHandlerTrait
     public function installAddOnProduct(Product $addOn)
     {
         /** @var ProductBatch $batch */
-        $batch = \XF::em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
+        $batch = XF::em()->create('ThemeHouse\InstallAndUpgrade:ProductBatch');
         $batch->addProduct($addOn);
         return $this->installAddOnProducts($batch);
     }
@@ -34,8 +37,8 @@ trait AddonHandlerTrait
      */
     public function installAddOnProducts(ProductBatch $productBatch)
     {
-        /** @var \ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive\InstallBatchCreator $creator */
-        $creator = $this->service('XF:AddOnArchive\InstallBatchCreator', \XF::app()->addOnManager());
+        /** @var InstallBatchCreator $creator */
+        $creator = $this->service('XF:AddOnArchive\InstallBatchCreator', XF::app()->addOnManager());
 
         foreach ($productBatch->getProducts() as $addOn) {
             /** @var Product $addOn */
@@ -67,7 +70,7 @@ trait AddonHandlerTrait
             throw new Exception(new Error($errors, 400));
         }
 
-        /** @var \XF\Entity\AddOnInstallBatch $addOnBatch */
+        /** @var AddOnInstallBatch $addOnBatch */
         $addOnBatch = $creator->save();
 
         foreach ($productBatch->getProducts() as $product) {

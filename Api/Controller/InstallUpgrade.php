@@ -2,19 +2,36 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Api\Controller;
 
+use XF\Api\Controller\AbstractController;
+use XF\Api\Mvc\Reply\ApiResult;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\AbstractReply;
+use XF\Mvc\Reply\Exception;
 
-class InstallUpgrade extends \XF\Api\Controller\AbstractController
+/**
+ * Class InstallUpgrade
+ * @package ThemeHouse\InstallAndUpgrade\Api\Controller
+ */
+class InstallUpgrade extends AbstractController
 {
+    /**
+     * @param $action
+     * @param ParameterBag $params
+     * @throws Exception
+     */
     protected function preDispatchController($action, ParameterBag $params)
     {
         $this->assertApiScope('installupgrade:read');
     }
 
+    /**
+     * @param ParameterBag $params
+     * @return ApiResult|AbstractReply
+     */
     public function actionGet(ParameterBag $params)
     {
-        switch ($params->type)
+        switch ($params['type'])
         {
             case 'addons':
                 $entityId = 'XF:AddOn';
@@ -30,7 +47,6 @@ class InstallUpgrade extends \XF\Api\Controller\AbstractController
 
             case 'installed':
                 return $this->getInstalled();
-                break;
 
             default:
                 return $this->notFound();
@@ -47,6 +63,9 @@ class InstallUpgrade extends \XF\Api\Controller\AbstractController
         ]);
     }
 
+    /**
+     * @return ApiResult
+     */
     protected function getInstalled()
     {
         $products = $this->finder('ThemeHouse\InstallAndUpgrade:Product')

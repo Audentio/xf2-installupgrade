@@ -2,6 +2,8 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn;
 
+use Exception;
+use FilesystemIterator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,6 +14,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\AddOnActionTraitFix;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
+use XF;
 use XF\AddOn\AddOn;
 use XF\Util\File;
 use XF\Util\Php;
@@ -51,7 +54,7 @@ class InstallUpgrade extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -65,7 +68,7 @@ class InstallUpgrade extends Command
 
         $id = $input->getArgument('id');
 
-        $addOnManager = \XF::app()->addOnManager();
+        $addOnManager = XF::app()->addOnManager();
         $addOn = $addOnManager->getById($id);
 
         if (!$addOn) {
@@ -76,7 +79,6 @@ class InstallUpgrade extends Command
 
         $isInstall = true;
         if (!$addOn->canInstall()) {
-            if ($addOn) {
                 $addOn = $this->checkInstalledAddOn($id, $error);
                 if (!$addOn) {
                     $output->writeln('<error>' . $error . '</error>');
@@ -85,17 +87,12 @@ class InstallUpgrade extends Command
                 }
 
                 if (!$addOn->canUpgrade() && !$input->getOption('force')) {
-                    $output->writeln("<error>" . \XF::phrase('this_add_on_cannot_be_upgraded') . "</error>");
+                    $output->writeln("<error>" . XF::phrase('this_add_on_cannot_be_upgraded') . "</error>");
 
                     return 1;
                 }
 
                 $isInstall = false;
-            } else {
-                $output->writeln("<error>" . \XF::phrase('this_add_on_cannot_be_installed') . "</error>");
-
-                return 1;
-            }
         }
 
         if (!$this->verifyAddOnAction($input, $output, $addOn)) {
@@ -107,7 +104,7 @@ class InstallUpgrade extends Command
         $helper = $this->getHelper('question');
 
         if ($isInstall) {
-            $question = new ConfirmationQuestion("<question>" . \XF::phrase('please_confirm_that_you_want_to_install_following_add_on') . ': (' . $addOn->title . ' ' . $addOn->version_string . ") (y/n)</question>");
+            $question = new ConfirmationQuestion("<question>" . XF::phrase('please_confirm_that_you_want_to_install_following_add_on') . ': (' . $addOn->title . ' ' . $addOn->version_string . ") (y/n)</question>");
 
             $response = $helper->ask($input, $output, $question);
             if (!$response) {
@@ -117,7 +114,7 @@ class InstallUpgrade extends Command
             $this->setupBulkJob($input, $output, true);
 
             // make sure any errors get logged here
-            \XF::app()->error()->setIgnorePendingUpgrade(true);
+            XF::app()->error()->setIgnorePendingUpgrade(true);
 
             $addOn->preInstall();
 
@@ -138,7 +135,7 @@ class InstallUpgrade extends Command
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
 
-            $phrase = \XF::phrase('upgrading_x_from_y_to_z', [
+            $phrase = XF::phrase('upgrading_x_from_y_to_z', [
                 'title' => $addOn->title,
                 'old' => $addOn->version_string,
                 'new' => $addOn->json_version_string
@@ -158,7 +155,7 @@ class InstallUpgrade extends Command
             $this->setupBulkJob($input, $output, true);
 
             // make sure any errors get logged here
-            \XF::app()->error()->setIgnorePendingUpgrade(true);
+            XF::app()->error()->setIgnorePendingUpgrade(true);
 
             $addOn->preUpgrade();
 
@@ -197,6 +194,6 @@ class InstallUpgrade extends Command
         }
 
         // Returns false  if the directory is totally empty
-        return (new \FilesystemIterator($addOnIdDir))->valid();
+        return (new FilesystemIterator($addOnIdDir))->valid();
     }
 }

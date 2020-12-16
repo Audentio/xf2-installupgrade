@@ -5,6 +5,9 @@ namespace ThemeHouse\InstallAndUpgrade\Cli\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use XF;
+use XF\Entity\AddOn;
+use XF\Repository\Style;
 
 /**
  * Trait BulkCliJobTrait
@@ -36,7 +39,7 @@ trait BulkCliJobTrait
         OutputInterface $output,
         $start
     ) {
-        $app = \XF::app();
+        $app = XF::app();
         $registry = $app->registry();
         if ($start) {
             $bulk = $input->getOption('bulk');
@@ -48,8 +51,8 @@ trait BulkCliJobTrait
 
             // reset is_processing flag which can get stuck
             $db->beginTransaction();
-            $addons = \XF::app()->finder('XF:AddOn')->where('is_processing', '=', 1)->fetch();
-            /** @var \XF\Entity\AddOn $addon */
+            $addons = XF::app()->finder('XF:AddOn')->where('is_processing', '=', 1)->fetch();
+            /** @var AddOn $addon */
             foreach ($addons as $addon) {
                 $addon->is_processing = false;
                 $addon->saveIfChanged($saved, true, false);
@@ -65,7 +68,7 @@ trait BulkCliJobTrait
             }
 
             if ($registry->get('svBulkJob.styleRebuild')) {
-                /** @var \XF\Repository\Style $styleRepo */
+                /** @var Style $styleRepo */
                 $styleRepo = $app->repository('XF:Style');
                 $styleRepo->updateAllStylesLastModifiedDate();
             }
@@ -84,10 +87,10 @@ trait BulkCliJobTrait
         InputInterface $input,
         OutputInterface $output
     ) {
-        $app = \XF::app();
+        $app = XF::app();
         $registry = $app->registry();
         if ($registry->get('svBulkJob') || $registry->get('svBulkJob.permRebuild') || $registry->get('svBulkJob.styleRebuild')) {
-            \XF::app()->container()->decache('job.manager');
+            XF::app()->container()->decache('job.manager');
             $output->writeln("Has a pending bulk job, to finish run;\n\tphp cmd.php iau-addon:finish-bulk");
 
             return true;

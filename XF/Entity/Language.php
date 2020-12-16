@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Entity;
 
+use ThemeHouse\InstallAndUpgrade\Entity\ApiTrait;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use XF\Mvc\Entity\Structure;
 
@@ -13,7 +14,7 @@ use XF\Mvc\Entity\Structure;
  */
 class Language extends XFCP_Language
 {
-    use \ThemeHouse\InstallAndUpgrade\Entity\ApiTrait;
+    use ApiTrait;
 
     /**
      * @param Structure $structure

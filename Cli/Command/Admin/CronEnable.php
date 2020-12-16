@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use XF;
+use XF\Entity\CronEntry;
 
 /**
  * Class CronEnable
@@ -57,15 +59,15 @@ class CronEnable extends Command
                 return 1;
             }
 
-            /** @var \XF\Entity\CronEntry $cron */
-            $cronEntries = \XF::finder('XF:CronEntry')->fetch();
+            /** @var CronEntry $cron */
+            $cronEntries = XF::finder('XF:CronEntry')->fetch();
             foreach ($cronEntries as $cron) {
                 $cron->active = 1;
                 $cron->saveIfChanged();
             }
         } else {
-            /** @var \XF\Entity\CronEntry $cron */
-            $cron = \XF::app()->find('XF:CronEntry', $id);
+            /** @var CronEntry $cron */
+            $cron = XF::app()->find('XF:CronEntry', $id);
             if (!$cron) {
                 $output->writeln("<error>" . "No cron entry with ID '$id' could be found." . "</error>");
 

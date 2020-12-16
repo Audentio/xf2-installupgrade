@@ -2,8 +2,10 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\View\Style;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Repository\Profile;
+use XF;
 
 /**
  * Class Listing
@@ -14,16 +16,17 @@ use ThemeHouse\InstallAndUpgrade\Repository\Profile;
 class Listing extends XFCP_Listing
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function renderHtml()
     {
         if (is_callable('parent::renderHtml')) {
+            /** @noinspection PhpUndefinedMethodInspection */
             parent::renderHtml();
         }
 
         /** @var Profile $profileRepo */
-        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profileRepo = XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
 
         $errors = [];
         $profiles = $profileRepo

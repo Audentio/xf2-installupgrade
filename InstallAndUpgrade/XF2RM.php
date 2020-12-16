@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
 
+use Exception;
 use PHPHtmlParser\Dom\Collection;
 use PHPHtmlParser\Dom\HtmlNode;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
@@ -19,6 +20,9 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\LanguageHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\StyleHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\TFATrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\VersioningTrait;
+use XF;
+use XF\Phrase;
+use XF\PrintableException;
 use XF\Util\File;
 
 /**
@@ -37,7 +41,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
      * @param $url
      * @param null $error
      * @return Product
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function createAddOnProductFromUrl($url, &$error = null)
     {
@@ -47,10 +51,10 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
     /**
      * @param $url
      * @param $type
-     * @param $
      * @param null $error
      * @return Product
-     * @throws \XF\PrintableException
+     * @throws PrintableException
+     * @noinspection PhpUnusedParameterInspection
      */
     protected function createProductFromUrl($url, $type, &$error = null)
     {
@@ -190,7 +194,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         $pageResult = $this->httpRequest($url);
 
         if ($pageResult->getStatusCode() !== 200) {
-            $error = \XF::phrase('th_installupgrade_connection_failed');
+            $error = XF::phrase('th_installupgrade_connection_failed');
             return false;
         }
 
@@ -204,7 +208,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
         $template = $htmlNode->getAttribute('data-template');
 
         if ($template !== 'xfrm_resource_view') {
-            $error = \XF::phrase('th_installupgrade_xfrm_url_does_not_appear_to_be_resource_overview_page',
+            $error = XF::phrase('th_installupgrade_xfrm_url_does_not_appear_to_be_resource_overview_page',
                 ['url' => $url]);
             return false;
         }
@@ -218,7 +222,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
             $classes = $pageAction->getAttribute('class');
 
             if (strpos($classes, 'button--icon--redirect')) {
-                $error = \XF::phrase('th_installupgrade_xfrm_external_download_not_supported');
+                $error = XF::phrase('th_installupgrade_xfrm_external_download_not_supported');
                 return false;
             }
 
@@ -227,7 +231,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
             }
 
             if ($pageAction->getAttribute('data-xf-click')) {
-                $error = \XF::phrase('th_installupgrade_xfrm_multiple_downloads_not_supported');
+                $error = XF::phrase('th_installupgrade_xfrm_multiple_downloads_not_supported');
                 return false;
             }
 
@@ -237,7 +241,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
             }
         }
 
-        $error = \XF::phrase('th_installupgrade_xfrm_no_download_found', ['url' => $url]);
+        $error = XF::phrase('th_installupgrade_xfrm_no_download_found', ['url' => $url]);
         return false;
     }
 
@@ -245,7 +249,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
      * @param $url
      * @param null $error
      * @return Product
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function createLanguageProductFromUrl($url, &$error = null)
     {
@@ -266,7 +270,7 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
      * @param $url
      * @param null $error
      * @return Product
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function createStyleProductFromUrl($url, &$error = null)
     {
@@ -284,11 +288,11 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
     }
 
     /**
-     * @return \XF\Phrase
+     * @return Phrase
      */
     public function getTitle()
     {
-        return \XF::phrase('install_upgrade_provider.xf2rm');
+        return XF::phrase('install_upgrade_provider.xf2rm');
     }
 
     /**
@@ -322,12 +326,12 @@ class XF2RM extends AbstractHandler implements StyleHandler, LanguageHandler, Ad
     /**
      * @param Product $product
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected function downloadProduct(Product $product)
     {
         if (!isset($product->extra['download_url'])) {
-            throw new \Exception('Download URL not found in product');
+            throw new Exception('Download URL not found in product');
         }
 
         $this->authenticate();

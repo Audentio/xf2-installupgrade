@@ -2,7 +2,11 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
+use XF\Mvc\Entity\AbstractCollection;
+use XF\Mvc\Entity\ArrayCollection;
+use XF\Mvc\Entity\Finder;
 use XF\Mvc\Entity\Repository;
 
 /**
@@ -19,7 +23,7 @@ class Profile extends Repository
     /**
      * @param $key
      * @return AbstractHandler
-     * @throws \Exception
+     * @throws Exception
      */
     public function getHandler($key)
     {
@@ -31,7 +35,7 @@ class Profile extends Repository
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getHandlers()
     {
@@ -48,7 +52,7 @@ class Profile extends Repository
     }
 
     /**
-     * @return \XF\Mvc\Entity\ArrayCollection
+     * @return AbstractCollection|ArrayCollection
      */
     public function getProductListProfiles()
     {
@@ -59,7 +63,7 @@ class Profile extends Repository
             try {
                 /** @var AbstractHandler $handler */
                 $handler = $profile->getHandler();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $handler = null;
             }
 
@@ -73,7 +77,7 @@ class Profile extends Repository
     }
 
     /**
-     * @return \XF\Mvc\Entity\Finder
+     * @return Finder
      */
     public function findProfiles()
     {

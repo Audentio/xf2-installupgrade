@@ -2,13 +2,17 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\LanguageHandler;
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
+use XF;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\Error;
+use XF\Mvc\Reply\Redirect;
 use XF\Mvc\Reply\View;
 
 /**
@@ -19,14 +23,13 @@ class Language extends XFCP_Language
 {
     /**
      * @param ParameterBag $params
-     * @return View
-     * @throws \Exception
+     * @return XF\Mvc\Reply\AbstractReply|View
+     * @throws Exception
      */
     public function actionThInstallUpgradeUpdate(ParameterBag $params)
     {
         /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\Language $language */
         $language = $this->assertLanguageExists($params['language_id']);
-        /** @var Product $product */
         $product = $language->THIAUProduct;
 
         if (!$product->update_available) {
@@ -66,12 +69,12 @@ class Language extends XFCP_Language
     }
 
     /**
-     * @return \XF\Mvc\Reply\Redirect
+     * @return Redirect
      */
     public function actionThInstallUpgradeDismiss()
     {
         /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
-        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profileRepo = XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
 
         $profiles = $profileRepo
             ->findProfiles()
@@ -92,11 +95,10 @@ class Language extends XFCP_Language
     }
 
     /**
-     * @return \XF\Mvc\Reply\Error|View
+     * @return Error|View
      */
     public function actionThInstallUpgrade()
     {
-        /** @var InstallAndUpgrade $repo */
         $repo = $this->getInstallUpgradeRepo();
 
         if (!$repo->canUseInstallUpgrade($error)) {
@@ -112,7 +114,7 @@ class Language extends XFCP_Language
         $products = $productRepo->findProductListProductsForProfiles($profiles, 'language')
             ->fetch()->groupBy('profile_id');
 
-        /** @var \XF\Repository\Language $languageRepo */
+        /** @var XF\Repository\Language $languageRepo */
         $languageRepo = $this->repository('XF:Language');
         $languageTree = $languageRepo->getLanguageTree(false);
 
@@ -133,8 +135,8 @@ class Language extends XFCP_Language
     }
 
     /**
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \Exception
+     * @throws XF\Mvc\Reply\Exception
+     * @throws Exception
      */
     public function actionThInstallUpgradeProduct()
     {
@@ -177,14 +179,13 @@ class Language extends XFCP_Language
     }
 
     /**
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\View
-     * @throws \Exception
+     * @return Error|View
+     * @throws Exception
      */
     public function actionThInstallUpgradeUrl()
     {
         $url = $this->filter('url', 'str');
 
-        /** @var InstallAndUpgrade $repo */
         $repo = $this->getInstallUpgradeRepo();
 
         /** @var Profile $profile */
@@ -197,7 +198,7 @@ class Language extends XFCP_Language
         $handler = $profile->getHandler();
 
         if (!$handler->getCapability('language')) {
-            return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_languages'));
+            return $this->error(XF::phrase('th_installupgrade_provider_does_not_support_languages'));
         }
 
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */

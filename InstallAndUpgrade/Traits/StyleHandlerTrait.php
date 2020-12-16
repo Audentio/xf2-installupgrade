@@ -6,7 +6,10 @@ use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Service\StyleArchive\Extractor;
 use ThemeHouse\InstallAndUpgrade\Service\StyleArchive\Installer;
+use XF;
 use XF\Entity\Style;
+use XF\PrintableException;
+use XF\Service\Style\Import;
 use XF\Util\Xml;
 
 /**
@@ -18,7 +21,7 @@ trait StyleHandlerTrait
     /**
      * @param ProductBatch $productBatch
      * @return mixed
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function installStyleProducts(ProductBatch $productBatch)
     {
@@ -26,7 +29,7 @@ trait StyleHandlerTrait
         $product = $productBatch->getProducts()->first();
         $file = $productBatch->getFile($product);
 
-        $request = \XF::app()->request();
+        $request = XF::app()->request();
         $xmls = $request->filter('xmls', 'array-str');
         $target = $request->filter('target', 'str');
         $overwrite = $request->filter('overwrite_style_id', 'uint');
@@ -38,13 +41,13 @@ trait StyleHandlerTrait
             $xmls = $this->getStyleXMLs($file);
 
             if (empty($xmls)) {
-                return $this->error(\XF::phrase('th_iau_no_style_xmls_found_in_package'));
+                return $this->error(XF::phrase('th_iau_no_style_xmls_found_in_package'));
             }
 
             $overWriteStyle = null;
             if($overwrite) {
                 /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\Style $overWriteStyle */
-                $overWriteStyle = \XF::em()->find('XF:Style', $overwrite);
+                $overWriteStyle = XF::em()->find('XF:Style', $overwrite);
             }
 
             return $this->view('ThemeHouse\InstallAndUpgrade:Style\XMLSelect', 'th_iau_style_xml_select', [
@@ -60,9 +63,9 @@ trait StyleHandlerTrait
             ]);
         }
 
-        $jobManager = \XF::app()->jobManager();
+        $jobManager = XF::app()->jobManager();
 
-        $jobManager->enqueueUnique("th-iau-extract-" . \XF::$time,
+        $jobManager->enqueueUnique("th-iau-extract-" . XF::$time,
             'ThemeHouse\InstallAndUpgrade:ExtractStyle',
             [
                 'batchId' => $productBatch->batch_id,
@@ -71,10 +74,10 @@ trait StyleHandlerTrait
         );
 
         if ($target == 'overwrite') {
-            /** @var \XF\Service\Style\Import $styleImporter */
+            /** @var Import $styleImporter */
             $styleImporter = $this->service('XF:Style\Import');
             /** @var Style $style */
-            $style = \XF::em()->find('XF:Style', $overwrite);
+            $style = XF::em()->find('XF:Style', $overwrite);
             $styleImporter->setOverwriteStyle($style);
 
             /** @var Extractor $extractor */
@@ -88,7 +91,7 @@ trait StyleHandlerTrait
             }
 
             if (!$force && !$styleImporter->isValidConfiguration($document, $errors)) {
-                return $this->error(\XF::phrase('import_verification_errors_x_select_skip_checks', [
+                return $this->error(XF::phrase('import_verification_errors_x_select_skip_checks', [
                     'errors' => implode(' ', $errors
                     )
                 ]));
@@ -117,7 +120,7 @@ trait StyleHandlerTrait
 
             if (empty($parentXmls)) {
                 if (empty($childXmls)) {
-                    return $this->error(\XF::phrase('th_installupgrade_no_xml_selected'));
+                    return $this->error(XF::phrase('th_installupgrade_no_xml_selected'));
                 }
 
                 $parentXmls = $this->getStyleXMLs($file, true);
@@ -125,7 +128,8 @@ trait StyleHandlerTrait
                 $parentXmls = [$parentXml['path']];
             }
 
-            $parentStyle = \XF::em()->find('XF:Style', $parent);
+            /** @var Style $parentStyle */
+            $parentStyle = XF::em()->find('XF:Style', $parent);
 
             /** @var Installer $service */
             $service = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Installer', $file, $product);
@@ -200,7 +204,6 @@ trait StyleHandlerTrait
         $this->log($style, 'download', [
             'version' => $style->latest_version
         ]);
-        /** @noinspection PhpUnhandledExceptionInspection */
         return $this->downloadProduct($style);
     }
 }

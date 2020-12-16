@@ -2,6 +2,8 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Entity;
 
+use Exception;
+use ThemeHouse\InstallAndUpgrade\Entity\ApiTrait;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use XF\Mvc\Entity\Structure;
 
@@ -13,7 +15,7 @@ use XF\Mvc\Entity\Structure;
  */
 class AddOn extends XFCP_AddOn
 {
-    use \ThemeHouse\InstallAndUpgrade\Entity\ApiTrait;
+    use ApiTrait;
 
     /**
      * @param Structure $structure
@@ -73,7 +75,7 @@ class AddOn extends XFCP_AddOn
                 } else {
                     $updateAvailable = false;
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $updateAvailable = false;
             }
 

@@ -2,6 +2,8 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
 
+use ArrayAccess;
+use LogicException;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
@@ -12,16 +14,22 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\TFA;
 use ThemeHouse\InstallAndUpgrade\Repository\Log;
+use XF;
+use XF\App;
+use XF\Mvc\Entity\Finder;
+use XF\Mvc\Entity\Manager;
+use XF\Mvc\Entity\Repository;
 use XF\Mvc\Reply\Error;
 use XF\Mvc\Reply\Exception;
 use XF\Mvc\Reply\Redirect;
 use XF\Mvc\Reply\View;
+use XF\PrintableException;
 
 /**
  * Class AbstractHandler
  * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade
  */
-abstract class AbstractHandler implements \ArrayAccess
+abstract class AbstractHandler implements ArrayAccess
 {
     /**
      * @var
@@ -29,7 +37,7 @@ abstract class AbstractHandler implements \ArrayAccess
     protected $values;
 
     /**
-     * @var \XF\Mvc\Entity\Manager
+     * @var Manager
      */
     protected $em;
 
@@ -39,7 +47,7 @@ abstract class AbstractHandler implements \ArrayAccess
     protected $profile;
 
     /**
-     * @var \XF\App
+     * @var App
      */
     protected $app;
 
@@ -49,7 +57,7 @@ abstract class AbstractHandler implements \ArrayAccess
      */
     public function __construct(Profile $profile = null)
     {
-        $this->app = \XF::app();
+        $this->app = XF::app();
         $this->em = $this->app->em();
         $this->profile = $profile;
     }
@@ -91,7 +99,7 @@ abstract class AbstractHandler implements \ArrayAccess
     public function redirect($url, $message = null, $type = 'temporary')
     {
         if ($message === null) {
-            $message = \XF::phrase('your_changes_have_been_saved');
+            $message = XF::phrase('your_changes_have_been_saved');
         }
         return new Redirect($url, $type, $message);
     }
@@ -204,7 +212,7 @@ abstract class AbstractHandler implements \ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        throw new \LogicException('Handler offsets may not be unset');
+        throw new LogicException('Handler offsets may not be unset');
     }
 
     /**
@@ -282,7 +290,7 @@ abstract class AbstractHandler implements \ArrayAccess
 
     /**
      * @param $shortName
-     * @return \XF\Mvc\Entity\Repository
+     * @return Repository
      */
     protected function repository($shortName)
     {
@@ -291,7 +299,7 @@ abstract class AbstractHandler implements \ArrayAccess
 
     /**
      * @param $shortName
-     * @return \XF\Mvc\Entity\Finder
+     * @return Finder
      */
     protected function finder($shortName)
     {
@@ -299,7 +307,7 @@ abstract class AbstractHandler implements \ArrayAccess
     }
 
     /**
-     * @return \XF\App
+     * @return App
      */
     protected function app()
     {
@@ -307,7 +315,7 @@ abstract class AbstractHandler implements \ArrayAccess
     }
 
     /**
-     * @return \XF\Mvc\Entity\Manager
+     * @return Manager
      */
     protected function em()
     {
@@ -327,12 +335,12 @@ abstract class AbstractHandler implements \ArrayAccess
      * @param $action
      * @param array $extra
      *
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     protected function log(Product $product, $action, $extra = [])
     {
         /** @var Log $repo */
-        $repo = \XF::repository('ThemeHouse\InstallAndUpgrade:Log');
+        $repo = XF::repository('ThemeHouse\InstallAndUpgrade:Log');
         $repo->log($product, $action, $extra);
     }
 

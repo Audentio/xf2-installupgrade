@@ -2,14 +2,19 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use ThemeHouse\InstallAndUpgrade\Repository\Product;
+use XF;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\Error;
 use XF\Mvc\Reply\Redirect;
+use XF\Mvc\Reply\View;
+use XF\PrintableException;
 
 /**
  * Class AddOn
@@ -18,11 +23,10 @@ use XF\Mvc\Reply\Redirect;
 class AddOn extends XFCP_AddOn
 {
     /**
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\View
+     * @return Error|View
      */
     public function actionThInstallUpgrade()
     {
-        /** @var InstallAndUpgrade $repo */
         $repo = $this->getInstallUpgradeRepo();
 
         if (!$repo->canUseInstallUpgrade($error)) {
@@ -59,7 +63,7 @@ class AddOn extends XFCP_AddOn
     public function actionThInstallUpgradeDismiss()
     {
         /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
-        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profileRepo = XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
 
         $profiles = $profileRepo
             ->findProfiles()
@@ -83,8 +87,8 @@ class AddOn extends XFCP_AddOn
     /**
      * @param ParameterBag $params
      * @return string
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \Exception
+     * @throws XF\Mvc\Reply\Exception
+     * @throws Exception
      */
     public function actionThInstallUpgradeUpgrade(ParameterBag $params)
     {
@@ -106,16 +110,16 @@ class AddOn extends XFCP_AddOn
     }
 
     /**
-     * @return \XF\Mvc\Reply\Error|Redirect
-     * @throws \XF\PrintableException
-     * @throws \Exception
+     * @return Error|Redirect
+     * @throws PrintableException
+     * @throws Exception
      */
     public function actionThInstallUpgradeProducts()
     {
         $productIds = $this->filter('install', 'array-str');
 
         if (empty($productIds)) {
-            return $this->error(\XF::phrase('th_installupgrade_no_product_selected'));
+            return $this->error(XF::phrase('th_installupgrade_no_product_selected'));
         }
 
         $profileId = 0;
@@ -160,8 +164,8 @@ class AddOn extends XFCP_AddOn
     }
 
     /**
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \Exception
+     * @throws XF\Mvc\Reply\Exception
+     * @throws Exception
      */
     public function actionThInstallUpgradeUrl()
     {
@@ -170,7 +174,6 @@ class AddOn extends XFCP_AddOn
         $urls = $this->filter('urls', 'array-str');
         $urls = array_filter(array_unique($urls));
 
-        /** @var InstallAndUpgrade $repo */
         $repo = $this->getInstallUpgradeRepo();
 
         /** @var Profile $lastProfile */
@@ -184,7 +187,7 @@ class AddOn extends XFCP_AddOn
             $profile = $repo->getProfileFromUrl($url, $error);
 
             if ($lastProfile && $profile->profile_id != $lastProfile->profile_id) {
-                $this->error(\XF::phrase('th_installupgrade_all_urls_must_point_to_same_provider'));
+                $this->error(XF::phrase('th_installupgrade_all_urls_must_point_to_same_provider'));
             }
 
             $lastProfile = $profile;
@@ -198,7 +201,7 @@ class AddOn extends XFCP_AddOn
         $handler = $lastProfile->getHandler();
 
         if (!$handler->getCapability('addOn')) {
-            return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_addons'));
+            return $this->error(XF::phrase('th_installupgrade_provider_does_not_support_addons'));
         }
 
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */

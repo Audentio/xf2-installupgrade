@@ -2,10 +2,12 @@
 
 namespace ThemeHouse\InstallAndUpgrade;
 
+use LogicException;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1000040;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1010030;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1010130;
 use ThemeHouse\InstallAndUpgrade\Setup\Patch1010670;
+use XF;
 use XF\AddOn\AbstractSetup;
 use XF\AddOn\StepRunnerInstallTrait;
 use XF\AddOn\StepRunnerUninstallTrait;
@@ -13,6 +15,7 @@ use XF\AddOn\StepRunnerUpgradeTrait;
 use XF\Db\Schema\Alter;
 use XF\Db\Schema\Column;
 use XF\Db\Schema\Create;
+use function get_class;
 
 /**
  * Class Setup
@@ -104,7 +107,7 @@ class Setup extends AbstractSetup
      * @param string|null $type
      * @param string|null $length
      * @return Column
-     * @throws \LogicException If table is unknown schema object
+     * @throws LogicException If table is unknown schema object
      */
     protected function addOrChangeColumn($table, $name, $type = null, $length = null)
     {
@@ -120,7 +123,7 @@ class Setup extends AbstractSetup
 
                 return $table->addColumn($name, $type, $length);
             } else {
-                throw new \LogicException('Unknown schema DDL type ' . \get_class($table));
+                throw new LogicException('Unknown schema DDL type ' . get_class($table));
             }
         }
     }
@@ -175,7 +178,7 @@ class Setup extends AbstractSetup
      */
     public function postInstall(array &$stateChanges)
     {
-        $jobManager = \XF::app()->jobManager();
+        $jobManager = XF::app()->jobManager();
         $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
     }
 
@@ -186,7 +189,7 @@ class Setup extends AbstractSetup
     public function postUpgrade($previousVersion, array &$stateChanges)
     {
         if ($previousVersion <= 1000040) {
-            $jobManager = \XF::app()->jobManager();
+            $jobManager = XF::app()->jobManager();
             $jobManager->enqueue('ThemeHouse\InstallAndUpgrade:ImportTHStyles');
         }
     }

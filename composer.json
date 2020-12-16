@@ -1,8 +1,8 @@
 {
     "require": {
         "thesoftwarefanatics/php-html-parser": "^1.8.0",
-        "tunaabutbul/cloudflare-middleware": "^1.2",
-        "xfapi/xfapi-php": "^0.1@alpha"
+        "xfapi/xfapi-php": "^0.1@alpha",
+        "cornford/guzzle-cloudflare-middleware": "^1.0"
     },
     "replace": {
         "guzzlehttp/guzzle":"*"

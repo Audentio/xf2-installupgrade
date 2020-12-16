@@ -2,10 +2,14 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Service\StyleArchive;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
+use XF;
 use XF\App;
 use XF\Entity\Style;
+use XF\PrintableException;
 use XF\Service\AbstractService;
+use XF\Service\Style\Import;
 
 // ######## NOTE: SIMILARITY TO XF CORE UPGRADER CODE ############
 // Much of this code is similar to the XFUpgraderExtractor class in src/XF/Install/_upgrader/core.php.
@@ -54,7 +58,7 @@ class Installer extends AbstractService
      * @param array $childXmls
      * @param bool $force
      * @return array
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function install(array $xmls, Style $parent = null, array $childXmls = [], $force = false)
     {
@@ -77,11 +81,11 @@ class Installer extends AbstractService
      * @param array $childXmls
      * @param bool $force
      * @return array
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     protected function installStyle($xml, Style $parent = null, $childXmls = [], $force = false)
     {
-        /** @var \XF\Service\Style\Import $styleImporter */
+        /** @var Import $styleImporter */
         $styleImporter = $this->service('XF:Style\Import');
 
         $styleImporter->setParentStyle($parent);
@@ -90,7 +94,7 @@ class Installer extends AbstractService
             /** @var Extractor $extractor */
             $extractor = $this->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Extractor', $this->file);
             $xmlContent = simplexml_load_string(stream_get_contents($extractor->getFile($xml)));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => $e->getMessage()
@@ -107,7 +111,7 @@ class Installer extends AbstractService
         if (!$force && !$styleImporter->isValidConfiguration($xmlContent, $errors)) {
             return [
                 'status' => 'error',
-                'message' => \XF::phrase('import_verification_errors_x_select_skip_checks', [
+                'message' => XF::phrase('import_verification_errors_x_select_skip_checks', [
                     'errors' => implode(' ', $errors
                     )
                 ])

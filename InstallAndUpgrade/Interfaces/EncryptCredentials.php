@@ -6,7 +6,7 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces;
  * Interface EncryptCredentials
  * @package ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces
  *
- * @method decryptCredentials (array $options)
+ * @publicmethod decryptCredentials (array $options = [])
  */
 interface EncryptCredentials
 {

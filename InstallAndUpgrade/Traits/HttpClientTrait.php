@@ -2,10 +2,12 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
+use Cornford\GuzzleCloudflareMiddleware\CloudflareMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
-use Tuna\CloudflareMiddleware;
+use XF;
 
 /**
  * Trait HttpClientTrait
@@ -37,7 +39,7 @@ trait HttpClientTrait
             $options['cookies'] = $this->cookieJar();
         }
 
-        $addonCache = \XF::app()->container('addon.cache');
+        $addonCache = XF::app()->container('addon.cache');
         $options['headers'] = array_merge(isset($options['headers']) ? $options['headers'] : [], [
             'User-Agent' => 'th-install-upgrade/' . $addonCache['ThemeHouse/InstallAndUpgrade'] .
                 ' (PHP ' . phpversion() . ')',
@@ -51,7 +53,7 @@ trait HttpClientTrait
             /** @var Response $response */
             $response = $this->httpClient()->{$method}($url, $options);
         }
-        catch (\GuzzleHttp\Exception\RequestException $e)
+        catch (RequestException $e)
         {
             if ($throwErrors)
             {
@@ -60,8 +62,7 @@ trait HttpClientTrait
         }
 
         if ($throwErrors && $response->getStatusCode() != 200) {
-            /** @noinspection PhpUndefinedMethodInspection */
-            $this->exception(\XF::phrase('th_iau_response_error', [
+            $this->exception(XF::phrase('th_iau_response_error', [
                 'statusCode' => $response->getStatusCode(),
                 'reason' => $response->getReasonPhrase()
             ]));
@@ -88,7 +89,7 @@ trait HttpClientTrait
     protected function httpClient()
     {
         if (!$this->httpClient) {
-            $this->httpClient = \XF::app()->http()->client();
+            $this->httpClient = XF::app()->http()->createClient(['cookies' => new CookieJar()]);
             $this->httpClient->getConfig('handler')->push(CloudflareMiddleware::create());
         }
 

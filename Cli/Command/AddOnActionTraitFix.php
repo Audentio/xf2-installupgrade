@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpDeprecationInspection */
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command;
 
@@ -8,6 +8,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
+use XF;
 use XF\AddOn\AddOn;
 use XF\Cli\Command\AddOnActionTrait;
 
@@ -32,7 +33,7 @@ trait AddOnActionTraitFix
 
         $builderOptions = [
             $execFinder->find(false),
-            \XF::getRootDirectory() . DIRECTORY_SEPARATOR . 'cmd.php',
+            XF::getRootDirectory() . DIRECTORY_SEPARATOR . 'cmd.php',
             'xf:addon-sub-action-deferred-jobs',
             $addOn->getAddOnId(),
             $action,
@@ -43,12 +44,10 @@ trait AddOnActionTraitFix
             $builderOptions[] = $verbosityOption;
         }
 
-        if (\XF::$versionId >= 2010000) {
-            /** @noinspection PhpParamsInspection */
+        if (XF::$versionId >= 2010000) {
             $process = new Process($builderOptions);
             $process->setTimeout(null);
             if (is_callable([$process, 'inheritEnvironmentVariables'])) {
-                /** @noinspection PhpUndefinedMethodInspection */
                 $process->inheritEnvironmentVariables();
             }
             $process->setCommandLine($process->getCommandLine());

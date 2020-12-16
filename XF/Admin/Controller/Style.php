@@ -2,13 +2,17 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
+use XF;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\Error;
+use XF\Mvc\Reply\Redirect;
 use XF\Mvc\Reply\View;
 
 /**
@@ -18,11 +22,10 @@ use XF\Mvc\Reply\View;
 class Style extends XFCP_Style
 {
     /**
-     * @return \XF\Mvc\Reply\Error|View
+     * @return Error|View
      */
     public function actionThInstallUpgrade()
     {
-        /** @var InstallAndUpgrade $repo */
         $repo = $this->getInstallUpgradeRepo();
 
         if (!$repo->canUseInstallUpgrade($error)) {
@@ -58,12 +61,12 @@ class Style extends XFCP_Style
     }
 
     /**
-     * @return \XF\Mvc\Reply\Redirect
+     * @return Redirect
      */
     public function actionThInstallUpgradeDismiss()
     {
         /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
-        $profileRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
+        $profileRepo = XF::repository('ThemeHouse\InstallAndUpgrade:Profile');
 
         $profiles = $profileRepo
             ->findProfiles()
@@ -85,8 +88,8 @@ class Style extends XFCP_Style
     }
 
     /**
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \Exception
+     * @throws XF\Mvc\Reply\Exception
+     * @throws Exception
      */
     public function actionThInstallUpgradeProduct()
     {
@@ -130,14 +133,13 @@ class Style extends XFCP_Style
     }
 
     /**
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\View
-     * @throws \Exception
+     * @return Error|View
+     * @throws Exception
      */
     public function actionThInstallUpgradeUrl()
     {
         $url = $this->filter('url', 'str');
 
-        /** @var InstallAndUpgrade $repo */
         $repo = $this->getInstallUpgradeRepo();
 
         /** @var Profile $profile */
@@ -150,7 +152,7 @@ class Style extends XFCP_Style
         $handler = $profile->getHandler();
 
         if (!$handler->getCapability('style')) {
-            return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_styles'));
+            return $this->error(XF::phrase('th_installupgrade_provider_does_not_support_styles'));
         }
 
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
@@ -181,14 +183,13 @@ class Style extends XFCP_Style
 
     /**
      * @param ParameterBag $params
-     * @return View
-     * @throws \Exception
+     * @return XF\Mvc\Reply\AbstractReply|View
+     * @throws Exception
      */
     public function actionThInstallUpgradeUpdate(ParameterBag $params)
     {
         /** @var \ThemeHouse\InstallAndUpgrade\XF\Entity\Style $style */
         $style = $this->assertStyleExists($params['style_id']);
-        /** @var Product $product */
         $product = $style->THIAUProduct;
 
         if (!$product->Profile->getHandler()->compareVersions($style->th_iau_current_version,

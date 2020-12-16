@@ -3,7 +3,10 @@
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
+use XF;
+use XF\AddOn\AddOn;
 use XF\Mvc\Entity\Repository;
+use XF\PrintableException;
 
 /**
  * Class InstallAndUpgrade
@@ -19,16 +22,16 @@ class InstallAndUpgrade extends Repository
     public function canUseInstallUpgrade(&$error, $bypassConfig = false)
     {
         if (!$bypassConfig && !$this->app()->config('enableAddOnArchiveInstaller')) {
-            $error = \XF::phrase('th_installupgrade_install_must_be_explicitly_enabled_explain');
+            $error = XF::phrase('th_installupgrade_install_must_be_explicitly_enabled_explain');
             return false;
         }
 
         if (!class_exists('ZipArchive')) {
-            $error = \XF::phrase('th_installupgrade_installing_is_only_supported_if_you_have_ziparchive_support');
+            $error = XF::phrase('th_installupgrade_installing_is_only_supported_if_you_have_ziparchive_support');
             return false;
         }
 
-        $root = \XF::getRootDirectory();
+        $root = XF::getRootDirectory();
         $ds = DIRECTORY_SEPARATOR;
 
         $mustBeWritable = [
@@ -52,7 +55,7 @@ class InstallAndUpgrade extends Repository
             unset($mustBeWritable[0]);
             $relativePaths = array_map('XF\Util\File::stripRootPathPrefix', $mustBeWritable);
 
-            $error = \XF::phrase('th_installupgrade_cannot_install_as_not_all_required_directories_writable',
+            $error = XF::phrase('th_installupgrade_cannot_install_as_not_all_required_directories_writable',
                 ['relativePaths' => implode(', ', $relativePaths)]);
             return false;
         }
@@ -67,7 +70,7 @@ class InstallAndUpgrade extends Repository
      */
     public function getProfileFromUrl($url, &$error)
     {
-        /** @var \ThemeHouse\InstallAndUpgrade\Repository\Profile $profileRepo */
+        /** @var Profile $profileRepo */
         $profileRepo = $this->repository('ThemeHouse\InstallAndUpgrade:Profile');
         $profiles = $profileRepo->findProfiles()->fetch();
 
@@ -77,13 +80,13 @@ class InstallAndUpgrade extends Repository
             }
         }
 
-        $error = \XF::phrase('th_installupgrade_no_profile_found_for_url');
+        $error = XF::phrase('th_installupgrade_no_profile_found_for_url');
         return null;
     }
 
     /**
      * @return array
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function getIndexUpdateInfo()
     {
@@ -146,13 +149,13 @@ class InstallAndUpgrade extends Repository
     }
 
     /**
-     * @param \XF\AddOn\AddOn[] $upgradeableAddOns
+     * @param AddOn[] $upgradeableAddOns
      * @return array
      */
     public function sortByDependencies(array $upgradeableAddOns)
     {
         $installList = [];
-        /** @var \XF\AddOn\AddOn[] $complex */
+        /** @var AddOn[] $complex */
         $complex = [];
         // init the list
         foreach ($upgradeableAddOns as $addOn) {

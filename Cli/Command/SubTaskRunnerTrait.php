@@ -1,13 +1,15 @@
-<?php
+<?php /** @noinspection PhpDeprecationInspection */
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command;
 
+use Exception;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
+use XF;
 
 /**
  * Trait SubTaskRunnerTrait
@@ -18,15 +20,15 @@ trait SubTaskRunnerTrait
     /**
      * @param OutputInterface $output
      * @param int $time
-     * @throws \Exception
+     * @throws Exception
      */
     public function runPendingManualJobsInTask(OutputInterface $output, $time = 30)
     {
-        \XF::triggerRunOnce();
+        XF::triggerRunOnce();
 
         $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
 
-        \XF::app()->container()->decache('job.manager');
+        XF::app()->container()->decache('job.manager');
         $this->runSubTask($output, [
             'iau-addon:run-jobs',
             '--manual-jobs',
@@ -44,7 +46,7 @@ trait SubTaskRunnerTrait
 
         $builderOptions = [
             $execFinder->find(false),
-            \XF::getRootDirectory() . DIRECTORY_SEPARATOR . 'cmd.php',
+            XF::getRootDirectory() . DIRECTORY_SEPARATOR . 'cmd.php',
             '-n'
         ];
         $builderOptions = array_merge($builderOptions, $args);

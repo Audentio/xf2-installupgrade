@@ -2,6 +2,9 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
+use LogicException;
+use XF;
+use XF\Mvc\Entity\ArrayCollection;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 use XF\Util\File;
@@ -33,7 +36,7 @@ class ProductBatch extends Entity
 
         $structure->columns = [
             'batch_id' => ['type' => self::UINT, 'autoIncrement' => true, 'nullable' => true],
-            'start_date' => ['type' => self::UINT, 'default' => \XF::$time],
+            'start_date' => ['type' => self::UINT, 'default' => XF::$time],
             'complete_date' => ['type' => self::UINT, 'default' => 0],
             'product_ids' => ['type' => self::JSON_ARRAY, 'default' => []],
             'results' => ['type' => self::JSON_ARRAY, 'default' => []]
@@ -97,14 +100,14 @@ class ProductBatch extends Entity
     public function getAbstractedBatchPath()
     {
         if (!$this->batch_id) {
-            throw new \LogicException("Cannot get batch path until saved");
+            throw new LogicException("Cannot get batch path until saved");
         }
 
         return "internal-data://th_iau_product_batch/{$this->batch_id}";
     }
 
     /**
-     * @return \XF\Mvc\Entity\ArrayCollection
+     * @return XF\Mvc\Entity\AbstractCollection|ArrayCollection
      */
     public function getProducts()
     {

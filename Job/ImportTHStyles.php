@@ -3,7 +3,10 @@
 namespace ThemeHouse\InstallAndUpgrade\Job;
 
 use ThemeHouse\InstallAndUpgrade\XF\Entity\Style;
+use XF;
 use XF\Job\AbstractJob;
+use XF\Job\JobResult;
+use XF\PrintableException;
 
 /**
  * Class ImportTHStyles
@@ -14,8 +17,8 @@ class ImportTHStyles extends AbstractJob
 
     /**
      * @param $maxRunTime
-     * @return \XF\Job\JobResult
-     * @throws \XF\PrintableException
+     * @return JobResult
+     * @throws PrintableException
      */
     public function run($maxRunTime)
     {
@@ -23,7 +26,7 @@ class ImportTHStyles extends AbstractJob
             return $this->complete();
         }
 
-        $db = \XF::db();
+        $db = XF::db();
         $db->beginTransaction();
         $styles = $this->app->em()->getFinder('XF:Style')->fetch();
         foreach ($styles as $style) {
@@ -54,9 +57,9 @@ class ImportTHStyles extends AbstractJob
      */
     public function getStatusMessage()
     {
-        $actionPhrase = \XF::phrase('th_iau_finishing_installation');
+        $actionPhrase = XF::phrase('th_iau_finishing_installation');
         return sprintf('%s... (%s)', $actionPhrase,
-            \XF::language()->numberFormat(1)
+            XF::language()->numberFormat(1)
         );
     }
 

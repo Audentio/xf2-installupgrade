@@ -4,6 +4,7 @@ namespace ThemeHouse\InstallAndUpgrade\XF\Admin\Controller;
 
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 use XF\Mvc\Reply\View;
+use XF\PrintableException;
 
 /**
  * Class Index
@@ -13,7 +14,7 @@ class Index extends XFCP_Index
 {
     /**
      * @return View
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function actionIndex()
     {

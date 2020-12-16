@@ -3,6 +3,8 @@
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
+use XF;
+use XF\Phrase;
 use XFApi\Dto\DBTech\eCommerce\ProductDto;
 
 /**
@@ -30,11 +32,11 @@ class AtelierAphelion extends DragonByte
     protected $exceptionPrefix = '[Atelier Aphelion Install & Upgrade]';
 
     /**
-     * @return \XF\Phrase
+     * @return Phrase
      */
     public function getTitle()
     {
-        return \XF::phrase('install_upgrade_provider.atelieraphelion');
+        return XF::phrase('install_upgrade_provider.atelieraphelion');
     }
 
     /**
@@ -57,7 +59,7 @@ class AtelierAphelion extends DragonByte
     protected function getContext()
     {
         // Rather than a bunch of if statements, we'll just construct the product filter this way
-        $version = explode('.', \XF::$version);
+        $version = explode('.', XF::$version);
 
         return [
             'platforms' => ['xf' . $version[0], 'xf' . $version[0] . $version[1]],

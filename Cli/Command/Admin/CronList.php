@@ -6,6 +6,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use XF;
+use XF\Entity\CronEntry;
 
 /**
  * Class CronList
@@ -51,14 +53,14 @@ class CronList extends Command
         $active = $input->getOption('active');
         $disabled = $input->getOption('disabled');
 
-        $finder = \XF::finder('XF:CronEntry');
+        $finder = XF::finder('XF:CronEntry');
         if ($active) {
             $finder->where('active', '=', 1);
         }
         if ($disabled) {
             $finder->where('active', '=', 0);
         }
-        /** @var \XF\Entity\CronEntry $cron */
+        /** @var CronEntry $cron */
         $cronEntries = $finder->fetch();
         foreach ($cronEntries as $cron) {
             $output->writeln($cron->entry_id . "," . $cron->title . "," . "," . strval($cron->active ? 1 : 0));

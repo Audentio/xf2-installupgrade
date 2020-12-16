@@ -2,8 +2,10 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn;
 
+use Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use XF;
 use XF\Cli\Command\AddOnSubAction;
 
 /**
@@ -25,16 +27,16 @@ class AddOnSubActionFix extends AddOnSubAction
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
             return parent::execute($input, $output);
         } finally {
-            \XF::triggerRunOnce();
+            XF::triggerRunOnce();
 
-            \XF::app()->container()->decache('job.manager');
+            XF::app()->container()->decache('job.manager');
         }
     }
 }

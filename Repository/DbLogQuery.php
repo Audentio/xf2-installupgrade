@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
+use Exception;
 use XF\DB\AbstractAdapter;
 
 /**
@@ -19,7 +20,7 @@ abstract class DbLogQuery extends AbstractAdapter
     {
         try {
             $db->queryLog = [];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
         }
     }

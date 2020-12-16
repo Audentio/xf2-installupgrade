@@ -9,8 +9,14 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
 
+use XF;
 use XF\Admin\Controller\AbstractController;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\Error;
+use XF\Mvc\Reply\Exception;
+use XF\Mvc\Reply\Redirect;
+use XF\Mvc\Reply\View;
+use XF\PrintableException;
 use XF\Repository\AddOn;
 
 /**
@@ -20,7 +26,7 @@ use XF\Repository\AddOn;
 class Product extends AbstractController
 {
     /**
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     * @return Redirect|View
      * @throws \Exception
      */
     public function actionRefresh()
@@ -56,7 +62,7 @@ class Product extends AbstractController
     }
 
     /**
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function actionAvailable()
     {
@@ -85,7 +91,7 @@ class Product extends AbstractController
     }
 
     /**
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function actionInstalled()
     {
@@ -114,7 +120,10 @@ class Product extends AbstractController
     }
 
     /**
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     * @return XF\Mvc\Reply\AbstractReply|Redirect|View
+     * @throws PrintableException
+     * @throws PrintableException
+     * @throws PrintableException
      */
     public function actionInstalledAdd()
     {
@@ -139,8 +148,11 @@ class Product extends AbstractController
                     return $this->notFound();
             }
 
+            /** @var \ThemeHouse\InstallAndUpgrade\Entity\Product $data */
             $data = $content->getRelationOrDefault('THInstallUpgradeData');
-            $data->download_url = $this->filter('download_url', 'str');
+            $extra = $data->extra;
+            $extra['download_url'] = $this->filter('download_url', 'str');
+            $data->extra = $extra;
             $data->save();
 
             return $this->redirect($this->buildLink('install-upgrade-products/installed'));
@@ -173,7 +185,7 @@ class Product extends AbstractController
     }
 
     /**
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function actionAddOn()
     {
@@ -200,7 +212,7 @@ class Product extends AbstractController
     /**
      * @param ParameterBag $params
      *
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     * @return Error|Redirect|View
      * @throws \Exception
      */
     public function actionAddOnInstall(ParameterBag $params)
@@ -211,13 +223,13 @@ class Product extends AbstractController
         /** @var AbstractHandler|EncryptCredentials|AddOnHandler $handler */
         $handler = $profile->getHandler();
         if (!$handler) {
-            return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('add_on')]));
+            return $this->error(XF::phrase('th_iau_no_handler_found_for_x', ['item' => XF::phrase('add_on')]));
         }
 
         $encryptionSecret = null;
         if ($profile->requires_decryption) {
-            if (isset(\XF::config('installAndUpgrade')['secrets'][$profile->profile_id])) {
-                $encryptionSecret = \XF::config('installAndUpgrade')['secrets'][$profile->profile_id];
+            if (isset(XF::config('installAndUpgrade')['secrets'][$profile->profile_id])) {
+                $encryptionSecret = XF::config('installAndUpgrade')['secrets'][$profile->profile_id];
                 $handler->setEncryptionSecret($encryptionSecret);
             } else {
                 if ($encryptionSecret = $this->filter('encryption_secret', 'str')) {
@@ -243,24 +255,24 @@ class Product extends AbstractController
         $addonId = $handler->installAddOnProduct($product);
 
         if (!$addonId) {
-            return $this->error(\XF::phrase('th_iau_addon_id_not_found_in_package'));
+            return $this->error(XF::phrase('th_iau_addon_id_not_found_in_package'));
         }
 
         return $this->redirect($this->buildLink('add-ons/install',
             ['addon_id_url' => str_replace('/', '-', $addonId), 'product' => $product]),
-            \XF::phrase('th_iau_addon_downloaded_successfully'));
+            XF::phrase('th_iau_addon_downloaded_successfully'));
     }
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
+     * @return Redirect|View
+     * @throws Exception
+     * @throws PrintableException
      */
     public function actionAddOnEdit(ParameterBag $params)
     {
         /** @var AddOn $repo */
-        $repo = \XF::repository('XF:AddOn');
+        $repo = XF::repository('XF:AddOn');
         $addOnId = $repo->convertAddOnIdUrlVersionToBase($params['product_id']);
         $addOn = $this->assertRecordExists('ThemeHouse\InstallAndUpgrade:AddOn', $addOnId, ['AddOn']);
 
@@ -283,7 +295,7 @@ class Product extends AbstractController
     }
 
     /**
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function actionStyle()
     {
@@ -309,7 +321,7 @@ class Product extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     * @return Error|Redirect|View
      * @throws \Exception
      */
     public function actionStyleInstall(ParameterBag $params)
@@ -320,13 +332,13 @@ class Product extends AbstractController
         /** @var AbstractHandler|EncryptCredentials|StyleHandler $handler */
         $handler = $profile->getHandler();
         if (!$handler) {
-            return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('style')]));
+            return $this->error(XF::phrase('th_iau_no_handler_found_for_x', ['item' => XF::phrase('style')]));
         }
 
         $encryptionSecret = null;
         if ($profile->requires_decryption) {
-            if (isset(\XF::config('installAndUpgrade')['secrets'][$profile->profile_id])) {
-                $encryptionSecret = \XF::config('installAndUpgrade')['secrets'][$profile->profile_id];
+            if (isset(XF::config('installAndUpgrade')['secrets'][$profile->profile_id])) {
+                $encryptionSecret = XF::config('installAndUpgrade')['secrets'][$profile->profile_id];
                 $handler->setEncryptionSecret($encryptionSecret);
             } else {
                 if ($encryptionSecret = $this->filter('encryption_secret', 'str')) {
@@ -351,18 +363,18 @@ class Product extends AbstractController
         $files = $handler->installStyle($product, $profile);
 
         if (!$files || empty($files)) {
-            return $this->error(\XF::phrase('th_iau_no_xml_files_found_in_package'));
+            return $this->error(XF::phrase('th_iau_no_xml_files_found_in_package'));
         }
 
         return $this->redirect($this->buildLink('styles/import', null, ['files' => $files, 'product' => $product]),
-            \XF::phrase('th_iau_style_successfully_downloaded'));
+            XF::phrase('th_iau_style_successfully_downloaded'));
     }
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
+     * @return Redirect|View
+     * @throws Exception
+     * @throws PrintableException
      */
     public function actionStyleEdit(ParameterBag $params)
     {
@@ -387,7 +399,7 @@ class Product extends AbstractController
     }
 
     /**
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function actionLanguage()
     {
@@ -413,7 +425,7 @@ class Product extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
+     * @return Error|Redirect|View
      * @throws \Exception
      */
     public function actionLanguageInstall(ParameterBag $params)
@@ -425,13 +437,13 @@ class Product extends AbstractController
         $handler = $profile->getHandler();
 
         if (!$handler) {
-            return $this->error(\XF::phrase('th_iau_no_handler_found_for_x', ['item' => \XF::phrase('language')]));
+            return $this->error(XF::phrase('th_iau_no_handler_found_for_x', ['item' => XF::phrase('language')]));
         }
 
         $encryptionSecret = null;
         if ($profile->requires_decryption) {
-            if (isset(\XF::config('installAndUpgrade')['secrets'][$profile->profile_id])) {
-                $encryptionSecret = \XF::config('installAndUpgrade')['secrets'][$profile->profile_id];
+            if (isset(XF::config('installAndUpgrade')['secrets'][$profile->profile_id])) {
+                $encryptionSecret = XF::config('installAndUpgrade')['secrets'][$profile->profile_id];
                 $handler->setEncryptionSecret($encryptionSecret);
             } else {
                 if ($encryptionSecret = $this->filter('encryption_secret', 'str')) {
@@ -458,18 +470,18 @@ class Product extends AbstractController
         $files = $handler->installLanguage($product, $profile);
 
         if (!$files || empty($files)) {
-            return $this->error(\XF::phrase('th_iau_no_xml_files_found_in_package'));
+            return $this->error(XF::phrase('th_iau_no_xml_files_found_in_package'));
         }
 
         return $this->redirect($this->buildLink('languages/import', null, ['files' => $files, 'product' => $product]),
-            \XF::phrase('th_iau_language_successfully_downloaded'));
+            XF::phrase('th_iau_language_successfully_downloaded'));
     }
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
+     * @return Redirect|View
+     * @throws Exception
+     * @throws PrintableException
      */
     public function actionLanguageEdit(ParameterBag $params)
     {

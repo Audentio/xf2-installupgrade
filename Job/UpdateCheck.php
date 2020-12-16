@@ -2,10 +2,12 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Job;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\LanguageHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
+use XF;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
 
@@ -29,7 +31,7 @@ class UpdateCheck extends AbstractJob
      * @param int $maxRunTime
      *
      * @return JobResult
-     * @throws \Exception
+     * @throws Exception
      */
     public function run($maxRunTime)
     {
@@ -104,8 +106,8 @@ class UpdateCheck extends AbstractJob
                         /** @var LanguageHandler $handler */
                         $handler->checkLanguageProductForUpdates($product);
                 }
-            } catch (\Exception $e) {
-                \XF::logException($e);
+            } catch (Exception $e) {
+                XF::logException($e);
             }
         }
 
@@ -117,7 +119,7 @@ class UpdateCheck extends AbstractJob
      */
     public function getStatusMessage()
     {
-        $actionPhrase = \XF::phrase('th_installupgrade_checking_for_updates');
+        $actionPhrase = XF::phrase('th_installupgrade_checking_for_updates');
         return sprintf('%s... (%s)', $actionPhrase, $this->data['steps']);
     }
 

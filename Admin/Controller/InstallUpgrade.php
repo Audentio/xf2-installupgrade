@@ -5,8 +5,14 @@ namespace ThemeHouse\InstallAndUpgrade\Admin\Controller;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
+use XF;
 use XF\Admin\Controller\AbstractController;
+use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\Error;
+use XF\Mvc\Reply\Exception;
+use XF\Mvc\Reply\Redirect;
+use XF\Mvc\Reply\View;
 
 /**
  * Class InstallUpgrade
@@ -16,8 +22,8 @@ class InstallUpgrade extends AbstractController
 {
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
+     * @return Error|Redirect|View
+     * @throws Exception
      * @throws \Exception
      */
     public function actionInstallProducts(ParameterBag $params)
@@ -38,14 +44,17 @@ class InstallUpgrade extends AbstractController
         }
 
         if(!$profile) {
-            return $this->error(\XF::phrase('th_installupgrade_no_installupgrade_profile_found'));
+            return $this->error(XF::phrase('th_installupgrade_no_installupgrade_profile_found'));
         }
 
         /** @var AbstractHandler $handler */
         $handler = $profile->getHandler();
 
+        /** @var Product $product */
+        $product = $products->last();
+
         if (!$handler->getCapability($product->product_type)) {
-            return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_' . $product->product_type . 's'));
+            return $this->error(XF::phrase('th_installupgrade_provider_does_not_support_' . $product->product_type . 's'));
         }
 
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
@@ -63,8 +72,8 @@ class InstallUpgrade extends AbstractController
      * @param $id
      * @param null $with
      * @param null $phraseKey
-     * @return \XF\Mvc\Entity\Entity
-     * @throws \XF\Mvc\Reply\Exception
+     * @return Entity
+     * @throws Exception
      */
     protected function assertBatchExists($id, $with = null, $phraseKey = null)
     {
@@ -73,8 +82,8 @@ class InstallUpgrade extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Error|\XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
+     * @return Error|Redirect|View
+     * @throws Exception
      * @throws \Exception
      */
     public function actionInstallProduct(ParameterBag $params)
@@ -87,7 +96,7 @@ class InstallUpgrade extends AbstractController
         $handler = $product->Profile->getHandler();
 
         if (!$handler->getCapability($product->product_type)) {
-            return $this->error(\XF::phrase('th_installupgrade_provider_does_not_support_' . $product->product_type . 's'));
+            return $this->error(XF::phrase('th_installupgrade_provider_does_not_support_' . $product->product_type . 's'));
         }
 
         /** @var \ThemeHouse\InstallAndUpgrade\ControllerPlugin\Profile $controllerPlugin */
@@ -104,8 +113,8 @@ class InstallUpgrade extends AbstractController
      * @param $id
      * @param null $with
      * @param null $phraseKey
-     * @return \XF\Mvc\Entity\Entity
-     * @throws \XF\Mvc\Reply\Exception
+     * @return Entity
+     * @throws Exception
      */
     protected function assertProductExists($id, $with = null, $phraseKey = null)
     {

@@ -2,9 +2,13 @@
 
 namespace ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive;
 
+use ThemeHouse\InstallAndUpgrade\XF\Entity\AddOnInstallBatch;
+
 /**
  * Class InstallBatchCreator
  * @package ThemeHouse\InstallAndUpgrade\XF\Service\AddOnArchive
+ *
+ * @property AddOnInstallBatch installBatch
  */
 class InstallBatchCreator extends XFCP_InstallBatchCreator
 {
@@ -30,7 +34,6 @@ class InstallBatchCreator extends XFCP_InstallBatchCreator
     {
         $response = parent::setupAddOnZip($tempFile, $error);
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->thLastAddedAddOnId = $this->installBatch->thLastAddedAddOnId();
 
         return $response;

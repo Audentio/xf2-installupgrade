@@ -2,6 +2,8 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
 
+use Exception;
+use Psr\Http\Message\ResponseInterface;
 use ThemeHouse\Core\Service\ApiRequest;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
@@ -10,6 +12,10 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\StyleHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\AddonHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\StyleHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\VersioningTrait;
+use XF;
+use XF\Mvc\Entity\Entity;
+use XF\Phrase;
+use XF\PrintableException;
 use XF\Util\File;
 
 /**
@@ -28,12 +34,11 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
     /**
      * @param $url
      * @param null $error
-     * @throws \Exception
+     * @throws Exception
      */
     public function createAddOnProductFromUrl($url, &$error = null)
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        throw new \Exception('This provider does not support installation from URL');
+        throw new Exception('This provider does not support installation from URL');
     }
 
     /**
@@ -49,12 +54,11 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
     /**
      * @param $url
      * @param null $error
-     * @throws \Exception
+     * @throws Exception
      */
     public function createStyleProductFromUrl($url, &$error = null)
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        throw new \Exception('This provider does not support installation from URL');
+        throw new Exception('This provider does not support installation from URL');
     }
 
     /**
@@ -68,11 +72,11 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
     }
 
     /**
-     * @return \XF\Phrase
+     * @return Phrase
      */
     public function getTitle()
     {
-        return \XF::phrase('install_upgrade_provider.themehouse');
+        return XF::phrase('install_upgrade_provider.themehouse');
     }
 
     /**
@@ -101,13 +105,13 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
     }
 
     /**
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function getProducts()
     {
         $profile = $this->profile;
 
-        /** @var \ThemeHouse\Core\Service\ApiRequest $apiService */
+        /** @var ApiRequest $apiService */
         $apiService = $this->service('ThemeHouse\Core:ApiRequest');
         $apiService->setApiKey($this->getApiKey());
 
@@ -146,7 +150,7 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
      * @param $payload
      * @param $productType
      * @param $profileId
-     * @return \XF\Mvc\Entity\Entity
+     * @return Entity
      */
     protected function productFromPayload($payload, $productType, $profileId)
     {
@@ -193,7 +197,7 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
 
         $downloadResponse = $this->getVersion($productId, $versionId);
         if ($downloadResponse['status'] === 'error') {
-            $this->app->logException(new \Exception('Unable to download zip from ThemeHouse.'));
+            $this->app->logException(new Exception('Unable to download zip from ThemeHouse.'));
             return false;
         }
 
@@ -201,7 +205,7 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
         $downloadResponse = $apiRequest->download($version['download_url'], $tempFile);
 
         if ($downloadResponse['status'] === 'error') {
-            $this->app->logException(new \Exception('Unable to download zip from ThemeHouse.'));
+            $this->app->logException(new Exception('Unable to download zip from ThemeHouse.'));
             return null;
         }
 
@@ -246,11 +250,11 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
     /**
      * @param $productId
      * @param $versionId
-     * @return array|mixed|object|\Psr\Http\Message\ResponseInterface
+     * @return array|mixed|object|ResponseInterface
      */
     protected function getVersion($productId, $versionId)
     {
-        /** @var \ThemeHouse\Core\Service\ApiRequest $apiService */
+        /** @var ApiRequest $apiService */
         $apiService = $this->service('ThemeHouse\Core:ApiRequest');
         $apiService->setApiKey($this->getApiKey());
 

@@ -39,6 +39,7 @@ trait EncryptCredentialsTrait
     /**
      * @param array $options
      * @return array
+     * @noinspection PhpUnusedParameterInspection
      */
     protected function decryptCredentials(array $options = [])
     {

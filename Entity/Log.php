@@ -2,8 +2,11 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
+use XF;
+use XF\Entity\User;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
+use XF\Phrase;
 
 /**
  * COLUMNS
@@ -22,9 +25,9 @@ use XF\Mvc\Entity\Structure;
  * @property mixed action_phrase
  *
  * RELATIONS
- * @property \XF\Entity\User User
- * @property \ThemeHouse\InstallAndUpgrade\Entity\Profile Profile
- * @property \ThemeHouse\InstallAndUpgrade\Entity\Product Product
+ * @property User User
+ * @property Profile Profile
+ * @property Product Product
  */
 class Log extends Entity
 {
@@ -42,8 +45,8 @@ class Log extends Entity
             'log_id' => ['type' => self::UINT, 'autoIncrement' => true],
             'profile_id' => ['type' => self::UINT, 'required' => true],
             'product_id' => ['type' => self::STR, 'maxLength' => 200, 'default' => ''],
-            'user_id' => ['type' => self::UINT, 'default' => \XF::visitor()->user_id],
-            'log_date' => ['type' => self::UINT, 'default' => \XF::$time],
+            'user_id' => ['type' => self::UINT, 'default' => XF::visitor()->user_id],
+            'log_date' => ['type' => self::UINT, 'default' => XF::$time],
             'action' => ['type' => self::STR, 'required' => true],
             'content_type' => ['type' => self::STR, 'maxLength' => 100, 'default' => ''],
             'content_id' => ['type' => self::STR, 'maxLength' => 200, 'default' => ''],
@@ -100,7 +103,7 @@ class Log extends Entity
     }
 
     /**
-     * @return \XF\Phrase
+     * @return Phrase
      */
     public function getActionPhrase()
     {
@@ -109,6 +112,6 @@ class Log extends Entity
             $this->extra,
             $this->Content ? $this->Content->toArray() : []
         );
-        return \XF::phrase('th_iau_log_action_' . $this->content_type . '_' . $this->action, $args);
+        return XF::phrase('th_iau_log_action_' . $this->content_type . '_' . $this->action, $args);
     }
 }

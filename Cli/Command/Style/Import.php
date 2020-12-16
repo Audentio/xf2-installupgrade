@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\Style;
 
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -9,7 +10,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
+use XF;
+use XF\Entity\Style;
 use XF\Util\Xml;
+use function basename;
+use function microtime;
 
 /**
  * Class Import
@@ -53,7 +58,7 @@ class Import extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -65,7 +70,7 @@ class Import extends Command
         $filename = $input->getArgument('file');
         try {
             $xml = Xml::openFile($filename, true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $xml = null;
         }
         if (!$xml) {
@@ -74,8 +79,8 @@ class Import extends Command
             return 1;
         }
 
-        /** @var \XF\Service\Style\Import $service */
-        $service = \XF::service('XF:Style\Import');
+        /** @var XF\Service\Style\Import $service */
+        $service = XF::service('XF:Style\Import');
 
         if (!$service->isValidXml($xml)) {
             $output->writeln("<error>" . "Invalid XML file; {$filename}" . "</error>");
@@ -85,8 +90,8 @@ class Import extends Command
 
         $overwriteId = (int)$input->getOption('overwrite-style-id');
         if ($overwriteId) {
-            /** @var \XF\Entity\Style $style */
-            $style = \XF::finder('XF:Style')
+            /** @var Style $style */
+            $style = XF::finder('XF:Style')
                 ->where('style_id', '=', $overwriteId)
                 ->fetchOne();
             if (!$style) {
@@ -98,8 +103,8 @@ class Import extends Command
         } else {
             $parentId = (int)$input->getOption('new-style-parent-id');
             if ($parentId) {
-                /** @var \XF\Entity\Style $style */
-                $style = \XF::finder('XF:Style')
+                /** @var Style $style */
+                $style = XF::finder('XF:Style')
                     ->where('style_id', '=', $parentId)
                     ->fetchOne();
                 if (!$style) {
@@ -114,10 +119,10 @@ class Import extends Command
 
         $this->setupBulkJob($input, $output, true);
 
-        $s = \microtime(true);
+        $s = microtime(true);
         $service->importFromXml($xml);
-        $seconds = round(\microtime(true) - $s, 2);
-        $filename = \basename($filename);
+        $seconds = round(microtime(true) - $s, 2);
+        $filename = basename($filename);
         $output->writeln("Imported {$filename} in {$seconds} seconds");
 
         if (!$this->hasPendingBulkJob($input, $output)) {

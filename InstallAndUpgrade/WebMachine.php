@@ -2,18 +2,24 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\AddOnHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\AddonHandlerTrait;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\VersioningTrait;
+use XF;
 use XF\Db\DuplicateKeyException;
 use XF\Mvc\Entity\Finder;
+use XF\Phrase;
 use XF\PrintableException;
 use XF\Util\File;
 use XFApi\Client;
+use XFApi\Dto\DBTech\eCommerce\DownloadDto;
+use XFApi\Dto\DBTech\eCommerce\DownloadsDto;
 use XFApi\Dto\DBTech\eCommerce\ProductDto;
 use XFApi\Exception\XFApiException;
+use function array_reverse;
 
 /**
  * Class WebMachine
@@ -47,11 +53,11 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
 
 
     /**
-     * @return \XF\Phrase
+     * @return Phrase
      */
     public function getTitle()
     {
-        return \XF::phrase('install_upgrade_provider.webmachine');
+        return XF::phrase('install_upgrade_provider.webmachine');
     }
 
     /**
@@ -132,7 +138,7 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
                     break;
 
                 default:
-                    \XF::logException($e);
+                    XF::logException($e);
                     break;
             }
 
@@ -169,7 +175,7 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
     protected function getContext()
     {
         // Rather than a bunch of if statements, we'll just construct the product filter this way
-        $version = explode('.', \XF::$version);
+        $version = explode('.', XF::$version);
 
         return [
             'platforms' => ['xf' . $version[0] . $version[1]],
@@ -210,12 +216,11 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
      * @param $url
      *
      * @param null $error
-     * @throws \Exception
+     * @throws Exception
      */
     public function createAddOnProductFromUrl($url, &$error = null)
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        throw new \Exception('This provider does not support installation from URL');
+        throw new Exception('This provider does not support installation from URL');
     }
 
     /**
@@ -250,7 +255,7 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
         try {
             $context = $this->getContext();
 
-            /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $latestVersion */
+            /** @var DownloadDto $latestVersion */
             $latestVersion = $client->dbtech_ecommerce->product->getLatestVersion($product->product_id,
                 $context['platforms'], $context['type']);
         } catch (XFApiException $e) {
@@ -260,7 +265,7 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
                     break;
 
                 default:
-                    \XF::logException($e);
+                    XF::logException($e);
                     break;
             }
 
@@ -284,9 +289,9 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
         $context = $this->getContext();
 
         if ($product->update_available) {
-            foreach (\array_reverse($context['platforms']) as $_productVersion) {
+            foreach (array_reverse($context['platforms']) as $_productVersion) {
                 try {
-                    /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $latestVersion */
+                    /** @var DownloadDto $latestVersion */
                     $latestVersion = $client->dbtech_ecommerce->product->getLatestVersion($product->product_id,
                         $_productVersion, $context['type']);
                 } catch (XFApiException $e) {
@@ -297,7 +302,7 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
                 }
 
                 if (!$latestVersion->can_download) {
-                    throw \XF::phrasedException('th_iau_wmtech_expired_licence', ['licenceUrl' => $this->licencesUrl]);
+                    throw XF::phrasedException('th_iau_wmtech_expired_licence', ['licenceUrl' => $this->licencesUrl]);
                 }
 
                 $downloadableId = $latestVersion->download_id;
@@ -305,13 +310,13 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
                 break;
             }
         } else {
-            foreach (\array_reverse($context['platforms']) as $_productVersion) {
+            foreach (array_reverse($context['platforms']) as $_productVersion) {
                 $page = 0;
                 do {
                     $page++;
 
                     try {
-                        /** @var \XFApi\Dto\DBTech\eCommerce\DownloadsDto $downloads */
+                        /** @var DownloadsDto $downloads */
                         $downloads = $client->dbtech_ecommerce->product->getDownloads($product->product_id,
                             $_productVersion, $context['type'], $page);
                     } catch (XFApiException $e) {
@@ -322,7 +327,7 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
                         throw new PrintableException($this->exceptionPrefix . ' ' . $e->getMessage());
                     }
 
-                    /** @var \XFApi\Dto\DBTech\eCommerce\DownloadDto $download */
+                    /** @var DownloadDto $download */
                     foreach ($downloads as $download) {
                         if ($download->can_download) {
                             $productVersion = $_productVersion;
@@ -338,7 +343,7 @@ class WebMachine extends AbstractHandler implements ProductList, AddOnHandler
             throw new PrintableException($this->exceptionPrefix . ' No downloadable versions could be found.');
         }
 
-        $tempPath = File::getNamedTempFile('wmtech-' . $product->product_type . \XF::$time . '.zip');
+        $tempPath = File::getNamedTempFile('wmtech-' . $product->product_type . XF::$time . '.zip');
 
         try {
             $client->dbtech_ecommerce->download->downloadFile($downloadableId, $productVersion, $context['type'],

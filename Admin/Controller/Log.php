@@ -2,8 +2,13 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Admin\Controller;
 
+use XF;
 use XF\Admin\Controller\AbstractController;
+use XF\Mvc\Entity\Entity;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\Exception;
+use XF\Mvc\Reply\Redirect;
+use XF\Mvc\Reply\View;
 
 /**
  * Class Log
@@ -13,8 +18,8 @@ class Log extends AbstractController
 {
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
+     * @return Redirect|View
+     * @throws Exception
      */
     public function actionIndex(ParameterBag $params)
     {
@@ -69,8 +74,8 @@ class Log extends AbstractController
      * @param $id
      * @param null $with
      * @param null $phraseKey
-     * @return \XF\Mvc\Entity\Entity
-     * @throws \XF\Mvc\Reply\Exception
+     * @return Entity
+     * @throws Exception
      */
     protected function assertLogExists($id, $with = null, $phraseKey = null)
     {
@@ -83,16 +88,16 @@ class Log extends AbstractController
     protected function getContentTypeFilters()
     {
         return [
-            'addOn' => \XF::phrase('add_on'),
-            'style' => \XF::phrase('style'),
-            'language' => \XF::phrase('language')
+            'addOn' => XF::phrase('add_on'),
+            'style' => XF::phrase('style'),
+            'language' => XF::phrase('language')
         ];
     }
 
     /**
      * @param $action
      * @param ParameterBag $params
-     * @throws \XF\Mvc\Reply\Exception
+     * @throws Exception
      */
     protected function preDispatchController($action, ParameterBag $params)
     {

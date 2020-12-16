@@ -2,8 +2,10 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Job;
 
+use Exception;
 use ThemeHouse\InstallAndUpgrade\Entity\Profile;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\ProductList;
+use XF;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
 
@@ -24,7 +26,7 @@ class GetProducts extends AbstractJob
     /**
      * @param int $maxRunTime
      * @return JobResult
-     * @throws \Exception
+     * @throws Exception
      */
     public function run($maxRunTime)
     {
@@ -75,9 +77,9 @@ class GetProducts extends AbstractJob
      */
     public function getStatusMessage()
     {
-        $actionPhrase = \XF::phrase('th_installupgrade_fetching_products');
+        $actionPhrase = XF::phrase('th_installupgrade_fetching_products');
         return sprintf('%s... (%s)', $actionPhrase,
-            \XF::language()->numberFormat($this->data['steps'])
+            XF::language()->numberFormat($this->data['steps'])
         );
     }
 

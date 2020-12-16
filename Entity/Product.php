@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
+use XF\Api\Result\EntityResult;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -25,17 +26,17 @@ use XF\Mvc\Entity\Structure;
  * @property mixed Content
  *
  * RELATIONS
- * @property \ThemeHouse\InstallAndUpgrade\Entity\Profile Profile
+ * @property Profile Profile
  */
 class Product extends Entity
 {
     /**
-     * @param \XF\Api\Result\EntityResult $result
+     * @param EntityResult $result
      * @param int $verbosity
      * @param array $options
      */
     protected function setupApiResultData(
-        \XF\Api\Result\EntityResult $result, $verbosity = self::VERBOSITY_NORMAL, array $options = []
+        EntityResult $result, $verbosity = self::VERBOSITY_NORMAL, array $options = []
     )
     {
         $result->includeColumn([
@@ -55,6 +56,7 @@ class Product extends Entity
 
         if (!empty($options['withContent']))
         {
+            /** @noinspection PhpUndefinedFieldInspection */
             $result->Content = $this->Content;
         }
     }

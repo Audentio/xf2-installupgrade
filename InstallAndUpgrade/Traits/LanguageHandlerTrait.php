@@ -5,7 +5,9 @@ namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
 use ThemeHouse\InstallAndUpgrade\Service\LanguageArchive\Extractor;
+use XF;
 use XF\Entity\Language;
+use XF\Service\Language\Import;
 use XF\Util\Xml;
 
 /**
@@ -24,7 +26,7 @@ trait LanguageHandlerTrait
         $product = $productBatch->getProducts()->first();
         $file = $productBatch->getFile($product);
 
-        $request = \XF::app()->request();
+        $request = XF::app()->request();
         $xmls = $request->filter('xmls', 'array-str');
         $target = $request->filter('target', 'str');
         $overwrite = $request->filter('overwrite_language_id', 'uint');
@@ -34,7 +36,7 @@ trait LanguageHandlerTrait
             $xmls = $this->getLanguageXmls($file);
 
             if (empty($xmls)) {
-                return $this->error(\XF::phrase('th_iau_no_language_xmls_found_in_package'));
+                return $this->error(XF::phrase('th_iau_no_language_xmls_found_in_package'));
             }
 
             return $this->view('ThemeHouse\InstallAndUpgrade:Language\XMLSelect', 'th_iau_language_xml_select', [
@@ -53,17 +55,17 @@ trait LanguageHandlerTrait
         $path = array_pop($xmls);
         $content = stream_get_contents($extractor->getFile($path));
 
-        /** @var \XF\Service\Language\Import $languageImporter */
+        /** @var Import $languageImporter */
         $languageImporter = $this->service('XF:Language\Import');
 
         if ($target == 'overwrite') {
             /** @var Language $language */
-            $language = \XF::em()->find('XF:Language', $overwrite);
+            $language = XF::em()->find('XF:Language', $overwrite);
             $languageImporter->setOverwriteLanguage($language);
         } else {
             if ($target == 'parent' && $parent) {
                 /** @var Language $language */
-                $language = \XF::em()->find('XF:Language', $parent);
+                $language = XF::em()->find('XF:Language', $parent);
                 $languageImporter->setParentLanguage($language);
             }
         }
@@ -87,6 +89,7 @@ trait LanguageHandlerTrait
      * @param $archive
      * @param bool $parentOnly
      * @return array
+     * @noinspection PhpUnusedParameterInspection
      */
     protected function getLanguageXMLs($archive, $parentOnly = false)
     {
@@ -135,7 +138,6 @@ trait LanguageHandlerTrait
         $this->log($language, 'download', [
             'version' => $language->latest_version
         ]);
-        /** @noinspection PhpUnhandledExceptionInspection */
         return $this->downloadProduct($language);
     }
 }

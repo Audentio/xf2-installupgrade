@@ -4,11 +4,15 @@ namespace ThemeHouse\InstallAndUpgrade\Repository;
 
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\EventableFilesystem\EventableFilesystem;
+use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\ZipArchive\ZipArchiveAdapter;
+use LogicException;
+use XF;
 use XF\FsMounts;
 use XF\Mvc\Entity\Repository;
 use XF\Util\File;
+use function preg_replace;
 
 /**
  * Class FileHandling
@@ -23,7 +27,7 @@ class FileHandling extends Repository
      */
     public function mountZip($zipFilename, $prefix)
     {
-        $fs = \XF::fs();
+        $fs = XF::fs();
 
         if (substr($zipFilename, 0, 7) == 'file://') {
             $zipFilename = substr($zipFilename, 7);
@@ -46,7 +50,7 @@ class FileHandling extends Repository
      */
     public function unmountZip($prefix)
     {
-        $fs = \XF::fs();
+        $fs = XF::fs();
 
         $filesystem = $fs->getFilesystem($prefix);
         if ($filesystem instanceof Filesystem) {
@@ -61,21 +65,21 @@ class FileHandling extends Repository
      * @param string $abstractSrc
      * @param string $realDest
      * @param callable $closure
-     * @throws \League\Flysystem\FileNotFoundException
-     * @throws \League\Flysystem\FileNotFoundException
+     * @throws FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function copyFiles($abstractSrc, $realDest, callable $closure)
     {
         $dest = File::canonicalizePath($realDest);
         if (!$dest) {
-            throw new \LogicException('Require a path for realDest');
+            throw new LogicException('Require a path for realDest');
         }
         $dest = rtrim($dest, '/') . '/';
 
         $fs = $this->app()->fs();
         $contents = $fs->listContents($abstractSrc . '/upload', true);
         foreach ($contents as $fileNode) {
-            $destFile = \preg_replace('#^upload\/#i', '', $fileNode['path'], 1);
+            $destFile = preg_replace('#^upload/#i', '', $fileNode['path'], 1);
             $destPath = $dest . $destFile;
             if ($fileNode['type'] == 'dir') {
                 File::createDirectory($destPath);

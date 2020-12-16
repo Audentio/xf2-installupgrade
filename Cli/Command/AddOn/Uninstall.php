@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn;
 
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -12,6 +13,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\AddOnActionTraitFix;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
+use XF;
 use XF\Util\Php;
 
 /**
@@ -49,7 +51,7 @@ class Uninstall extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -71,7 +73,7 @@ class Uninstall extends Command
         }
 
         if (!$addOn->canUninstall() && !$input->getOption('force')) {
-            $output->writeln("<error>" . \XF::phrase('this_add_on_cannot_be_uninstalled_like_files_missing') . "</error>");
+            $output->writeln("<error>" . XF::phrase('this_add_on_cannot_be_uninstalled_like_files_missing') . "</error>");
 
             return 1;
         }
@@ -80,7 +82,7 @@ class Uninstall extends Command
         $helper = $this->getHelper('question');
 
         /** @noinspection PhpUndefinedFieldInspection */
-        $question = new ConfirmationQuestion("<question>" . \XF::phrase('please_confirm_that_you_want_to_uninstall_following_add_on') . ': (' . $addOn->title . ' ' . $addOn->version_string . ") (y/n)</question>");
+        $question = new ConfirmationQuestion("<question>" . XF::phrase('please_confirm_that_you_want_to_uninstall_following_add_on') . ': (' . $addOn->title . ' ' . $addOn->version_string . ") (y/n)</question>");
         $response = $helper->ask($input, $output, $question);
         if (!$response) {
             return 1;
@@ -91,7 +93,7 @@ class Uninstall extends Command
         $addOn->preUninstall();
 
         $this->runSubAction($output, $addOn, 'uninstall');
-        if (\XF::$versionId > 2010000) {
+        if (XF::$versionId > 2010000) {
             $this->runSubAction($output, $addOn, 'uninstall-data');
         }
         $this->runSubAction($output, $addOn, 'post-uninstall');

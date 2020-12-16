@@ -4,8 +4,53 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bea839695d286b532a3beb921e84b8d9",
+    "content-hash": "2e2dfa27096c56d7825944bfa3936a9e",
     "packages": [
+        {
+            "name": "cornford/guzzle-cloudflare-middleware",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bradcornford/guzzle-cloudflare-middleware.git",
+                "reference": "44cfe64969d44f6834c4cea1d33db638152694ae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bradcornford/guzzle-cloudflare-middleware/zipball/44cfe64969d44f6834c4cea1d33db638152694ae",
+                "reference": "44cfe64969d44f6834c4cea1d33db638152694ae",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3",
+                "php": "^7.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cornford\\GuzzleCloudflareMiddleware\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bradley Cornford",
+                    "email": "me@bradleycornford.co.uk"
+                }
+            ],
+            "description": "Cloudflare Middleware For Guzzle",
+            "keywords": [
+                "Guzzle",
+                "cloudflare",
+                "middleware"
+            ],
+            "support": {
+                "source": "https://github.com/bradcornford/guzzle-cloudflare-middleware/tree/master"
+            },
+            "time": "2020-06-11T07:44:11+00:00"
+        },
         {
             "name": "paquettg/string-encode",
             "version": "0.1.1",
@@ -50,6 +95,10 @@
                 "encoding",
                 "string"
             ],
+            "support": {
+                "issues": "https://github.com/paquettg/string-encoder/issues",
+                "source": "https://github.com/paquettg/string-encoder/tree/master"
+            },
             "time": "2014-05-29T18:38:09+00:00"
         },
         {
@@ -112,49 +161,11 @@
                 "html",
                 "parser"
             ],
+            "support": {
+                "issues": "https://github.com/thesoftwarefanatics/php-html-parser/issues",
+                "source": "https://github.com/thesoftwarefanatics/php-html-parser/tree/master"
+            },
             "time": "2018-12-21T07:45:56+00:00"
-        },
-        {
-            "name": "tunaabutbul/cloudflare-middleware",
-            "version": "v1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tunaabutbul/cloudflare-middleware.git",
-                "reference": "05a88cf070f041d501a2d8fc3c01bb66ffc63b15"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tunaabutbul/cloudflare-middleware/zipball/05a88cf070f041d501a2d8fc3c01bb66ffc63b15",
-                "reference": "05a88cf070f041d501a2d8fc3c01bb66ffc63b15",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "6.3.*",
-                "php": ">=5.6"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Tuna\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tuna Abutbul",
-                    "email": "tuna.abutbul+github@gmail.com"
-                }
-            ],
-            "description": "Cloudflare Middleware For Guzzle",
-            "keywords": [
-                "Guzzle",
-                "cloudflare",
-                "middleware"
-            ],
-            "time": "2018-02-07T09:18:26+00:00"
         },
         {
             "name": "xfapi/xfapi-php",
@@ -199,6 +210,10 @@
                 }
             ],
             "description": "A PHP library for XenForo's REST API",
+            "support": {
+                "issues": "https://github.com/xfapi/xfapi-php/issues",
+                "source": "https://github.com/xfapi/xfapi-php/tree/master"
+            },
             "time": "2019-02-18T23:03:50+00:00"
         }
     ],
@@ -211,5 +226,6 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }

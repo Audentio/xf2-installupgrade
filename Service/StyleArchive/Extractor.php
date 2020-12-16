@@ -2,10 +2,13 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Service\StyleArchive;
 
+use LogicException;
+use XF;
 use XF\App;
 use XF\Service\AbstractService;
 use XF\Timer;
 use XF\Util\File;
+use ZipArchive;
 
 // ######## NOTE: SIMILARITY TO XF CORE UPGRADER CODE ############
 // Much of this code is similar to the XFUpgraderExtractor class in src/XF/Install/_upgrader/core.php.
@@ -23,7 +26,7 @@ class Extractor extends AbstractService
     protected $fileName;
 
     /**
-     * @var \ZipArchive|null
+     * @var ZipArchive|null
      */
     protected $_zip;
 
@@ -59,7 +62,7 @@ class Extractor extends AbstractService
     }
 
     /**
-     * @return null|\ZipArchive
+     * @return null|ZipArchive
      */
     protected function zip()
     {
@@ -73,10 +76,10 @@ class Extractor extends AbstractService
     public function open()
     {
         if (!$this->_zip) {
-            $zip = new \ZipArchive();
+            $zip = new ZipArchive();
             $openResult = $zip->open($this->fileName);
             if ($openResult !== true) {
-                throw new \LogicException("File could not be opened as a zip ($openResult)");
+                throw new LogicException("File could not be opened as a zip ($openResult)");
             }
 
             $this->_zip = $zip;
@@ -126,12 +129,12 @@ class Extractor extends AbstractService
             return null;
         }
 
-        if (!preg_match("#^(?:.*?\/)?uploads?/.#", $fileName)) {
+        if (!preg_match("#^(?:.*?/)?uploads?/.#", $fileName)) {
             // file outside of "upload" so we can just skip this
             return null;
         }
 
-        return preg_replace("#^((?:.*?\/)?uploads?/)#", '', $fileName); // remove "upload/"
+        return preg_replace("#^((?:.*?/)?uploads?/)#", '', $fileName); // remove "upload/"
     }
 
     /**
@@ -140,7 +143,7 @@ class Extractor extends AbstractService
      */
     protected function getFinalFsFileName($fileName)
     {
-        return \XF::getRootDirectory() . \XF::$DS . $fileName;
+        return XF::getRootDirectory() . XF::$DS . $fileName;
     }
 
     /**
@@ -148,6 +151,7 @@ class Extractor extends AbstractService
      * @param int $start
      * @param Timer|null $timer
      * @return array
+     * @noinspection PhpUnusedParameterInspection
      */
     public function copyFiles(array $changeset = null, $start = 0, Timer $timer = null)
     {

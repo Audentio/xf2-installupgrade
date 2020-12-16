@@ -2,21 +2,22 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
-use XF\Mvc\Entity\Entity;
-use XF\Mvc\Entity\Structure;
+use LogicException;
+use XF\Api\Result\EntityResult;
 
 trait ApiTrait
 {
     protected function setupApiResultData(
-        \XF\Api\Result\EntityResult $result, $verbosity = self::VERBOSITY_NORMAL, array $options = []
+        EntityResult $result, $verbosity = self::VERBOSITY_NORMAL, array $options = []
     )
     {
         // try to call parent method (if any)
         try
         {
+            /** @noinspection PhpUndefinedClassInspection */
             parent::setupApiResultData($result, $verbosity, $options);
         }
-        catch(\LogicException $e) {}
+        catch(LogicException $e) {}
 
         $config = [];
 

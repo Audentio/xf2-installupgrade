@@ -3,6 +3,8 @@
 namespace ThemeHouse\InstallAndUpgrade\XF\Admin\View;
 
 use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
+use XF;
+use XF\PrintableException;
 
 /**
  * Class Index
@@ -14,16 +16,17 @@ use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
 class Index extends XFCP_Index
 {
     /**
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function renderHtml()
     {
         if (is_callable('parent::renderHtml')) {
+            /** @noinspection PhpUndefinedMethodInspection */
             parent::renderHtml();
         }
 
         /** @var InstallAndUpgrade $installUpgradeRepo */
-        $installUpgradeRepo = \XF::repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
+        $installUpgradeRepo = XF::repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
         $this->params['th_iau_upgrades'] = $installUpgradeRepo->getIndexUpdateInfo();
     }
 }

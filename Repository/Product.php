@@ -3,6 +3,7 @@
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
 use XF\Mvc\Entity\ArrayCollection;
+use XF\Mvc\Entity\Finder;
 use XF\Mvc\Entity\Repository;
 
 /**
@@ -14,20 +15,18 @@ class Product extends Repository
     /**
      * @param $profiles
      * @param string $type
-     * @return \XF\Mvc\Entity\Finder
+     * @return Finder
      */
     public function findProductListProductsForProfiles(ArrayCollection $profiles, $type = 'addOn')
     {
-        $products = $this->findProducts()
+        return $this->findProducts()
             ->where('product_type', '=', $type)
             ->where('profile_id', '=', $profiles->keys())
             ->order(['installed', 'title'], 'ASC');
-
-        return $products;
     }
 
     /**
-     * @return \XF\Mvc\Entity\Finder
+     * @return Finder
      */
     public function findProducts()
     {

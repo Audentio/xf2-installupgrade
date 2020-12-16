@@ -2,7 +2,10 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Entity;
 
+use Exception;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
+use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits\EncryptCredentialsTrait;
 use XF\Mvc\Entity\Entity;
 use XF\Mvc\Entity\Structure;
 
@@ -60,12 +63,12 @@ class Profile extends Entity
 
     /**
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCredentials()
     {
         if (!$this->credentials) {
-            /** @var EncryptCredentials $handler */
+            /** @var EncryptCredentials|EncryptCredentialsTrait $handler */
             $handler = $this->getHandler();
             $handler->setEncryptionSecret($this->secret);
             $this->credentials = $handler->decryptCredentials($this->options);
@@ -75,8 +78,8 @@ class Profile extends Entity
     }
 
     /**
-     * @return null|\ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler
-     * @throws \Exception
+     * @return null|AbstractHandler
+     * @throws Exception
      */
     public function getHandler()
     {
@@ -104,7 +107,7 @@ class Profile extends Entity
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function _postSave()
     {

@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
+use XF;
+use XF\Entity\Style;
 
 /**
  * Class EnableDisable
@@ -52,8 +54,8 @@ class EnableDisable extends Command
         }
 
         $styleId = (int)$input->getArgument('style');
-        /** @var \XF\Entity\Style $style */
-        $style = \XF::finder('XF:Style')
+        /** @var Style $style */
+        $style = XF::finder('XF:Style')
             ->where('style_id', '=', $styleId)
             ->fetchOne();
         if (!$style) {

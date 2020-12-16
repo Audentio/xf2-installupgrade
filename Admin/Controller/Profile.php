@@ -4,8 +4,17 @@ namespace ThemeHouse\InstallAndUpgrade\Admin\Controller;
 
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
+use Throwable;
+use XF;
 use XF\Admin\Controller\AbstractController;
+use XF\ControllerPlugin\Toggle;
+use XF\Mvc\FormAction;
 use XF\Mvc\ParameterBag;
+use XF\Mvc\Reply\Exception;
+use XF\Mvc\Reply\Message;
+use XF\Mvc\Reply\Redirect;
+use XF\Mvc\Reply\View;
+use XF\PrintableException;
 
 /**
  * Class Profile
@@ -14,7 +23,7 @@ use XF\Mvc\ParameterBag;
 class Profile extends AbstractController
 {
     /**
-     * @return \XF\Mvc\Reply\View
+     * @return View
      * @throws \Exception
      */
     public function actionIndex()
@@ -45,8 +54,9 @@ class Profile extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\View
+     * @return View
      * @throws \Exception
+     * @noinspection PhpUnusedParameterInspection
      */
     public function actionAdd(ParameterBag $params)
     {
@@ -88,7 +98,7 @@ class Profile extends AbstractController
 
     /**
      * @param \ThemeHouse\InstallAndUpgrade\Entity\Profile $profile
-     * @return \XF\Mvc\Reply\View
+     * @return View
      * @throws \Exception
      */
     protected function profileAddEdit(\ThemeHouse\InstallAndUpgrade\Entity\Profile $profile)
@@ -103,8 +113,8 @@ class Profile extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
+     * @return View
+     * @throws Exception
      * @throws \Exception
      */
     public function actionEdit(ParameterBag $params)
@@ -118,7 +128,7 @@ class Profile extends AbstractController
      * @param null $with
      * @param null $phraseKey
      * @return \ThemeHouse\InstallAndUpgrade\Entity\Profile
-     * @throws \XF\Mvc\Reply\Exception
+     * @throws Exception
      */
     protected function assertProfileExists($id, $with = null, $phraseKey = null)
     {
@@ -128,10 +138,10 @@ class Profile extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Redirect
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
-     * @throws \Throwable
+     * @return Redirect
+     * @throws Exception
+     * @throws PrintableException
+     * @throws Throwable
      */
     public function actionSave(ParameterBag $params)
     {
@@ -149,9 +159,9 @@ class Profile extends AbstractController
 
     /**
      * @param \ThemeHouse\InstallAndUpgrade\Entity\Profile $profile
-     * @return \XF\Mvc\FormAction
+     * @return FormAction
      * @throws \Exception
-     * @throws \Throwable
+     * @throws Throwable
      */
     protected function profileSaveProcess(\ThemeHouse\InstallAndUpgrade\Entity\Profile $profile)
     {
@@ -172,13 +182,13 @@ class Profile extends AbstractController
         $result = $handler->verifyOptions($input['options']);
 
         if ($result !== true) {
-            if ($result instanceof \Throwable) {
+            if ($result instanceof Throwable) {
                 throw $result;
             } else {
                 if ($result) {
                     $form->logError($result);
                 } else {
-                    $form->logError(\XF::phrase('th_iau_authentication_failed'));
+                    $form->logError(XF::phrase('th_iau_authentication_failed'));
                 }
             }
         }
@@ -196,9 +206,9 @@ class Profile extends AbstractController
 
     /**
      * @param ParameterBag $params
-     * @return \XF\Mvc\Reply\Redirect|\XF\Mvc\Reply\View
-     * @throws \XF\Mvc\Reply\Exception
-     * @throws \XF\PrintableException
+     * @return Redirect|View
+     * @throws Exception
+     * @throws PrintableException
      */
     public function actionDelete(ParameterBag $params)
     {
@@ -220,11 +230,11 @@ class Profile extends AbstractController
     }
 
     /**
-     * @return \XF\Mvc\Reply\Message
+     * @return Message
      */
     public function actionToggle()
     {
-        /** @var \XF\ControllerPlugin\Toggle $plugin */
+        /** @var Toggle $plugin */
         $plugin = $this->plugin('XF:Toggle');
         return $plugin->actionToggle('ThemeHouse\InstallAndUpgrade:Profile');
     }
@@ -232,7 +242,7 @@ class Profile extends AbstractController
     /**
      * @param $action
      * @param ParameterBag $params
-     * @throws \XF\Mvc\Reply\Exception
+     * @throws Exception
      */
     protected function preDispatchController($action, ParameterBag $params)
     {

@@ -6,6 +6,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use XF;
+use XF\Job\JobResult;
 
 /**
  * Class RunJobs
@@ -47,8 +49,8 @@ class RunJobs extends Command
         $quietFlag = OutputInterface::OUTPUT_NORMAL | OutputInterface::VERBOSITY_QUIET;
         $flags = OutputInterface::OUTPUT_NORMAL | OutputInterface::VERBOSITY_VERBOSE;
 
-        $app = \XF::app();
-        if (\XF::$versionId != $app->options()->currentVersionId) {
+        $app = XF::app();
+        if (XF::$versionId != $app->options()->currentVersionId) {
             $output->writeln("<error>Version mismatch - upgrade pending?</error>", $flags);
 
             return 1;
@@ -64,7 +66,7 @@ class RunJobs extends Command
             $this->runQueue($output, $includeManualJobs, $maxJobRunTime);
             $more = $jobManager->queuePending($includeManualJobs);
             // keep memory usage down
-            \XF::app()->em()->clearEntityCache();
+            XF::app()->em()->clearEntityCache();
         } while ($more && ($maxRunTime < 0 || (microtime(true) - $start < $maxRunTime)));
 
         if ($more) {
@@ -83,7 +85,7 @@ class RunJobs extends Command
      * @param OutputInterface $output
      * @param $manual
      * @param $maxRunTime
-     * @return null|\XF\Job\JobResult
+     * @return null|JobResult
      */
     public function runQueue(OutputInterface $output, $manual, $maxRunTime)
     {
@@ -91,7 +93,7 @@ class RunJobs extends Command
             $maxRunTime = 2;
         }
 
-        $jobManager = \XF::app()->jobManager();
+        $jobManager = XF::app()->jobManager();
 
         $runnable = $jobManager->getRunnable($manual);
         $startTime = microtime(true);

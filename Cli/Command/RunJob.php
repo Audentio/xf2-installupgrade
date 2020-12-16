@@ -8,6 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use ThemeHouse\InstallAndUpgrade\Repository\DbLogQuery;
+use XF;
+use function is_callable;
+use function microtime;
 
 /**
  * Class RunJob
@@ -31,7 +34,7 @@ class RunJob extends Command
                 "The id of a specific manual job to run",
                 null
             );
-        if (\is_callable('meminfo_dump')) {
+        if (is_callable('meminfo_dump')) {
             $this->addOption(
                 'mem-dump',
                 null,
@@ -50,8 +53,8 @@ class RunJob extends Command
     {
         $flags = OutputInterface::OUTPUT_NORMAL | OutputInterface::VERBOSITY_VERBOSE;
 
-        $app = \XF::app();
-        if (\XF::$versionId != $app->options()->currentVersionId) {
+        $app = XF::app();
+        if (XF::$versionId != $app->options()->currentVersionId) {
             $output->writeln("<error>Version mismatch - upgrade pending?</error>", $flags);
 
             return 1;
@@ -71,25 +74,24 @@ class RunJob extends Command
      */
     public function runJob($uniqueId, InputInterface $input, OutputInterface $output)
     {
-        $jobManager = \XF::app()->jobManager();
-        $app = \XF::app();
+        $jobManager = XF::app()->jobManager();
+        $app = XF::app();
         $em = $app->em();
 
         if (function_exists('pcntl_signal') && defined('SIGINT')) {
             // Where possible, register a signal handler to run on interrupt to cancel the unique job
-            /** @noinspection PhpComposerExtensionStubsInspection */
             pcntl_signal(SIGINT, function () use ($uniqueId) {
-                \XF::app()->jobManager()->cancelUniqueJob($uniqueId);
+                XF::app()->jobManager()->cancelUniqueJob($uniqueId);
             });
         }
 
         // after a minute, disabling DB query logging
         $longRunning = false;
-        $target = \microtime(true) + 60;
+        $target = microtime(true) + 60;
         $snapshot = 0;
-        $meminfoDump = \is_callable('meminfo_dump') && intval($input->getOption('mem-dump'));
+        $meminfoDump = is_callable('meminfo_dump') && intval($input->getOption('mem-dump'));
 
-        while ($runner = $jobManager->runUnique($uniqueId, \XF::config('jobMaxRunTime'))) {
+        while ($runner = $jobManager->runUnique($uniqueId, XF::config('jobMaxRunTime'))) {
             if ($output) {
                 $output->writeln((string)$runner->statusMessage);
             }
@@ -104,9 +106,9 @@ class RunJob extends Command
                     $snapshot++;
                 }
             } else {
-                if ($target < \microtime(true)) {
+                if ($target < microtime(true)) {
                     $longRunning = true;
-                    $db = \XF::db();
+                    $db = XF::db();
                     $db->logQueries(false, null);
                     DbLogQuery::resetQueryLog($db);
                 }
@@ -114,7 +116,6 @@ class RunJob extends Command
 
             if (function_exists('pcntl_signal_dispatch')) {
                 // Dispatch any registered signal handlers for pending signals
-                /** @noinspection PhpComposerExtensionStubsInspection */
                 pcntl_signal_dispatch();
             }
         }

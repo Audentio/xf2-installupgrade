@@ -2,9 +2,14 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Job;
 
+use LogicException;
+use ThemeHouse\InstallAndUpgrade\Entity\Product;
 use ThemeHouse\InstallAndUpgrade\Entity\ProductBatch;
+use XF;
 use XF\Job\AbstractJob;
 use XF\Job\JobResult;
+use XF\Phrase;
+use XF\Service\AddOnArchive\Extractor;
 use XF\Timer;
 
 /**
@@ -39,41 +44,38 @@ class ExtractStyle extends AbstractJob
             $this->complete();
         }
 
+        /** @var Product $product */
         $product = $batch->getProducts()->first();
 
         $zipFile = $batch->getFile($product);
 
-        /** @var \XF\Service\AddOnArchive\Extractor $extractor */
+        /** @var Extractor $extractor */
         $extractor = $this->app->service('ThemeHouse\InstallAndUpgrade:StyleArchive\Extractor', $zipFile);
         $timer = new Timer($maxRunTime);
         $result = $extractor->copyFiles([], $this->data['start'], $timer);
 
         switch ($result['status']) {
             case 'error':
+            case 'complete':
                 return $this->complete();
-                break;
 
             case 'incomplete':
                 $this->data['start'] = $result['last'] + 1;
                 break;
 
-            case 'complete':
-                return $this->complete();
-                break;
-
             default:
-                throw new \LogicException("Unknown result from copy '$result[status]'");
+                throw new LogicException("Unknown result from copy '$result[status]'");
         }
 
         return $this->resume();
     }
 
     /**
-     * @return \XF\Phrase
+     * @return Phrase
      */
     public function getStatusMessage()
     {
-        return \XF::phrase('copying_files...');
+        return XF::phrase('copying_files...');
     }
 
     /**

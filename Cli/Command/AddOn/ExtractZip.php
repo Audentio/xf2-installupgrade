@@ -2,12 +2,17 @@
 
 namespace ThemeHouse\InstallAndUpgrade\Cli\Command\AddOn;
 
+use League\Flysystem\FileNotFoundException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\BulkCliJobTrait;
+use ThemeHouse\InstallAndUpgrade\Repository\FileHandling;
+use XF;
 use XF\Util\Php;
+use function file_exists;
+use function is_readable;
 
 /**
  * Class ExtractZip
@@ -37,8 +42,8 @@ class ExtractZip extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null
-     * @throws \League\Flysystem\FileNotFoundException
-     * @throws \League\Flysystem\FileNotFoundException
+     * @throws FileNotFoundException
+     * @throws FileNotFoundException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -49,22 +54,22 @@ class ExtractZip extends Command
 
         $zipFilenames = $input->getArgument('zip-filenames');
         foreach ($zipFilenames as $zipFilename) {
-            if (!\file_exists($zipFilename) || !\is_readable($zipFilename)) {
+            if (!file_exists($zipFilename) || !is_readable($zipFilename)) {
                 $output->writeln("<error>File {$zipFilename} is not readable</error>");
 
                 return 1;
             }
         }
 
-        /** @var \ThemeHouse\InstallAndUpgrade\Repository\FileHandling $repo */
-        $repo = \XF::repository('ThemeHouse\InstallAndUpgrade:FileHandling');
+        /** @var FileHandling $repo */
+        $repo = XF::repository('ThemeHouse\InstallAndUpgrade:FileHandling');
         foreach ($zipFilenames as $zipFilename) {
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
                 $output->writeln("Extracting $zipFilename");
             }
             $zipRoot = $repo->mountZip($zipFilename, 'addon-zip');
             try {
-                $repo->copyFiles($zipRoot . '://', \XF::getRootDirectory(), function ($file) use ($output) {
+                $repo->copyFiles($zipRoot . '://', XF::getRootDirectory(), function ($file) use ($output) {
                     if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERY_VERBOSE) {
                         $output->writeln($file);
                     }

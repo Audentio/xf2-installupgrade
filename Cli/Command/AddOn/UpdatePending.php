@@ -10,7 +10,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use ThemeHouse\InstallAndUpgrade\Cli\Command\SubTaskRunnerTrait;
+use ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade;
+use XF;
+use XF\AddOn\AddOn;
 use XF\Util\Php;
+use function array_fill_keys;
 
 /**
  * Class UpdatePending
@@ -55,15 +59,15 @@ class UpdatePending extends Command
         }
 
         $excludedAddons = $input->getArgument('exclude-addon');
-        $excludedAddons = \array_fill_keys($excludedAddons, true);
+        $excludedAddons = array_fill_keys($excludedAddons, true);
         $includeLegacy = $input->getOption('include-legacy');
 
         // big hammer to avoid caching issues
         Php::resetOpcache();
 
         // discover add-ons
-        $allAddOns = \XF::app()->addOnManager()->getAllAddOns();
-        /** @var \XF\AddOn\AddOn[] $upgradeableAddOns */
+        $allAddOns = XF::app()->addOnManager()->getAllAddOns();
+        /** @var AddOn[] $upgradeableAddOns */
         $upgradeableAddOns = [];
         foreach ($allAddOns as $addon) {
             if (isset($excludedAddons[$addon->getAddOnId()])) {
@@ -74,7 +78,6 @@ class UpdatePending extends Command
                 $upgradeableAddOns[] = $addon;
             } else {
                 if ($includeLegacy && $addon->isLegacy()) {
-                    /** @noinspection PhpUndefinedFieldInspection */
                     $legacyAddonId = $addon->legacy_addon_id;
                     if ($legacyAddonId && isset($allAddOns[$legacyAddonId]) && $addon->canUpgrade()) {
                         $upgradeableAddOns[] = $addon;
@@ -88,8 +91,8 @@ class UpdatePending extends Command
             return 0;
         }
 
-        /** @var \ThemeHouse\InstallAndUpgrade\Repository\InstallAndUpgrade $repo */
-        $repo = \XF::repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
+        /** @var InstallAndUpgrade $repo */
+        $repo = XF::repository('ThemeHouse\InstallAndUpgrade:InstallAndUpgrade');
         $upgradeableAddOns = $repo->sortByDependencies($upgradeableAddOns);
         if (!$upgradeableAddOns) {
             return 1;
@@ -100,11 +103,10 @@ class UpdatePending extends Command
 
         $titles = [];
         foreach ($upgradeableAddOns as $addOn) {
-            /** @noinspection PhpUndefinedFieldInspection */
             $titles[] = $addOn['title'] . "(" . $addOn->version_string . " => " . $addOn->json_version_string . ")";
         }
         $titleList = join("\n", $titles);
-        $question = new ConfirmationQuestion("<question>" . \XF::phrase('th_iau_please_confirm_that_you_want_to_upgrade_following_add_ons') . ":\n" . $titleList . "\n (y/n)</question>");
+        $question = new ConfirmationQuestion("<question>" . XF::phrase('th_iau_please_confirm_that_you_want_to_upgrade_following_add_ons') . ":\n" . $titleList . "\n (y/n)</question>");
         $response = $helper->ask($input, $output, $question);
         if (!$response) {
             return 1;

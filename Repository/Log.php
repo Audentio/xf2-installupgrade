@@ -3,9 +3,11 @@
 namespace ThemeHouse\InstallAndUpgrade\Repository;
 
 use ThemeHouse\InstallAndUpgrade\Entity\Product;
+use XF;
 use XF\Entity\User;
 use XF\Mvc\Entity\Finder;
 use XF\Mvc\Entity\Repository;
+use XF\PrintableException;
 
 /**
  * Class Log
@@ -18,12 +20,12 @@ class Log extends Repository
      * @param $action
      * @param array $extra
      * @param User|null $user
-     * @throws \XF\PrintableException
+     * @throws PrintableException
      */
     public function log(Product $product, $action, $extra = [], User $user = null)
     {
         if (!$user) {
-            $user = \XF::visitor();
+            $user = XF::visitor();
         }
 
         $log = $this->em->create('ThemeHouse\InstallAndUpgrade:Log');

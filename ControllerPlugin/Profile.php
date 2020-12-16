@@ -7,6 +7,7 @@ use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\AbstractHandler;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\EncryptCredentials;
 use ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Interfaces\TFA;
 use XF\ControllerPlugin\AbstractPlugin;
+use XF\Mvc\Reply\View;
 
 /**
  * Class Profile
@@ -19,7 +20,7 @@ class Profile extends AbstractPlugin
      * @param ProfileEntity $profile
      * @param callable $successFunction
      * @param array $params
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function handleReply(
         AbstractHandler $handler,
@@ -67,7 +68,7 @@ class Profile extends AbstractPlugin
     /**
      * @param ProfileEntity $profile
      * @param array $extra
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function credentialsForm(ProfileEntity $profile, array $extra)
     {
@@ -84,7 +85,7 @@ class Profile extends AbstractPlugin
     /**
      * @param ProfileEntity $profile
      * @param array $extra
-     * @return \XF\Mvc\Reply\View
+     * @return View
      */
     public function tfaForm(ProfileEntity $profile, array $extra)
     {
