@@ -1,1 +1,0 @@
-Installing via Install & Upgrade is only supported if you have <code>ZipArchive</code> support. You may need to ask your host to enable this.

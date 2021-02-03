@@ -24,7 +24,42 @@ use XF\Util\File;
  */
 class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, ProductList
 {
-    use VersioningTrait, AddonHandlerTrait, StyleHandlerTrait;
+    use AddonHandlerTrait, StyleHandlerTrait;
+
+    /**
+     * @param $currentVersion
+     * @param $latestVersion
+     * @param string $operator
+     * @return mixed
+     */
+    public function compareVersions($currentVersion, $latestVersion, $operator = '<')
+    {
+        preg_match('/^\d+\.\d+\.\d+/', $currentVersion, $XFcurrentVersion);
+        preg_match('/^\d+\.\d+\.\d+/', $latestVersion, $XFlatestVersion);
+
+        if(is_array($XFcurrentVersion)) {
+            $XFcurrentVersion = reset($XFcurrentVersion);
+        }
+        if(is_array($XFlatestVersion)) {
+            $XFlatestVersion = reset($XFlatestVersion);
+        }
+
+        if(($res = version_compare($currentVersion, $latestVersion, $operator)) != 0) {
+            return $res;
+        }
+
+        preg_match('/\d+\.\d+$/', $currentVersion, $UIXcurrentVersion);
+        preg_match('/\d+\.\d+$/', $latestVersion, $UIXlatestVersion);
+
+        if(is_array($UIXcurrentVersion)) {
+            $UIXcurrentVersion = reset($UIXcurrentVersion);
+        }
+        if(is_array($UIXlatestVersion)) {
+            $UIXlatestVersion = reset($UIXlatestVersion);
+        }
+
+        return version_compare($UIXcurrentVersion, $UIXlatestVersion, $operator);
+    }
 
     /**
      * @var string
