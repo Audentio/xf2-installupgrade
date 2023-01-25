@@ -20,7 +20,7 @@ class Listing extends XFCP_Listing
      */
     public function renderHtml()
     {
-        if (is_callable('parent::renderHtml')) {
+        if (is_callable(parent::class . '::renderHtml')) {
             /** @noinspection PhpUndefinedMethodInspection */
             parent::renderHtml();
         }
