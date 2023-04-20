@@ -165,6 +165,9 @@ class ThemeHouse extends AbstractHandler implements StyleHandler, AddOnHandler, 
         $installed[] = 211; // Bookmarks
         $installed[] = 212; // Reactions
 
+        // Remove addons with no build to download
+        $installed[] = 316; // ACE
+
         if (isset($addOns['payload']['products']) && !empty($addOns['payload']['products'])) {
             foreach ($addOns['payload']['products'] as $addOn) {
                 if (!in_array($addOn['id'], $installed)) {

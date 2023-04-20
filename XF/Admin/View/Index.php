@@ -20,7 +20,7 @@ class Index extends XFCP_Index
      */
     public function renderHtml()
     {
-        if (is_callable('parent::renderHtml')) {
+        if (is_callable(parent::class . '::renderHtml')) {
             /** @noinspection PhpUndefinedMethodInspection */
             parent::renderHtml();
         }

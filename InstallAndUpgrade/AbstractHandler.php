@@ -130,6 +130,7 @@ abstract class AbstractHandler implements ArrayAccess
      * @param mixed $key
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return $this->__isset($key);
@@ -166,6 +167,7 @@ abstract class AbstractHandler implements ArrayAccess
      * @param mixed $key
      * @return mixed|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->get($key);
@@ -193,6 +195,7 @@ abstract class AbstractHandler implements ArrayAccess
      * @param mixed $key
      * @param mixed $value
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($key, $value)
     {
         $this->set($key, $value);
@@ -210,6 +213,7 @@ abstract class AbstractHandler implements ArrayAccess
     /**
      * @param mixed $offset
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new LogicException('Handler offsets may not be unset');
