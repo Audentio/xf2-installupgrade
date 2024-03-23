@@ -22,7 +22,7 @@ class Log extends Repository
      * @param User|null $user
      * @throws PrintableException
      */
-    public function log(Product $product, $action, $extra = [], User $user = null)
+    public function log(Product $product, $action, $extra = [], ?User $user = null)
     {
         if (!$user) {
             $user = XF::visitor();
