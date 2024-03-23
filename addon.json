@@ -12,6 +12,10 @@
         "XFRM": "https://xenforo.com/community/resources/install-and-upgrade.6753/"
     },
     "require": {
+        "php": [
+            "7.1.0",
+            "PHP 7.1.0+"
+        ],
         "XF": [
             2010010,
             "XenForo 2.1.0+"

@@ -43,7 +43,7 @@ class Installer extends AbstractService
      * @param Product $product
      * @param Style|null $parentStyle
      */
-    public function __construct(App $app, $file, Product $product, Style $parentStyle = null)
+    public function __construct(App $app, $file, Product $product, ?Style $parentStyle = null)
     {
         parent::__construct($app);
 
@@ -60,7 +60,7 @@ class Installer extends AbstractService
      * @return array
      * @throws PrintableException
      */
-    public function install(array $xmls, Style $parent = null, array $childXmls = [], $force = false)
+    public function install(array $xmls, ?Style $parent = null, array $childXmls = [], $force = false)
     {
         $response = null;
 
@@ -83,7 +83,7 @@ class Installer extends AbstractService
      * @return array
      * @throws PrintableException
      */
-    protected function installStyle($xml, Style $parent = null, $childXmls = [], $force = false)
+    protected function installStyle($xml, ?Style $parent = null, $childXmls = [], $force = false)
     {
         /** @var Import $styleImporter */
         $styleImporter = $this->service('XF:Style\Import');
