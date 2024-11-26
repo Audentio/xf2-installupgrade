@@ -93,7 +93,7 @@ class Extractor extends AbstractService
      * @param array $failures
      * @return bool
      */
-    public function checkWritable(array $changeset = null, &$failures = [])
+    public function checkWritable(?array $changeset = null, &$failures = [])
     {
         $zip = $this->zip();
         $failures = [];
@@ -153,7 +153,7 @@ class Extractor extends AbstractService
      * @return array
      * @noinspection PhpUnusedParameterInspection
      */
-    public function copyFiles(array $changeset = null, $start = 0, Timer $timer = null)
+    public function copyFiles(?array $changeset = null, $start = 0, ?Timer $timer = null)
     {
         $zip = $this->zip();
         $lastComplete = $start;

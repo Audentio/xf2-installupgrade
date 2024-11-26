@@ -55,7 +55,7 @@ abstract class AbstractHandler implements ArrayAccess
      * AbstractHandler constructor.
      * @param Profile|null $profile
      */
-    public function __construct(Profile $profile = null)
+    public function __construct(?Profile $profile = null)
     {
         $this->app = XF::app();
         $this->em = $this->app->em();
