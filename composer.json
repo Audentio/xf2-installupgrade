@@ -1,10 +1,19 @@
 {
     "require": {
-        "thesoftwarefanatics/php-html-parser": "^1.8.0",
         "xfapi/xfapi-php": "^0.1@alpha",
-        "cornford/guzzle-cloudflare-middleware": "^1.0"
+        "cornford/guzzle-cloudflare-middleware": "dev-master",
+        "voku/simple_html_dom": "^4.8"
     },
     "replace": {
         "guzzlehttp/guzzle":"*"
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "vendor_/cornford/guzzle-cloudflare-middleware",
+            "options": {
+                "symlink": false
+            }
+        }
+    ]
 }

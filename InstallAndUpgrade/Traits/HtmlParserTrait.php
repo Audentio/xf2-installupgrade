@@ -2,7 +2,7 @@
 
 namespace ThemeHouse\InstallAndUpgrade\InstallAndUpgrade\Traits;
 
-use PHPHtmlParser\Dom;
+use voku\helper\HtmlDomParser;
 
 /**
  * Trait HtmlParserTrait
@@ -15,6 +15,6 @@ trait HtmlParserTrait
      */
     public function htmlParser()
     {
-        return new Dom();
+        return new HtmlDomParser();
     }
 }
